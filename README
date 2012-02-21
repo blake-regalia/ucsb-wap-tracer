@@ -1,0 +1,4 @@
+./android
+	Contains all the files required to build a working Android application, you must have the Android SDK installed along with JDK to compile the Java source.
+
+
