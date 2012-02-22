@@ -1,6 +1,8 @@
-WARNING: Due to the hardware requirements of this project, the compiled program will not run on a virtual device. A physical device is
-	required to run the compiled .APK file. 
+WARNING: Due to the hardware requirements of this project, the compiled program will not run on a virtual device. A physical device is required to run the compiled .APK file.
+
+Android Users:
+	Navigate to the ./bin directory and copy "ucsb_wap_tracer.apk" to your device, install it, then run "UCSB WAP Tracer" from your applications menu. 
 
 Eclipse:
-	File > Import > General > Existing Projects into Workspace. Browse for root directory and select the "ucsb-wap-tracer" directory.
-	The project should show up below in the list, click Finish.
+	File > Import > General > Existing Projects into Workspace. Browse for root directory and select the "ucsb-wap-tracer" directory. The project should show up below in the list, click Finish.
+	
