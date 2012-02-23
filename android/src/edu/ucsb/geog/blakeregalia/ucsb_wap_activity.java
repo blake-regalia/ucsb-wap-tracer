@@ -2,96 +2,143 @@ package edu.ucsb.geog.blakeregalia;
 
 import java.util.List;
 
+import edu.ucsb.geog.blakeregalia.WAP_Manager.WAP_Listener;
+
 import android.app.Activity;
-import android.app.Activity.*;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.wifi.ScanResult;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.net.wifi.*;
+import android.provider.Settings;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
 public class ucsb_wap_activity extends Activity {
-	private WifiManager wifi;
-	private List<ScanResult> waps;
+
+	
+	public static final int GPS_ENABLED_REQUEST_CODE = 0;
+	
+	private WAP_Manager wap_manager;
+	private GPS_Locator gps_locator;
+
 	private TableLayout table; 
 	private TextView debugTextView;
 	
-	private boolean ignore_rssi_change = false;
+	private boolean wifi_ready = false;
+	private boolean gps_ready = false;
 	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        /* establish wap_manager */
+        wap_manager = new WAP_Manager(this);
+        
+        /* establish gps_locator */
+        gps_locator = new GPS_Locator(this);
+        
+        /* set content view */
         setContentView(R.layout.main);
+        
+        /* fetch table layout */
         table = (TableLayout) findViewById(R.id.tableLayout1);
+        
+        /* fetch top text view for printing status */
         debugTextView = (TextView) findViewById(R.id.debugTextView);
         
+        /* startup */
         initialize();
     }
     
-    private void debug(String message) {
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        if(requestCode == GPS_ENABLED_REQUEST_CODE && resultCode == 0) {
+        	gps_locator.checkIfGPSWasEnabled(data);
+        }
+    }
+    
+    public void debug(String message) {
     	debugTextView.setText(message);
     }
-    
-    private void initialize() {
-    	wifi = (WifiManager) this.getSystemService(Context.WIFI_SERVICE);
-    	
-    	// enable wifi if it is off
-    	if(wifi.isWifiEnabled() == false) {
-	        IntentFilter intent = new IntentFilter();
-	        intent.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
-	        this.registerReceiver(new BroadcastReceiver() {
-	        	@Override
-	        	public void onReceive(Context c, Intent i) {
-	        		wifi = (WifiManager) c.getSystemService(Context.WIFI_SERVICE);
-	        		if(wifi.isWifiEnabled()) {
-	        			debug("wifi enabled");
-	        			start_listeners();
-	        		}
-	        		else {
-	        			debug("could not enable wifi");
-	        		}
-	        	}
-	        }
-	        , intent);
 
-    		debug("enabling wifi...");
-    		wifi.setWifiEnabled(true);
-    	}
-    	// wifi is already enabled
-    	else {
-			start_listeners();
-    	}
+    /**
+     * check wifi state, check GPS state
+     */
+    private void initialize() {
+    	/* enable wifi */
+    	wap_manager.enableWifi(new Hardware_Ready_Listener() {
+    		public void onReady() {
+	    		wifi_ready = true;
+	    		if(gps_ready) {
+	    			ready_device();
+	    		}
+    		}
+    		public void onFail() {
+    			debug("failed to start wifi");
+    		}
+    	});
+
+    	/* enable gps */
+    	gps_locator.enableGps(new Hardware_Ready_Listener() {
+    		public void onReady() {
+    			gps_ready = true;
+    			if(wifi_ready) {
+    				ready_device();
+    			}
+    		}
+    		public void onFail() {
+    			debug("failed to start gps");
+    		}
+    	});
     }
     
+    /**
+     * indicate to the user that the device is ready for action, and wait for their approval
+     */
+    private void ready_device() {
+    	debug("device is ready");
+    }
+    
+    /**
+     * listens for broadcast events, and starts the associated processes
+     */
     private void start_listeners() {
-		//listen_for_rssi_change();
-		listen_for_scans();
-		scan();
+		/* start scanning */
+		wap_manager.startScanning(wap_listener());
     }
     
-    private void scan() {
-        debug(" * = UCSB Wireless Web");
-        ignore_rssi_change = true;
-    	wifi.startScan();
-    }
+    private WAP_Listener wap_listener() {
+    	return new WAP_Manager.WAP_Listener() {
+    		/**
+    		 * gets called once the scan has completed
+    		 */
+			public void onComplete(int size) {
+				
+				/* assure number of rows */
+				correct_table_length(size);
+				
+				/* display results */
+				display_scan_results_to_table(size);
+			}
+		};
+	}
     
-    public void getWAPs() {
-    	ScanResult access_point;
+    /**
+     * make sure that the correct number of rows is present in the tableview layout
+     */
+    private void correct_table_length(int size) {
     	TableRow tr;
     	TextView text;
-    	StringBuilder info;
-    	int signal_level;
     	int i;
-    	
-    	int wap_len = waps.size();
-    	
+
+    	/* add rows while there aren't enough */
     	int row_len = table.getChildCount();
-    	while(row_len < wap_len) {
+    	while(row_len < size) {
     		tr = new TableRow(this);
     		text = new TextView(this);
     		tr.addView(text);
@@ -99,41 +146,37 @@ public class ucsb_wap_activity extends Activity {
     		row_len += 1;
     	}
 
-    	i = wap_len;
+    	/* remove rows while there's too many */
+    	i = size;
     	while(i > row_len) {
     		table.removeViewAt(i);
     		i -= 1;
     	}
+    }
+
+    /**
+     * iteratively push the string summary of each access point to the tableview
+     */
+    private void display_scan_results_to_table(int size) {
+    	TableRow tr;
+    	TextView text;
+    	WAP_Manager.AccessPointIncident wap;
     	
-    	i = wap_len;
+    	int i = size;
     	while(i-- != 0) {
-    		access_point = waps.get(i);
+    		wap = wap_manager.getWAP(i);
+
     		tr = (TableRow) table.getChildAt(i);    		
     		text = (TextView) tr.getChildAt(0);
-
-    		info = new StringBuilder();
     		
-    		// signal
-    		signal_level = (int) (WifiManager.calculateSignalLevel(access_point.level, 46) * 2.2222);
-    		info.append(signal_level+"%");
-    		
-    		// bssid
-    		info.append("  "+access_point.BSSID);
-    		
-    		// asterik
-    		if(access_point.SSID.equals("UCSB Wireless Web")) {
-    			info.append(" *");
-    		}
-    		
-    		text.setText(info.toString());
+    		text.setText(wap.toString());
     	}
-    	// should wait here a bit so we don't fry their wifi card?
-    	
-		scan();
     }
     
-    // to make the storage of BSSIDs efficient, turn the 34-byte string into a 6-byte string
-    // to make the encoding of the BSSIDs quick, don't use a loop 
+    /**
+     * to make the storage of BSSIDs efficient, turn the 34-byte string into a 6-byte string
+     * to make the encoding of the BSSIDs quick, don't use a loop
+     */ 
     public String encode_hw_addr(String hw_addr) {
     	char[] mac = new char[3];
     	char a, b, c,
@@ -256,31 +299,5 @@ public class ucsb_wap_activity extends Activity {
     	if(m[11] > 57) m[11] += 39;
     	
     	return new String(m);
-    }
-    
-    
-    public void listen_for_rssi_change() {
-    	IntentFilter intent = new IntentFilter();
-    	intent.addAction(WifiManager.RSSI_CHANGED_ACTION);
-    	this.registerReceiver(new BroadcastReceiver() {
-			@Override
-			public void onReceive(Context c, Intent i) {
-				if(ignore_rssi_change == false) {
-					scan();
-				}
-			}
-    	}, intent);
-    }
-    
-    public void listen_for_scans() {
-        IntentFilter intent = new IntentFilter();
-        intent.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
-        this.registerReceiver(new BroadcastReceiver() {
-        	@Override
-        	public void onReceive(Context c, Intent i) {
-        		waps = ((WifiManager) c.getSystemService(Context.WIFI_SERVICE)).getScanResults();
-        		getWAPs();
-        	}
-        }, intent);
     }
 }
