@@ -9,6 +9,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.location.Location;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ public class ucsb_wap_activity extends Activity {
 
 	
 	public static final int GPS_ENABLED_REQUEST_CODE = 0;
+	protected static final long WIFI_SCAN_INTERVAL_MS = 200; 
 	
 	private WAP_Manager wap_manager;
 	private GPS_Locator gps_locator;
@@ -75,8 +77,8 @@ public class ucsb_wap_activity extends Activity {
     		public void onReady() {
 	    		wifi_ready = true;
 	    		if(gps_ready) {
-	    			ready_device();
-	    		}
+    				hardware_ready();
+    			}
     		}
     		public void onFail() {
     			debug("failed to start wifi");
@@ -88,7 +90,7 @@ public class ucsb_wap_activity extends Activity {
     		public void onReady() {
     			gps_ready = true;
     			if(wifi_ready) {
-    				ready_device();
+    				hardware_ready();
     			}
     		}
     		public void onFail() {
@@ -97,21 +99,28 @@ public class ucsb_wap_activity extends Activity {
     	});
     }
     
+    private void hardware_ready() {
+    	debug("device hardware ready. waiting for location fix");
+    	gps_locator.useNetworkProvider();
+		
+    	gps_locator.waitForPositionFix(new GPS_Locator.Position_Fix_Listener() {
+    		public void onReady() {
+    			device_ready();
+    		}
+    		public void onFail() {
+    			
+    		}
+    	}, (float) 10.0);
+    }
+
     /**
      * indicate to the user that the device is ready for action, and wait for their approval
      */
-    private void ready_device() {
-    	debug("device is ready");
-    }
-    
-    /**
-     * listens for broadcast events, and starts the associated processes
-     */
-    private void start_listeners() {
+    private void device_ready() {
 		/* start scanning */
 		wap_manager.startScanning(wap_listener());
     }
-    
+
     private WAP_Listener wap_listener() {
     	return new WAP_Manager.WAP_Listener() {
     		/**
@@ -124,6 +133,19 @@ public class ucsb_wap_activity extends Activity {
 				
 				/* display results */
 				display_scan_results_to_table(size);
+				
+				
+				Location gps = gps_locator.getCurrentLocation();
+				debug("location: "+gps.getLatitude()+","+gps.getLongitude()+"; "+gps.getAccuracy()+"m");
+				
+				try {
+					Thread.sleep(WIFI_SCAN_INTERVAL_MS);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				
+				/* scan for waps again */
+				wap_manager.continueScanning();
 			}
 		};
 	}

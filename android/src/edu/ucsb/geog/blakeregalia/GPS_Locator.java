@@ -11,20 +11,35 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.location.LocationProvider;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 
 public class GPS_Locator {
 	
+	private final static long TOGGLE_EXPLOIT_INTERVAL_MS = 200;
+	/* wait for up to 5 seconds */
+	private final static int TOGGLE_EXPLOIT_CHECK_NUMS = 25; 
+	
+	/* reject the old location after 15 seconds */
+	private int EXPIRATION_TIME_MS = 15000;
+	
 	LocationManager location_manager;
+	LocationListener location_listener = null;
+	Location current_location;
+	
 	ucsb_wap_activity main;
 	Context context;
 	
 	Hardware_Ready_Listener stored_callback = null;
 	
+	float best_accuracy = Float.MAX_VALUE;
+	
 	boolean can_toggle_gps = false;
 	int gps_exploit_attempts = 0;
+	
+	boolean use_network_provider = false;
 	
 	public GPS_Locator(ucsb_wap_activity activity) {
 		main = activity;
@@ -33,7 +48,7 @@ public class GPS_Locator {
 		// Acquire a reference to the system Location Manager
 		location_manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 
-		can_toggle_gps = gps_toggle_exploit_available() && false;
+		can_toggle_gps = gps_toggle_exploit_available();
 	}
 	
 	private boolean gps_toggle_exploit_available() {
@@ -76,7 +91,7 @@ public class GPS_Locator {
 				if(gps_exploit_attempts != 0) {
 
 					/* try waiting up to 5 seconds */
-					if(gps_exploit_attempts < 25) {
+					if(gps_exploit_attempts < TOGGLE_EXPLOIT_CHECK_NUMS) {
 
 						/* and check again */
 						enableGps(callback);
@@ -100,8 +115,8 @@ public class GPS_Locator {
 
 					gps_exploit_attempts += 1;
 					try {
-						/* wait 200 milliseconds in between each check */
-						Thread.sleep(200);
+						/* wait n milliseconds in between each check */
+						Thread.sleep(TOGGLE_EXPLOIT_INTERVAL_MS);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
@@ -142,26 +157,6 @@ public class GPS_Locator {
 		AlertDialog alert = alert_dialog_builder.create();
 		alert.show();
 	}
-
-	private void unused() {
-		// Define a listener that responds to location updates
-		LocationListener location_listener = new LocationListener() {
-			public void onLocationChanged(Location location) {
-				/* Called when a new location is found by the network location provider. */
-				//makeUseOfNewLocation(location);
-			}
-
-			public void onStatusChanged(String provider, int status, Bundle extras) {}
-
-			public void onProviderEnabled(String provider) {}
-
-			public void onProviderDisabled(String provider) {}
-
-		};
-
-		// Register the listener with the Location Manager to receive location updates
-		location_manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, location_listener);
-	}
 	
 	public void checkIfGPSWasEnabled(Intent data) {
     	if(stored_callback == null) return;
@@ -172,5 +167,126 @@ public class GPS_Locator {
         else {
             stored_callback.onFail();
         }
+	}
+	
+	public void waitForPositionFix(final Position_Fix_Listener callback, final float maximumErrorMeters) {
+		if(location_listener == null) {
+			/* define a listener that responds to location updates */
+			location_listener = new LocationListener() {
+				
+				public void onLocationChanged(Location location) {
+					current_location = location;
+					if(location.getAccuracy() <= maximumErrorMeters) {
+						main.debug("location fixed");
+						
+						best_accuracy = location.getAccuracy(); 
+						location_manager.removeUpdates(location_listener);
+						location_listener = gps_location_listener();
+						location_manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, location_listener);
+						if(use_network_provider) {
+							location_manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, network_location_listener());
+						}
+						callback.onReady();
+					}
+					else {
+						main.debug("waiting for accuracy within "+maximumErrorMeters+"m.\n"+location.getProvider()+" currently gives an accuracy of "+location.getAccuracy()+"m");
+					}
+				}
+
+				public void onStatusChanged(String provider, int status, Bundle extras) {
+					main.debug("status changed");
+					if(status != LocationProvider.AVAILABLE) {
+						callback.onFail();
+					}
+				}
+
+				public void onProviderEnabled(String provider) {}
+
+				public void onProviderDisabled(String provider) {}
+
+			};
+
+			/* register the listener with the Location Manager to receive location updates */
+			location_manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, location_listener);
+			if(use_network_provider) {
+				location_manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, location_listener);
+			}
+		}
+	}
+	
+	public void useNetworkProvider() {
+		use_network_provider = true;
+		if(location_listener != null) {
+			location_manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, network_location_listener());
+		}
+	}
+
+	private LocationListener gps_location_listener() {
+		return new LocationListener() {
+			public void onLocationChanged(Location location) {
+				if((location.hasAccuracy() && location.getAccuracy() <= best_accuracy)
+//					|| (location.getProvider().equals(current_location.getProvider()))
+					|| (location.getTime() - current_location.getTime() > EXPIRATION_TIME_MS)) {
+					best_accuracy = location.getAccuracy();
+					current_location = location;
+				}
+			}
+
+			public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+			public void onProviderEnabled(String provider) {}
+
+			public void onProviderDisabled(String provider) {}
+		};
+	}
+
+	private LocationListener network_location_listener() {
+		return new LocationListener() {
+			public void onLocationChanged(Location location) {
+				if((location.getAccuracy() <= best_accuracy)
+//					|| (location.getProvider().equals(current_location.getProvider()))
+					|| (location.getTime() - current_location.getTime() > EXPIRATION_TIME_MS)) {
+					best_accuracy = location.getAccuracy();
+					current_location = location;
+				}
+			}
+
+			public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+			public void onProviderEnabled(String provider) {}
+
+			public void onProviderDisabled(String provider) {}
+		};
+	}
+	
+	public Location getCurrentLocation() {
+		return new Location(current_location);
+	}	
+	
+	public LatLng getCurrentLatLng() {
+		return new LatLng(current_location.getLatitude(), current_location.getLongitude());
+	}
+	
+	public interface Position_Fix_Listener {
+		public void onReady();
+		public void onFail();
+	}
+	
+	public class LatLng {
+		private double lat;
+		private double lng;
+		
+		public LatLng(double latitude, double longitude) {
+			lat = latitude;
+			lng = longitude;
+		}
+		
+		public double getLatitude() {
+			return lat;
+		}
+		
+		public double getLongitude() {
+			return lng;
+		}
 	}
 }

@@ -51,7 +51,7 @@ public class WAP_Manager {
 	 * initiates the scan for wireless access points
 	 */
 	private void scan_waps() {
-		main.debug(" * = UCSB Wireless Web");
+		//main.debug(" * = UCSB Wireless Web");
 		wifi.startScan();
 	}
 
@@ -97,7 +97,7 @@ public class WAP_Manager {
 	}
 	
 	/**
-	 * initiates the continuous scanning process
+	 * initiates the scanning process
 	 * @param callback		the method to be called every time a scan completes
 	 */
 	public void startScanning(WAP_Listener callback) {
@@ -106,10 +106,17 @@ public class WAP_Manager {
     	/* get ready to be notified about all future scans */
 		listen_for_scans();
 		
-		/* begin the continuous scanning process */
+		/* begin the scanning process */
 		scan_waps();
 	}
 
+	/**
+	 * continue the scanning process
+	 * @param callback		the method to be called every time a scan completes
+	 */
+	public void continueScanning() {
+		scan_waps();
+	}
 	
 	public AccessPointIncident getWAP(int index) {
 		return new AccessPointIncident(scan_result.get(index));
