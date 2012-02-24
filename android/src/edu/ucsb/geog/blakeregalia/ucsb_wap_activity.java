@@ -99,13 +99,17 @@ public class ucsb_wap_activity extends Activity {
     }
     
     private byte[] encode_long(long longInt) {
-    	 byte[] array = new byte[4];
+    	 byte[] array = new byte[8];
          
-    	 /* convert from an unsigned long int to a 4-byte array */
-    	 array[0] = (byte) ((longInt >> 24) & 0xFF);
-    	 array[1] = (byte) ((longInt >> 16) & 0xFF);
-    	 array[2] = (byte) ((longInt >> 8) & 0xFF);
-    	 array[3] = (byte) (longInt & 0xFF);
+    	 /* convert from an unsigned long int to a 8-byte array */
+    	 array[0] = (byte) ((longInt >> 56) & 0xFF);
+    	 array[1] = (byte) ((longInt >> 48) & 0xFF);
+    	 array[2] = (byte) ((longInt >> 40) & 0xFF);
+    	 array[3] = (byte) ((longInt >> 32) & 0xFF);
+    	 array[4] = (byte) ((longInt >> 24) & 0xFF);
+    	 array[5] = (byte) ((longInt >> 16) & 0xFF);
+    	 array[6] = (byte) ((longInt >> 8) & 0xFF);
+    	 array[7] = (byte) (longInt & 0xFF);
     	 
 		return array;
     }

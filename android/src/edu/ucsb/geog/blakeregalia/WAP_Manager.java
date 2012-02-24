@@ -239,6 +239,84 @@ public class WAP_Manager {
 		    
 		}
 	}
+    /**
+     * to make the storage of BSSIDs efficient, turn the 34-byte string into a 6-byte array
+     * to make the encoding of the BSSIDs quick, don't use a loop
+     */ 
+	private byte[] encode_hw_addr_byte(char[] hw_addr) {
+		byte[] b = new byte[6];
+		char d, e;
+
+		
+		d = hw_addr[0];
+		if(d > 96) d -= 'W';
+		else d -= '0';
+
+		e = hw_addr[1];
+		if(e > 96) d -= 'W';
+		else e -= '0';
+		
+		b[0] = (byte) (((d & 0x0f) << 4) | (e & 0x0f));
+
+		
+		d = hw_addr[3];
+		if(d > 96) d -= 'W';
+		else d -= '0';
+
+		e = hw_addr[4];
+		if(e > 96) e -= 'W';
+		else e -= '0';
+		
+		b[1] = (byte) (((d & 0x0f) << 4) | (e & 0x0f));
+		
+		
+		d = hw_addr[6];
+		if(d > 96) d -= 'W';
+		else d -= '0';
+		b[4] = (byte) d;
+
+		e = hw_addr[7];
+		if(e > 96) e -= 'W';
+		else e -= '0';
+
+		b[2] = (byte) (((d & 0x0f) << 4) | (e & 0x0f));
+		
+
+		d = hw_addr[9];
+		if(d > 96) d -= 'W';
+		else d -= '0';
+
+		e = hw_addr[10];
+		if(e > 96) e -= 'W';
+		else e -= '0';
+
+		b[3] = (byte) (((d & 0x0f) << 4) | (e & 0x0f));
+		
+
+		d = hw_addr[12];
+		if(d > 96) d -= 'W';
+		else d -= '0';
+
+		e = hw_addr[13];
+		if(e > 96) e -= 'W';
+		else e -= '0';
+
+		b[4] = (byte) (((d & 0x0f) << 4) | (e & 0x0f));
+
+
+		d = hw_addr[15];
+		if(d > 96) d -= 'W';
+		else d -= '0';
+
+		e = hw_addr[16];
+		if(e > 96) e -= 'W';
+		else e -= '0';
+		
+		b[5] = (byte) (((d & 0x0f) << 4) | (e & 0x0f));
+
+
+		return b;
+	}
 
 	public interface WAP_Listener {
 		public void onComplete(int size, long time);
