@@ -1,34 +1,60 @@
 package edu.ucsb.geog.blakeregalia;
 
-import java.util.List;
-
-import edu.ucsb.geog.blakeregalia.WAP_Manager.WAP_Listener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Date;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.location.Location;
-import android.net.wifi.ScanResult;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import edu.ucsb.geog.blakeregalia.WAP_Manager.WAP_Listener;
+
+/**
+ * 
+ * DATA:
+ * HTTTTLLLLLLLLMMMMMMrrMMMMMMrr
+ * 0123456789ABCDEF0123456789ABC
+ * 
+ * Header - 0+1
+ * Time - 1+4
+ * Location - 5+8
+ * WAP - 13+8, 21+8, 29+8
+ * 
+ * Timestamp = z
+ * E(z) => (z-start_time)*10^-2
+ * 
+ * LatLng = z
+ * E(z) => (int) ((z-nw_campus_corner)*10^6)
+ * 
+ * @author Blake
+ *
+ */
 
 public class ucsb_wap_activity extends Activity {
 
-	
 	public static final int GPS_ENABLED_REQUEST_CODE = 0;
-	protected static final long WIFI_SCAN_INTERVAL_MS = 200; 
+	protected static final long WIFI_SCAN_INTERVAL_MS = 1000;
+	private static final String DATA_FILE_NAME = "trace.bin"; 
+	
+	/* precision of the recorded time-stamp values in milliseconds, value of 100 yields 0.1 second resolution */
+	private static final int TIMESTAMP_PRECISION_MS = 100;
+	private static final double TIMESTAMP_REDUCTION_FACTOR = 1.0 / TIMESTAMP_PRECISION_MS;
 	
 	private WAP_Manager wap_manager;
 	private GPS_Locator gps_locator;
 
 	private TableLayout table; 
 	private TextView debugTextView;
+	
+	private FileOutputStream data_file;
+	private long start_time;
 	
 	private boolean wifi_ready = false;
 	private boolean gps_ready = false;
@@ -55,6 +81,33 @@ public class ucsb_wap_activity extends Activity {
         
         /* startup */
         initialize();
+    }
+    
+    /**
+     * turns a 8-byte long representing a timestamp to a 2-byte char
+     * this offers at most 65535 unique entries
+     * translated to available time span in minutes => 65535*(1 minute / 60 seconds)*(1 second / 10 deciseconds) = 109 minutes & 13.5 seconds
+     * @param ts
+     * @return
+     */
+    private char encode_timestamp(long timestamp) {
+    	return Character.toChars((int) ((timestamp-start_time)*TIMESTAMP_REDUCTION_FACTOR))[0];
+    }
+    
+    private int decode_timestamp(char ts) {
+    	return (int) ts;
+    }
+    
+    private byte[] encode_long(long longInt) {
+    	 byte[] array = new byte[4];
+         
+    	 /* convert from an unsigned long int to a 4-byte array */
+    	 array[0] = (byte) ((longInt >> 24) & 0xFF);
+    	 array[1] = (byte) ((longInt >> 16) & 0xFF);
+    	 array[2] = (byte) ((longInt >> 8) & 0xFF);
+    	 array[3] = (byte) (longInt & 0xFF);
+    	 
+		return array;
     }
     
     @Override
@@ -100,7 +153,15 @@ public class ucsb_wap_activity extends Activity {
     }
     
     private void hardware_ready() {
-    	debug("device hardware ready. waiting for location fix");
+    	
+    	try {
+			data_file = this.openFileOutput(DATA_FILE_NAME, Context.MODE_APPEND);
+		} catch (FileNotFoundException e) {
+			debug(e.getMessage());
+		}
+    	
+    	debug("device hardware ready. waiting for location fix\ndata file is currently "+(new File(this.getFilesDir(), DATA_FILE_NAME)).length()+"kb");
+    	
     	gps_locator.useNetworkProvider();
 		
     	gps_locator.waitForPositionFix(new GPS_Locator.Position_Fix_Listener() {
@@ -117,6 +178,16 @@ public class ucsb_wap_activity extends Activity {
      * indicate to the user that the device is ready for action, and wait for their approval
      */
     private void device_ready() {
+    	/* set the start time so we only store the time differences */
+    	start_time = (new Date()).getTime();
+    	
+    	/* write the file header */
+    	try {
+    		data_file.write(encode_long(start_time));
+    	} catch (IOException e) {
+			debug(e.getMessage());
+    	}
+    	
 		/* start scanning */
 		wap_manager.startScanning(wap_listener());
     }
@@ -126,13 +197,16 @@ public class ucsb_wap_activity extends Activity {
     		/**
     		 * gets called once the scan has completed
     		 */
-			public void onComplete(int size) {
+			public void onComplete(int size, long time) {
 				
 				/* assure number of rows */
 				correct_table_length(size);
 				
+				/* write data */
+				handle_data(size, time);
+				
 				/* display results */
-				display_scan_results_to_table(size);
+//				display_scan_results_to_table(size);
 				
 				
 				Location gps = gps_locator.getCurrentLocation();
@@ -175,6 +249,42 @@ public class ucsb_wap_activity extends Activity {
     		i -= 1;
     	}
     }
+    
+    private void display_scan_result_to_table_row(int row, String text) {
+		TableRow tr = (TableRow) table.getChildAt(row);    		
+		TextView tv = (TextView) tr.getChildAt(0);
+		
+		tv.setText(text);
+    }
+    
+    /**
+     * @param time 
+     * 
+     */
+    private void handle_data(int size, long time) {
+    	StringBuilder data = new StringBuilder();
+    	WAP_Manager.AccessPointIncident wap;
+    	
+    	/**/
+    	data.append(encode_timestamp(time));
+    	data.append((byte) size);
+    	
+    	int i = size;
+    	while(i-- != 0) {
+    		wap = wap_manager.getWAP(i);
+    		data.append(wap.encode());
+    		display_scan_result_to_table_row(i, wap.toString());
+    	}
+    	
+    	/*
+    	try {
+			data_file.write(data.toString().getBytes());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		*/
+    }
 
     /**
      * iteratively push the string summary of each access point to the tableview
@@ -194,88 +304,6 @@ public class ucsb_wap_activity extends Activity {
     		text.setText(wap.toString());
     	}
     }
-    
-    /**
-     * to make the storage of BSSIDs efficient, turn the 34-byte string into a 6-byte string
-     * to make the encoding of the BSSIDs quick, don't use a loop
-     */ 
-    public String encode_hw_addr(String hw_addr) {
-    	char[] mac = new char[3];
-    	char a, b, c,
-    		d, e;
-    	
-    	d = hw_addr.charAt(0);
-    	if(d > 96) d -= 'W';
-    	else d -= '0';
-    	
-    	e = hw_addr.charAt(1);
-    	if(e > 96) e -= 'W';
-    	else e -= '0';
-
-    	a = (char) (((d << 4) | e) << 8);
-
-
-    	d = hw_addr.charAt(3);
-    	if(d > 96) d -= 'W';
-    	else d -= '0';
-    	
-    	e = hw_addr.charAt(4);
-    	if(e > 96) e -= 'W';
-    	else e -= '0';
-
-    	a |= (char) ((d << 4) | e);
-
-    	
-    	d = hw_addr.charAt(6);
-    	if(d > 96) d -= 'W';
-    	else d -= '0';
-    	
-    	e = hw_addr.charAt(7);
-    	if(e > 96) e -= 'W';
-    	else e -= '0';
-
-    	b = (char) (((d << 4) | e) << 8);
-    	
-    	
-    	d = hw_addr.charAt(9);
-    	if(d > 96) d -= 'W';
-    	else d -= '0';
-    	
-    	e = hw_addr.charAt(10);
-    	if(e > 96) e -= 'W';
-    	else e -= '0';
-
-    	b |= (char) ((d << 4) | e);
-    	
-    	
-    	d = hw_addr.charAt(12);
-    	if(d > 96) d -= 'W';
-    	else d -= '0';
-    	
-    	e = hw_addr.charAt(13);
-    	if(e > 96) e -= 'W';
-    	else e -= '0';
-
-    	c = (char) (((d << 4) | e) << 8);
-    	
-    	
-    	d = hw_addr.charAt(15);
-    	if(d > 96) d -= 'W';
-    	else d -= '0';
-    	
-    	e = hw_addr.charAt(16);
-    	if(e > 96) e -= 'W';
-    	else e -= '0';
-
-    	c |= (char) ((d << 4) | e);
-    	
-    	mac[0] = a;
-    	mac[1] = b;
-    	mac[2] = c;
-    	
-    	return new String(mac);
-    }
-    
     public String decode(char a, char b, char c) {
     	char[] m = new char[12];
     	char f = 0x000f;

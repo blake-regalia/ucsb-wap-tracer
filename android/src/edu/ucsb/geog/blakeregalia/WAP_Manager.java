@@ -1,5 +1,6 @@
 package edu.ucsb.geog.blakeregalia;
 
+import java.util.Date;
 import java.util.List;
 
 import android.content.BroadcastReceiver;
@@ -8,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
+import android.text.format.Time;
 
 public class WAP_Manager {
 
@@ -44,7 +46,7 @@ public class WAP_Manager {
 	 */
 	private void receive_waps(List<ScanResult> waps) {
 		scan_result = waps;
-		scan_callback.onComplete(scan_result.size());
+		scan_callback.onComplete(scan_result.size(), (new Date()).getTime());
 	}
 
 	/**
@@ -146,10 +148,100 @@ public class WAP_Manager {
 
 			return info.toString();
 		}
+		
+		/**
+		 * 
+		 * @return		a fixed n-byte string of this encoded access point incident
+		 */
+		public String encode() {
+			return encode_hw_addr(access_point.BSSID);
+		}
+
+	    /**
+	     * to make the storage of BSSIDs efficient, turn the 34-byte string into a 6-byte string
+	     * to make the encoding of the BSSIDs quick, don't use a loop
+	     */ 
+		private String encode_hw_addr(String hw_addr) {
+			char[] mac = new char[3];
+			char a, b, c,
+			d, e;
+
+			d = hw_addr.charAt(0);
+			if(d > 96) d -= 'W';
+			else d -= '0';
+
+			e = hw_addr.charAt(1);
+			if(e > 96) e -= 'W';
+			else e -= '0';
+
+			a = (char) (((d << 4) | e) << 8);
+
+
+			d = hw_addr.charAt(3);
+			if(d > 96) d -= 'W';
+			else d -= '0';
+
+			e = hw_addr.charAt(4);
+			if(e > 96) e -= 'W';
+			else e -= '0';
+
+			a |= (char) ((d << 4) | e);
+
+
+			d = hw_addr.charAt(6);
+			if(d > 96) d -= 'W';
+			else d -= '0';
+
+			e = hw_addr.charAt(7);
+			if(e > 96) e -= 'W';
+			else e -= '0';
+
+			b = (char) (((d << 4) | e) << 8);
+
+
+			d = hw_addr.charAt(9);
+			if(d > 96) d -= 'W';
+			else d -= '0';
+
+			e = hw_addr.charAt(10);
+			if(e > 96) e -= 'W';
+			else e -= '0';
+
+			b |= (char) ((d << 4) | e);
+
+
+			d = hw_addr.charAt(12);
+			if(d > 96) d -= 'W';
+			else d -= '0';
+
+			e = hw_addr.charAt(13);
+			if(e > 96) e -= 'W';
+			else e -= '0';
+
+			c = (char) (((d << 4) | e) << 8);
+
+
+			d = hw_addr.charAt(15);
+			if(d > 96) d -= 'W';
+			else d -= '0';
+
+			e = hw_addr.charAt(16);
+			if(e > 96) e -= 'W';
+			else e -= '0';
+
+			c |= (char) ((d << 4) | e);
+
+			mac[0] = a;
+			mac[1] = b;
+			mac[2] = c;
+
+			return new String(mac);
+		    
+		}
 	}
 
 	public interface WAP_Listener {
-		public void onComplete(int size);
+		public void onComplete(int size, long time);
 	}
 
 }

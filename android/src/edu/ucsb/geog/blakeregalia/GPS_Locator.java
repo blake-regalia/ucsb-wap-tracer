@@ -18,6 +18,8 @@ import android.provider.Settings;
 
 public class GPS_Locator {
 	
+//	34.42316,-119.859295 (North-West corner)
+	
 	private final static long TOGGLE_EXPLOIT_INTERVAL_MS = 200;
 	/* wait for up to 5 seconds */
 	private final static int TOGGLE_EXPLOIT_CHECK_NUMS = 25; 
