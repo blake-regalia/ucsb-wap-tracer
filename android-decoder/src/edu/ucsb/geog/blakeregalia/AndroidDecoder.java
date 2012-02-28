@@ -10,10 +10,23 @@ import java.util.Date;
  * A: Latitude
  * L: Longitude
  * M: MAC address
- * r: rssi signal strength
+ * r: RSSI signal strength
+ * i: SSID name of network key
+ * k: key of SSID
+ * s: length of SSID string
+ * D: SSID string
  * 
- * SSSSSSSSWTTAAAALLLLMMMMMMrMMMMMMr
- * --long--b-s-int-int-
+ * SSSSSSSS
+ * --long--
+ * 
+ * WTTAAAALLLLMMMMMMri
+ * b-s-int-int--mac-bb
+ * 
+ * 0
+ * -
+ * 
+ * ksD+
+ * bb-S
  * 
  * @author Blake
  *
@@ -24,6 +37,8 @@ public class AndroidDecoder {
 	private final static long FILE_HEADER_LENGTH = 8;
 	private final static long DATA_HEADER_LENGTH = 11;
 	private final static long DATA_ENTRY_LENGTH = 7;
+	private final static long TERMINATING_FIELD_LENGTH = 1;
+	private final static long STRING_MAPPING_LENGTH = 2;
 	private final static long MINIMUM_FILE_SIZE = FILE_HEADER_LENGTH + DATA_HEADER_LENGTH + DATA_ENTRY_LENGTH;
 
 	public static void main(String[] args) {		
