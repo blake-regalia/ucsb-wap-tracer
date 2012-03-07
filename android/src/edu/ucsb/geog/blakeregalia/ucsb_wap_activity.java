@@ -10,10 +10,15 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.provider.Settings.Secure;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import edu.ucsb.geog.blakeregalia.GPS_Locator.SOUTHWEST_CAMPUS_CORNER;
 import edu.ucsb.geog.blakeregalia.WAP_Manager.WAP_Listener;
 
 /**
@@ -41,317 +46,402 @@ public class ucsb_wap_activity extends Activity {
 
 	public static final int GPS_ENABLED_REQUEST_CODE = 0;
 	protected static final long WIFI_SCAN_INTERVAL_MS = 1000;
-	private static final String DATA_FILE_NAME = "trace.bin"; 
-	
+	private static final String DATA_FILE_NAME = "trace.bin";
+
+
+	public static String android_id;
+
+	protected static final float MIN_POSITION_ACCURACY = 60.0f;
+
 	/* precision of the recorded time-stamp values in milliseconds, value of 100 yields 0.1 second resolution */
 	private static final int TIMESTAMP_PRECISION_MS = 100;
 	private static final double TIMESTAMP_REDUCTION_FACTOR = 1.0 / TIMESTAMP_PRECISION_MS;
-	
+
+	private static final int MAX_NUM_WAPS = 255;
+
 	private WAP_Manager wap_manager;
 	private GPS_Locator gps_locator;
+	private HTTP_Uploader http_uploader;
 
 	private TableLayout table; 
 	private TextView debugTextView;
-	
+	private Button action_button;
+
+	private File files_dir;
+	private File trace_file;
 	private FileOutputStream data_file;
 	private long start_time;
-	
+
 	private boolean wifi_ready = false;
 	private boolean gps_ready = false;
+	private boolean stop_scanning = false;
+
+	private enum Action_Mode {
+		EXIT, START, STOP, UPLOAD
+	}
+	private Action_Mode action_mode;
+
+	/** Called when the activity is first created. */
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		android_id = Secure.getString(this.getContentResolver(), Secure.ANDROID_ID);
+
+		/* establish wap_manager */
+		wap_manager = new WAP_Manager(this);
+
+		/* establish gps_locator */
+		gps_locator = new GPS_Locator(this);
+		
+		/* set content view */
+		setContentView(R.layout.main);
+
+		/* fetch table layout */
+		table = (TableLayout) findViewById(R.id.tableLayout1);
+
+		/* fetch top text view for printing status */
+		debugTextView = (TextView) findViewById(R.id.debugTextView);
+
+		/* fetch action button */
+		action_button = (Button) findViewById(R.id.action);
+		action_button.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				action_button.setEnabled(false);
+				switch(action_mode) {
+				case EXIT:
+					System.exit(0);
+					break;
+				case START:
+					action_start();
+					break;
+				case STOP:
+					action_stop();
+					break;
+				case UPLOAD:
+					action_upload();
+					break;
+				}
+			}
+		});
+		
+		http_uploader = new HTTP_Uploader(this);
+
+		/* startup */
+		initialize();
+	}
+
+	private void set_action_mode(Action_Mode to) {
+		action_mode = to;
+		switch(action_mode) {
+		case EXIT:
+			action_button.setText("Exit");
+			break;
+		case START:
+			action_button.setText("Start");
+			break;
+		case STOP:
+			action_button.setText("Stop");
+			break;
+		case UPLOAD:
+			action_button.setText("Upload");
+			break;
+		}
+		action_button.setEnabled(true);
+	}
+
+	/**
+	 * turns a 8-byte long representing a timestamp to a 2-byte char
+	 * this offers at most 65535 unique entries
+	 * translated to available time span in minutes => 65535*(1 minute / 60 seconds)*(1 second / 10 deciseconds) = 109 minutes & 13.5 seconds
+	 * @param ts
+	 * @return
+	 */
+	private byte[] encode_timestamp(long timestamp) {
+		char reduced_timestamp = reduce_timestamp(timestamp);
+		return Encoder.encode_char(reduced_timestamp);
+	}
 	
-    /** Called when the activity is first created. */
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        
-        /* establish wap_manager */
-        wap_manager = new WAP_Manager(this);
-        
-        /* establish gps_locator */
-        gps_locator = new GPS_Locator(this);
-        
-        /* set content view */
-        setContentView(R.layout.main);
-        
-        /* fetch table layout */
-        table = (TableLayout) findViewById(R.id.tableLayout1);
-        
-        /* fetch top text view for printing status */
-        debugTextView = (TextView) findViewById(R.id.debugTextView);
-        
-        /* startup */
-        initialize();
-    }
-    
-    /**
-     * turns a 8-byte long representing a timestamp to a 2-byte char
-     * this offers at most 65535 unique entries
-     * translated to available time span in minutes => 65535*(1 minute / 60 seconds)*(1 second / 10 deciseconds) = 109 minutes & 13.5 seconds
-     * @param ts
-     * @return
-     */
-    private char encode_timestamp(long timestamp) {
-    	return Character.toChars((int) ((timestamp-start_time)*TIMESTAMP_REDUCTION_FACTOR))[0];
-    }
-    
-    private int decode_timestamp(char ts) {
-    	return (int) ts;
-    }
-    
-    private byte[] encode_long(long longInt) {
-    	 byte[] array = new byte[8];
-         
-    	 /* convert from an unsigned long int to a 8-byte array */
-    	 array[0] = (byte) ((longInt >> 56) & 0xFF);
-    	 array[1] = (byte) ((longInt >> 48) & 0xFF);
-    	 array[2] = (byte) ((longInt >> 40) & 0xFF);
-    	 array[3] = (byte) ((longInt >> 32) & 0xFF);
-    	 array[4] = (byte) ((longInt >> 24) & 0xFF);
-    	 array[5] = (byte) ((longInt >> 16) & 0xFF);
-    	 array[6] = (byte) ((longInt >> 8) & 0xFF);
-    	 array[7] = (byte) (longInt & 0xFF);
-    	 
-		return array;
-    }
-    
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data){
-        if(requestCode == GPS_ENABLED_REQUEST_CODE && resultCode == 0) {
-        	gps_locator.checkIfGPSWasEnabled(data);
-        }
-    }
-    
-    public void debug(String message) {
-    	debugTextView.setText(message);
-    }
+	private char reduce_timestamp(long timestamp) {
+		return (char) ((timestamp-start_time) * TIMESTAMP_REDUCTION_FACTOR);
+	}
 
-    /**
-     * check wifi state, check GPS state
-     */
-    private void initialize() {
-    	/* enable wifi */
-    	wap_manager.enableWifi(new Hardware_Ready_Listener() {
-    		public void onReady() {
-	    		wifi_ready = true;
-	    		if(gps_ready) {
-    				hardware_ready();
-    			}
-    		}
-    		public void onFail() {
-    			debug("failed to start wifi");
-    		}
-    	});
+	private int decode_timestamp(char ts) {
+		return (int) ts;
+	}
 
-    	/* enable gps */
-    	gps_locator.enableGps(new Hardware_Ready_Listener() {
-    		public void onReady() {
-    			gps_ready = true;
-    			if(wifi_ready) {
-    				hardware_ready();
-    			}
-    		}
-    		public void onFail() {
-    			debug("failed to start gps");
-    		}
-    	});
-    }
-    
-    private void hardware_ready() {
-    	
-    	try {
-			data_file = this.openFileOutput(DATA_FILE_NAME, Context.MODE_APPEND);
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data){
+		if(requestCode == GPS_ENABLED_REQUEST_CODE && resultCode == 0) {
+			gps_locator.checkIfGPSWasEnabled(data);
+		}
+	}
+
+	public void debug(String message) {
+		//		debugTextView.setText("trace file: "+(new File(files_dir, DATA_FILE_NAME)).length()+"b\n"+message);
+		debugTextView.setText("trace file: "+trace_file.length()+"b\n"+message);
+	}
+
+	/**
+	 * check wifi state, check GPS state
+	 */
+	private void initialize() {
+		/* enable wifi */
+		wap_manager.enableWifi(new Hardware_Ready_Listener() {
+			public void onReady() {
+				wifi_ready = true;
+				if(gps_ready) {
+					hardware_ready();
+				}
+			}
+			public void onFail() {
+				debug("failed to start wifi");
+			}
+		});
+
+		/* enable gps */
+		gps_locator.enableGps(new Hardware_Ready_Listener() {
+			public void onReady() {
+				gps_ready = true;
+				if(wifi_ready) {
+					hardware_ready();
+				}
+			}
+			public void onFail() {
+				debug("failed to start gps");
+			}
+		});
+	}
+
+	private void hardware_ready() {
+
+		files_dir = this.getFilesDir();
+		try {
+			trace_file = new File(files_dir, DATA_FILE_NAME);
+			data_file = this.openFileOutput(DATA_FILE_NAME, Context.MODE_PRIVATE);
 		} catch (FileNotFoundException e) {
 			debug(e.getMessage());
 		}
-    	
-    	debug("device hardware ready. waiting for location fix\ndata file is currently "+(new File(this.getFilesDir(), DATA_FILE_NAME)).length()+"kb");
-    	
-    	gps_locator.useNetworkProvider();
-		
-    	gps_locator.waitForPositionFix(new GPS_Locator.Position_Fix_Listener() {
-    		public void onReady() {
-    			device_ready();
-    		}
-    		public void onFail() {
-    			
-    		}
-    	}, (float) 10.0);
-    }
 
-    /**
-     * indicate to the user that the device is ready for action, and wait for their approval
-     */
-    private void device_ready() {
-    	/* set the start time so we only store the time differences */
-    	start_time = (new Date()).getTime();
-    	
-    	/* write the file header */
-    	try {
-    		data_file.write(encode_long(start_time));
-    	} catch (IOException e) {
+		debug("device hardware ready. waiting for location fix");
+
+		gps_locator.useNetworkProvider();
+
+		gps_locator.waitForPositionFix(new GPS_Locator.Position_Fix_Listener() {
+			public void onReady() {
+				device_ready();
+			}
+			public void onFail() {
+
+			}
+		}, MIN_POSITION_ACCURACY);
+	}
+
+	/**
+	 * indicate to the user that the device is ready for action, and wait for their approval
+	 */
+	private void device_ready() {
+		set_action_mode(Action_Mode.START);
+	}
+
+	private void action_start() {
+		set_action_mode(Action_Mode.STOP);
+
+		/* set the start time so we only store the time differences */
+		start_time = (new Date()).getTime();
+
+		/* write the file header */
+		try {
+			data_file.write(Encoder.encode_long(start_time));
+			data_file.write(Encoder.encode_long((long) (GPS_Locator.SOUTHWEST_CAMPUS_CORNER.LATITDUE*GPS_Locator.COORDINATE_PRECISION)));
+			data_file.write(Encoder.encode_long((long) (GPS_Locator.SOUTHWEST_CAMPUS_CORNER.LONGITUDE*GPS_Locator.COORDINATE_PRECISION)));
+		} catch (IOException e) {
 			debug(e.getMessage());
-    	}
-    	
+		}
+
+		debug("starting to scan...");
+
 		/* start scanning */
 		wap_manager.startScanning(wap_listener());
-    }
+	}
 
-    private WAP_Listener wap_listener() {
-    	return new WAP_Manager.WAP_Listener() {
-    		/**
-    		 * gets called once the scan has completed
-    		 */
+	private void action_stop() {
+		stop_scanning = true;
+	}
+
+	private void action_upload() {
+
+	}
+
+	private WAP_Listener wap_listener() {
+		return new WAP_Manager.WAP_Listener() {
+			/**
+			 * gets called once the scan has completed
+			 */
 			public void onComplete(int size, long time) {
-				
+
 				/* assure number of rows */
 				correct_table_length(size);
-				
+
 				/* write data */
 				handle_data(size, time);
-				
+
 				/* display results */
-//				display_scan_results_to_table(size);
-				
-				
+				//				display_scan_results_to_table(size);
+
+
 				Location gps = gps_locator.getCurrentLocation();
-				debug("location: "+gps.getLatitude()+","+gps.getLongitude()+"; "+gps.getAccuracy()+"m");
-				
-				try {
-					Thread.sleep(WIFI_SCAN_INTERVAL_MS);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
+				debug("location:\n"+gps.getLatitude()+","+gps.getLongitude()+"; "+gps.getAccuracy()+"m");
+
+				if(stop_scanning) {
+					try {
+						data_file.write(wap_manager.encodeSSIDs());
+						data_file.close();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					correct_table_length(0);
+					/*
+					debug("renaming file");
+					File upload_file = new File(files_dir, "upload.bin");
+					trace_file.renameTo(upload_file);
+					trace_file = upload_file;
+					upload_file.canRead()
+					debug("establishing connection with server...");*/
+//					check_network();
+					debug("saving file...");
+					http_uploader.save(trace_file);
+					set_action_mode(Action_Mode.UPLOAD);
 				}
-				
-				/* scan for waps again */
-				wap_manager.continueScanning();
+				else {
+
+					try {
+						Thread.sleep(WIFI_SCAN_INTERVAL_MS);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+
+					/* scan for waps again */
+					wap_manager.continueScanning();
+				}
 			}
 		};
 	}
-    
-    /**
-     * make sure that the correct number of rows is present in the tableview layout
-     */
-    private void correct_table_length(int size) {
-    	TableRow tr;
-    	TextView text;
-    	int i;
 
-    	/* add rows while there aren't enough */
-    	int row_len = table.getChildCount();
-    	while(row_len < size) {
-    		tr = new TableRow(this);
-    		text = new TextView(this);
-    		tr.addView(text);
-    		table.addView(tr);
-    		row_len += 1;
-    	}
+	private void check_network() {
+		ConnectivityManager connection = ((ConnectivityManager) this.getSystemService(CONNECTIVITY_SERVICE));
+		if(connection.getActiveNetworkInfo() == null) {
+			debug("No active network.");
+			try {
+				Thread.sleep(10000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		else {
+			if(connection.getActiveNetworkInfo().isConnected()) {
+				debug("Network connected.");
+			}
+			else {
+				debug("No active network.");
+				try {
+					Thread.sleep(10000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
 
-    	/* remove rows while there's too many */
-    	i = size;
-    	while(i > row_len) {
-    		table.removeViewAt(i);
-    		i -= 1;
-    	}
-    }
-    
-    private void display_scan_result_to_table_row(int row, String text) {
+	/**
+	 * make sure that the correct number of rows is present in the tableview layout
+	 */
+	private void correct_table_length(int size) {
+		TableRow tr;
+		TextView text;
+		int i;
+
+		/* add rows while there aren't enough */
+		int row_len = table.getChildCount();
+		while(row_len < size) {
+			tr = new TableRow(this);
+			text = new TextView(this);
+			tr.addView(text);
+			table.addView(tr);
+			row_len += 1;
+		}
+
+		/* remove rows while there's too many */
+		i = row_len;
+		while(i > size) {
+			table.removeViewAt(--i);
+		}
+	}
+
+	private void display_scan_result_to_table_row(int row, String text) {
 		TableRow tr = (TableRow) table.getChildAt(row);    		
 		TextView tv = (TextView) tr.getChildAt(0);
-		
+
 		tv.setText(text);
-    }
-    
-    /**
-     * @param time 
-     * 
-     */
-    private void handle_data(int size, long time) {
-    	StringBuilder data = new StringBuilder();
-    	WAP_Manager.AccessPointIncident wap;
-    	
-    	/**/
-    	data.append(encode_timestamp(time));
-    	data.append((byte) size);
-    	
-    	int i = size;
-    	while(i-- != 0) {
-    		wap = wap_manager.getWAP(i);
-    		data.append(wap.encode());
-    		display_scan_result_to_table_row(i, wap.toString());
-    	}
-    	
-    	/*
-    	try {
-			data_file.write(data.toString().getBytes());
+	}
+
+	/**
+	 * @param time 
+	 * 
+	 */
+	private void handle_data(int size, long time) {
+		StringBuilder data = new StringBuilder();
+		WAP_Manager.AccessPointIncident wap;
+		
+		ByteBuilder bytes = new ByteBuilder(Encoder.DATA_HEADER_LENGTH + size*Encoder.DATA_ENTRY_LENGTH);
+
+		/**/
+		size = Math.min(size, MAX_NUM_WAPS);
+		bytes.append(Encoder.encode_byte(size));
+		/**/
+		bytes.append(encode_timestamp(time));
+		/**/
+		bytes.append(gps_locator.encode());
+
+		int i = size;
+		while(i-- != 0) {
+			wap = wap_manager.getWAP(i);
+			bytes.append(wap.encode());
+			System.out.println(wap.toString());
+			display_scan_result_to_table_row(i, wap.toString());
+		}
+
+		System.out.println("\n");
+
+		try {
+			data_file.write(bytes.getBytes());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			System.exit(1);
 		}
-		*/
-    }
+		/**/
+	}
 
-    /**
-     * iteratively push the string summary of each access point to the tableview
-     */
-    private void display_scan_results_to_table(int size) {
-    	TableRow tr;
-    	TextView text;
-    	WAP_Manager.AccessPointIncident wap;
-    	
-    	int i = size;
-    	while(i-- != 0) {
-    		wap = wap_manager.getWAP(i);
+	/**
+	 * iteratively push the string summary of each access point to the tableview
+	 */
+	private void display_scan_results_to_table(int size) {
+		TableRow tr;
+		TextView text;
+		WAP_Manager.AccessPointIncident wap;
 
-    		tr = (TableRow) table.getChildAt(i);    		
-    		text = (TextView) tr.getChildAt(0);
-    		
-    		text.setText(wap.toString());
-    	}
-    }
-    public String decode(char a, char b, char c) {
-    	char[] m = new char[12];
-    	char f = 0x000f;
-    	
-    	m[0] = (char) ((a >> 12) & f) ;
-    	m[1] = (char) ((a >> 8) & f);
-    	m[2] = (char) ((a >> 4) & f);
-    	m[3] = (char) (a & f);
+		int i = size;
+		while(i-- != 0) {
+			wap = wap_manager.getWAP(i);
 
-    	m[4] = (char) ((b >> 12) & f);
-    	m[5] = (char) ((b >> 8) & f);
-    	m[6] = (char) ((b >> 4) & f);
-    	m[7] = (char) (b & f);
-    	
-    	m[8] = (char) ((c >> 12) & f);
-    	m[9] = (char) ((c >> 8) & f);
-    	m[10] = (char) ((c >> 4) & f);
-    	m[11] = (char) (c & f);
+			tr = (TableRow) table.getChildAt(i);    		
+			text = (TextView) tr.getChildAt(0);
 
-    	m[0] += '0';
-    	if(m[0] > 57) m[0] += 39;
-    	m[1] += '0';
-    	if(m[1] > 57) m[1] += 39;
-    	m[2] += '0';
-    	if(m[2] > 57) m[2] += 39;
-    	m[3] += '0';
-    	if(m[3] > 57) m[3] += 39;
-    	m[4] += '0';
-    	if(m[4] > 57) m[4] += 39;
-    	m[5] += '0';
-    	if(m[5] > 57) m[5] += 39;
-    	m[6] += '0';
-    	if(m[6] > 57) m[6] += 39;
-    	m[7] += '0';
-    	if(m[7] > 57) m[7] += 39;
-    	m[8] += '0';
-    	if(m[8] > 57) m[8] += 39;
-    	m[9] += '0';
-    	if(m[9] > 57) m[9] += 39;
-    	m[10] += '0';
-    	if(m[10] > 57) m[10] +=39;
-    	m[11] += '0';
-    	if(m[11] > 57) m[11] += 39;
-    	
-    	return new String(m);
-    }
+			text.setText(wap.toString());
+		}
+	}
 }

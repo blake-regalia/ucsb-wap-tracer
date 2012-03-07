@@ -17,42 +17,49 @@ import android.os.Bundle;
 import android.provider.Settings;
 
 public class GPS_Locator {
+
+	//	34.42316,-119.859295 (North-West corner)
+	public final static class SOUTHWEST_CAMPUS_CORNER {
+		public final static double LATITDUE = 34.403511;
+		public final static double LONGITUDE = -119.881353;
+	};
 	
-//	34.42316,-119.859295 (North-West corner)
-	
+	// 10^6
+	public final static int COORDINATE_PRECISION = 1000000; 
+
 	private final static long TOGGLE_EXPLOIT_INTERVAL_MS = 200;
 	/* wait for up to 5 seconds */
 	private final static int TOGGLE_EXPLOIT_CHECK_NUMS = 25; 
-	
+
 	/* reject the old location after 15 seconds */
 	private int EXPIRATION_TIME_MS = 15000;
-	
+
 	LocationManager location_manager;
 	LocationListener location_listener = null;
 	Location current_location;
-	
+
 	ucsb_wap_activity main;
 	Context context;
-	
+
 	Hardware_Ready_Listener stored_callback = null;
-	
+
 	float best_accuracy = Float.MAX_VALUE;
-	
+
 	boolean can_toggle_gps = false;
 	int gps_exploit_attempts = 0;
-	
+
 	boolean use_network_provider = false;
-	
+
 	public GPS_Locator(ucsb_wap_activity activity) {
 		main = activity;
 		context = (Context) main;
-		
+
 		// Acquire a reference to the system Location Manager
 		location_manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 
 		can_toggle_gps = gps_toggle_exploit_available();
 	}
-	
+
 	private boolean gps_toggle_exploit_available() {
 		PackageManager pacman = context.getPackageManager();
 		PackageInfo pacInfo = null;
@@ -134,53 +141,85 @@ public class GPS_Locator {
 				showAlertDialogToEnableGPS();
 			}
 		}
-}
+	}
+	
+
+	public byte[] test_encode() {
+		ByteBuilder bytes = new ByteBuilder(8);
+		
+		double latitude = 34.415535 - SOUTHWEST_CAMPUS_CORNER.LATITDUE;
+		double longitude = -119.845211 - SOUTHWEST_CAMPUS_CORNER.LONGITUDE;
+		
+		System.out.println(latitude);
+		
+		bytes.append_4(Encoder.encode_double_to_4_bytes(latitude, COORDINATE_PRECISION));
+		bytes.append_4(Encoder.encode_double_to_4_bytes(longitude, COORDINATE_PRECISION));
+		
+		return bytes.getBytes();
+	}
+	
+	public byte[] encode() {
+		ByteBuilder bytes = new ByteBuilder(9);
+		
+		double latitude = current_location.getLatitude() - SOUTHWEST_CAMPUS_CORNER.LATITDUE;
+		double longitude = current_location.getLongitude() - SOUTHWEST_CAMPUS_CORNER.LONGITUDE;
+		int accuracy = Math.round(current_location.getAccuracy());
+		if(accuracy > 255) {
+			accuracy = 255;
+		}
+		
+		bytes.append_4(Encoder.encode_double_to_4_bytes(latitude, COORDINATE_PRECISION));
+		bytes.append_4(Encoder.encode_double_to_4_bytes(longitude, COORDINATE_PRECISION));
+		bytes.append(Encoder.encode_byte(accuracy));
+		
+		return bytes.getBytes();
+	}
 
 	private void showAlertDialogToEnableGPS() {
 		AlertDialog.Builder alert_dialog_builder = new AlertDialog.Builder(context);
 		alert_dialog_builder.setMessage("GPS must be enabled to run this app. Please enable GPS")
-			.setCancelable(false)
-			.setPositiveButton("Okay",
-					new DialogInterface.OnClickListener(){
-						public void onClick(DialogInterface dialog, int id) {
-							/* if gps was enabled since the alert was created */
-							if(location_manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-								/* notify the listener */
-								stored_callback.onReady();
-							}
-							/*take the user to the settings menu */
-							else {
-								Intent intent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-								main.startActivityForResult(intent, ucsb_wap_activity.GPS_ENABLED_REQUEST_CODE);
-							}
-						}
-					}
-			);
+		.setCancelable(false)
+		.setPositiveButton("Okay",
+				new DialogInterface.OnClickListener(){
+			public void onClick(DialogInterface dialog, int id) {
+				/* if gps was enabled since the alert was created */
+				if(location_manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+					/* notify the listener */
+					stored_callback.onReady();
+				}
+				/*take the user to the settings menu */
+				else {
+					Intent intent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+					main.startActivityForResult(intent, ucsb_wap_activity.GPS_ENABLED_REQUEST_CODE);
+				}
+			}
+		}
+				);
 		AlertDialog alert = alert_dialog_builder.create();
 		alert.show();
 	}
-	
+
 	public void checkIfGPSWasEnabled(Intent data) {
-    	if(stored_callback == null) return;
-        String provider = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
-        if(provider != null){
-            stored_callback.onReady();
-        }
-        else {
-            stored_callback.onFail();
-        }
+		if(stored_callback == null) return;
+		String provider = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+		if(provider != null){
+			stored_callback.onReady();
+		}
+		else {
+			stored_callback.onFail();
+		}
 	}
-	
+
 	public void waitForPositionFix(final Position_Fix_Listener callback, final float maximumErrorMeters) {
 		if(location_listener == null) {
 			/* define a listener that responds to location updates */
 			location_listener = new LocationListener() {
-				
+
 				public void onLocationChanged(Location location) {
 					current_location = location;
 					if(location.getAccuracy() <= maximumErrorMeters) {
 						main.debug("location fixed");
-						
+
 						best_accuracy = location.getAccuracy(); 
 						location_manager.removeUpdates(location_listener);
 						location_listener = gps_location_listener();
@@ -195,9 +234,18 @@ public class GPS_Locator {
 					}
 				}
 
-				public void onStatusChanged(String provider, int status, Bundle extras) {
-					main.debug("status changed");
-					if(status != LocationProvider.AVAILABLE) {
+				public void onStatusChanged(String provider, int status_code, Bundle extras) {
+					String status = "";
+					switch(status_code) {
+					case LocationProvider.AVAILABLE:
+						status = "available";
+					case LocationProvider.OUT_OF_SERVICE:
+						status = "out of service";
+					case LocationProvider.TEMPORARILY_UNAVAILABLE:
+						status = "temporarily unavailable";
+					}
+					main.debug("status changed\n"+provider+" is "+status);
+					if(status_code != LocationProvider.AVAILABLE) {
 						callback.onFail();
 					}
 				}
@@ -215,7 +263,7 @@ public class GPS_Locator {
 			}
 		}
 	}
-	
+
 	public void useNetworkProvider() {
 		use_network_provider = true;
 		if(location_listener != null) {
@@ -227,8 +275,8 @@ public class GPS_Locator {
 		return new LocationListener() {
 			public void onLocationChanged(Location location) {
 				if((location.hasAccuracy() && location.getAccuracy() <= best_accuracy)
-//					|| (location.getProvider().equals(current_location.getProvider()))
-					|| (location.getTime() - current_location.getTime() > EXPIRATION_TIME_MS)) {
+						//					|| (location.getProvider().equals(current_location.getProvider()))
+						|| (location.getTime() - current_location.getTime() > EXPIRATION_TIME_MS)) {
 					best_accuracy = location.getAccuracy();
 					current_location = location;
 				}
@@ -246,8 +294,8 @@ public class GPS_Locator {
 		return new LocationListener() {
 			public void onLocationChanged(Location location) {
 				if((location.getAccuracy() <= best_accuracy)
-//					|| (location.getProvider().equals(current_location.getProvider()))
-					|| (location.getTime() - current_location.getTime() > EXPIRATION_TIME_MS)) {
+						//					|| (location.getProvider().equals(current_location.getProvider()))
+						|| (location.getTime() - current_location.getTime() > EXPIRATION_TIME_MS)) {
 					best_accuracy = location.getAccuracy();
 					current_location = location;
 				}
@@ -260,33 +308,33 @@ public class GPS_Locator {
 			public void onProviderDisabled(String provider) {}
 		};
 	}
-	
+
 	public Location getCurrentLocation() {
 		return new Location(current_location);
 	}	
-	
+
 	public LatLng getCurrentLatLng() {
 		return new LatLng(current_location.getLatitude(), current_location.getLongitude());
 	}
-	
+
 	public interface Position_Fix_Listener {
 		public void onReady();
 		public void onFail();
 	}
-	
+
 	public class LatLng {
 		private double lat;
 		private double lng;
-		
+
 		public LatLng(double latitude, double longitude) {
 			lat = latitude;
 			lng = longitude;
 		}
-		
+
 		public double getLatitude() {
 			return lat;
 		}
-		
+
 		public double getLongitude() {
 			return lng;
 		}

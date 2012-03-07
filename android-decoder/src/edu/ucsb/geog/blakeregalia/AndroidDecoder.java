@@ -5,22 +5,30 @@ import java.util.Date;
 
 /**
  * S: Start time
- * W: # of WAPS
- * T: Time
+ * L: Start latitude / longitude
+ * N: # of WAPS
+ * T: Time offset
  * A: Latitude
- * L: Longitude
+ * G: Longitude
+ * X: Location Accuracy in Meters
  * M: MAC address
- * r: RSSI signal strength
- * i: SSID name of network key
+ * R: RSSI signal strength
+ * I: SSID name of network key
  * k: key of SSID
  * s: length of SSID string
  * D: SSID string
  * 
- * SSSSSSSS
- * --long--
+ * file header
+ * SSSSSSSSLLLLLLLLLLLLLLLL
+ * --long----long----long--
  * 
- * WTTAAAALLLLMMMMMMri
- * b-s-int-int--mac-bb
+ * line header
+ * NTTAAAAGGGGX
+ * b-s-int-intb
+ * 
+ * 		line data
+ * 		MMMMMMRI
+ * 		--mac-bb
  * 
  * 0
  * -
@@ -34,12 +42,20 @@ import java.util.Date;
 
 public class AndroidDecoder {
 
-	private final static long FILE_HEADER_LENGTH = 8;
-	private final static long DATA_HEADER_LENGTH = 11;
-	private final static long DATA_ENTRY_LENGTH = 7;
+	private final static long FILE_HEADER_LENGTH = 24;
+	private final static long DATA_HEADER_LENGTH = 12;
+	private final static long DATA_ENTRY_LENGTH = 8;
 	private final static long TERMINATING_FIELD_LENGTH = 1;
 	private final static long STRING_MAPPING_LENGTH = 2;
 	private final static long MINIMUM_FILE_SIZE = FILE_HEADER_LENGTH + DATA_HEADER_LENGTH + DATA_ENTRY_LENGTH;
+	
+	private final static double COORDINATE_FACTOR = 0.001; 
+	private final static double COORDINATE_PRECISION = 1000000; 
+	private final static double COORDINATE_PRECISION_INV = 1 / COORDINATE_PRECISION;
+
+	/* precision of the recorded time-stamp values in milliseconds, value of 100 yields 0.1 second resolution */
+	private static final int TIMESTAMP_PRECISION_MS = 100;
+	private static final double TIMESTAMP_REDUCTION_FACTOR = 1.0 / TIMESTAMP_PRECISION_MS;
 
 	public static void main(String[] args) {		
 		new AndroidDecoder(args);
@@ -72,47 +88,84 @@ public class AndroidDecoder {
 		
 		System.out.println("----------------------------------------------");
 
-		/* read start time */
+		/* read start time - SSSSSSSS [8 bytes] */
 		long start_time = fr.read_long();
 
-		long bytes_read = FILE_HEADER_LENGTH;
+		/* read start latitude/longitude - LLLLLLLLLLLLLLLL [16 bytes] */
+		double start_latitude = ((double) fr.read_long()) * COORDINATE_PRECISION_INV;
+		double start_longitude = ((double) fr.read_long()) * COORDINATE_PRECISION_INV;
+		
+		System.out.println("Start Time: "+(new Date(start_time)).toString());
+		System.out.println("South West Corner: "+start_latitude+", "+start_longitude);
 
-		char mode = 0;
 		int b = 0;
 		while((b=fr.read()) != -1) {
-			char wap_length = (char) (b & 0xff);
+			System.out.println("");
+			
+			int offset = fr.bytes_read;
+			
+			//byte wap_length = fr.read_byte();
+			byte wap_length = (byte) (b & 0xff);
 
-			int event_length = (int) (DATA_HEADER_LENGTH + wap_length*DATA_ENTRY_LENGTH); 
-			if(bytes_read + event_length > file_size) {
-				System.err.println("The trace file is incomplete, expecting more data. "+bytes_read+" bytes read, "+event_length+" more bytes expected");
+			if(wap_length == 0) break;
+
+			int event_length = (int) (DATA_HEADER_LENGTH + wap_length*DATA_ENTRY_LENGTH) - 1;
+			if(fr.bytes_read + event_length > file_size) {
+				System.err.println("The trace file is incomplete, expecting more data. "+fr.bytes_read+" bytes read, "+event_length+" more bytes expected");
 				return;
 			}
 
 			/* read time offset */
 			char c = fr.read_char();
-			long timestamp = start_time + c;
-			System.out.println((new Date(timestamp*100)).toString()+": "+((int)wap_length)+" WAP(s); ");
-
+			long timestamp = start_time + c*TIMESTAMP_PRECISION_MS;
+			
 			/* read latitude */
-			fr.read_int();
+			double latitude = start_latitude + (((double) fr.read_int()) * COORDINATE_PRECISION_INV);
 
 			/* read longitude */
-			fr.read_int();
+			double longitude = start_longitude + (((double) fr.read_int()) * COORDINATE_PRECISION_INV);
+			
+			/* read location accuracy */
+			int accuracy = fr.read();
+
+			System.out.println(""+(new Date(timestamp)).toString()+": "+((int)wap_length)+" WAP(s); "
+					+ latitude+", "+longitude+" :"+accuracy+"m");
 
 			/* read wap entries */
-			char n = wap_length;
+			byte n = wap_length;
 			while(n-- != 0) {
+				
+				offset = fr.bytes_read;
+				
+				/* read hw addr - MMMMMM [6 bytes] */
 				byte[] byte_hw_addr = new byte[6];
 				fr.read(byte_hw_addr);
-				System.out.print("\t");
-				int rssi = fr.read() & 0xff;
+
+				/* read rssi - R [1 byte] */
+				int rssi = ((int) fr.read_byte()) & 0xff;
 				int signal = (int) (((float) rssi) / 2.55f);
-				System.out.print(signal+"%  ");
+
+				/* read String ID - I [1 byte] */
+				int ssid = fr.read_byte();
+
+				System.out.print("\t");
+				System.out.print(signal+"%: ");
 				System.out.print(decode_hw_addr(byte_hw_addr));
-				System.out.print("\n");
+				System.out.print("\t"+ssid);
+				System.out.println("");
 			}
-			
-			bytes_read += event_length;
+		}
+
+		System.out.println("=========================");
+		
+		int ssid_key = fr.read_int();
+		while(true) {
+			String ssid = fr.read_string();
+			System.out.println(ssid_key+": "+ssid);
+			if(fr.bytes_read == file_size) {
+				break;
+			}
+			ssid_key = fr.read_int();
 		}
 
 		fr.close();
@@ -120,11 +173,55 @@ public class AndroidDecoder {
 	
 
     public String decode_hw_addr(byte[] b) {
-    	return Integer.toHexString(b[0] & 0xff)  + ":"
-    			+ Integer.toHexString(b[1] & 0xff) + ":"
-    			+ Integer.toHexString(b[2] & 0xff) + ":"
-    			+ Integer.toHexString(b[3] & 0xff) + ":"
-    			+ Integer.toHexString(b[4] & 0xff) + ":"
-    			+ Integer.toHexString(b[5] & 0xff);
+    	StringBuilder addr = new StringBuilder();
+    	String hex;
+    	
+    	hex = Integer.toHexString(b[0] & 0xff);
+    	if(hex.length() == 1) {
+    		addr.append('0');
+    	}
+    	addr.append(hex);
+    	
+    	addr.append(':');
+    	
+    	hex = Integer.toHexString(b[1] & 0xff);
+    	if(hex.length() == 1) {
+    		addr.append('0');
+    	}
+    	addr.append(hex);
+
+    	addr.append(':');
+    	
+    	hex = Integer.toHexString(b[2] & 0xff);
+    	if(hex.length() == 1) {
+    		addr.append('0');
+    	}
+    	addr.append(hex);
+
+    	addr.append(':');
+    	
+    	hex = Integer.toHexString(b[3] & 0xff);
+    	if(hex.length() == 1) {
+    		addr.append('0');
+    	}
+    	addr.append(hex);
+
+    	addr.append(':');
+    	
+    	hex = Integer.toHexString(b[4] & 0xff);
+    	if(hex.length() == 1) {
+    		addr.append('0');
+    	}
+    	addr.append(hex);
+
+    	addr.append(':');
+    	
+    	hex = Integer.toHexString(b[5] & 0xff);
+    	if(hex.length() == 1) {
+    		addr.append('0');
+    	}
+    	addr.append(hex);
+
+    	return addr.toString();
     }
 }

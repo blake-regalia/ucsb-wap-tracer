@@ -8,8 +8,11 @@ import java.io.IOException;
 public class _FileReader {
 	private File file;
 	private FileInputStream fis;
+	
+	public int bytes_read;
 
 	public _FileReader(String file_name) {
+		bytes_read = 0;
 		file = new File(file_name);
 		if(!file.isFile()) {
 			System.err.println("\""+file_name+"\" is not a file.");
@@ -31,6 +34,7 @@ public class _FileReader {
 
 	public int read() {
 		try {
+			bytes_read += 1;
 			return fis.read();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -42,12 +46,28 @@ public class _FileReader {
 
 	public void read(byte[] b) {
 		try {
-			fis.read(b);
+			if(fis.read(b) != -1) {
+				bytes_read += b.length;
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			System.exit(1);
 		}
+	}
+	
+	public byte read_byte() {
+		try {
+			byte b = (byte) fis.read();
+			if(b != -1) {
+				bytes_read += 1;
+			}
+			return (byte) (b & 0xff);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return 0;
 	}
 	
 	public char read_char() {
@@ -67,6 +87,13 @@ public class _FileReader {
 		read(b);
 		return ((long) (b[0] & 0xff) << 56) | ((long) (b[1] & 0xff) << 48) | ((long) (b[2] & 0xff) << 40) | ((long) (b[3] & 0xff) << 32)
 				| ((long) (b[4] & 0xff) << 24) | ((long) (b[5] & 0xff) << 16) | ((long) (b[6] & 0xff) << 8) | ((long) (b[7] & 0xff));
+	}
+	
+	public String read_string() {
+		int size = read_byte();
+		byte[] b = new byte[size];
+		read(b);
+		return new String(b);
 	}
 
 	public long size() {

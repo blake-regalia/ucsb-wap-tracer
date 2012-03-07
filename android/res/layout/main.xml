@@ -3,19 +3,26 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
-
+
     <TextView
         android:id="@+id/debugTextView"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="Loading..."
         android:textAppearance="?android:attr/textAppearanceSmall" />
-
+
     <TableLayout
         android:id="@+id/tableLayout1"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent" >
-
+        android:layout_height="384dp"
+        android:layout_weight="0.88" >
     </TableLayout>
+
+    <Button
+        android:id="@+id/action"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:enabled="false"
+        android:text="Exit" />
 
 </LinearLayout>
