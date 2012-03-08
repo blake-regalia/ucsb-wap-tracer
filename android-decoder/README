@@ -4,12 +4,9 @@ ECLIPSE:
 
 COMMAND LINE INTERFACE:
 
-To invoke the decoder, open a command prompt or terminal and change directory to be in $PATH_TO_PROJECT/android-decoder/bin/
-Assuming you've place a log file in the directory $PATH_TO_PROJECT/android-decoder/data/
+java -jar android-decoder [-json] [-pretty] FILE
 
-java -cp . edu.ucsb.geog.blakeregalia.AndroidDecoder ../../data/$TRACE_FILE.bin > ../data/$NAME_OF_WHAT_YOU_WANT_YOUR_OUTPUT_FILE.txt
- 
- 
- Included is a sample trace.bin file. To just simply see the results in the console you can invoke the command as follows:
- 
-java -cp . edu.ucsb.geog.blakeregalia.AndroidDecoder ../../data/trace.bin 
+To invoke the decoder, open a command prompt or terminal and change directory to be in $PATH_TO_PROJECT/android-decoder/
+Assuming you've place the log file, `trace.bin` in the directory $PATH_TO_PROJECT/android-decoder/data/
+
+java -jar android-decoder trace.bin

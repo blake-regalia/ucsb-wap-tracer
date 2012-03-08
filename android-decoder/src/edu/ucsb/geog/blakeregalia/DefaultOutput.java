@@ -40,7 +40,7 @@ public class DefaultOutput {
 	
 	private String getSSIDs() {
 		StringBuilder list = new StringBuilder();
-		list.append("=========================");
+		list.append("=========================\n");
 
 		Iterator<Entry<String, Integer>> set = ssid_names.entrySet().iterator();
 		while(set.hasNext()) {

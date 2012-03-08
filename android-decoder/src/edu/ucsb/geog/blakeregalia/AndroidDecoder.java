@@ -84,13 +84,13 @@ public class AndroidDecoder {
 			}
 		}
 
-		File dir = new File("./data");
+		File dir = new File("./");
 		String file_path = "";
 
 		try {
 			file_path = dir.getCanonicalPath()+File.separatorChar+file_name;
 		} catch (IOException e) {
-			System.out.println("Could not find directory \"data\" located at "+System.getProperty("user.dir"));
+			System.err.println("Could not find file \""+file_name+"\" in "+System.getProperty("user.dir"));
 		}
 		
 		/* open the file reader for reading and decoding bytes from the binary file */
@@ -193,7 +193,7 @@ public class AndroidDecoder {
 
 		fr.close();
 		
-		System.out.println(output.dump());
+		System.out.print(output.dump());
 	}
 	
 

@@ -1,5 +1,6 @@
 package edu.ucsb.geog.blakeregalia;
 
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
@@ -8,7 +9,28 @@ public class JSON_Output extends DefaultOutput {
 	private String tab;
 	private StringBuilder out;
 	
+	private Hashtable<String, Integer> mac_addrs;
+	
 	private boolean pretty = true;
+	
+	public JSON_Output(boolean prettyPrint) {
+		pretty = prettyPrint;
+		mac_addrs = new Hashtable<String, Integer>(128);
+		tab = pretty? "\n": "";
+	}
+	
+	@Override
+	public void addEvent(WAP_Event event) {
+		int i = event.getNumWAPs();
+		while(i-- != 0) {
+			WAP wap = event.getWAP(i);
+			String mac = wap.getMAC();
+			if(!mac_addrs.containsKey(mac)) {
+				mac_addrs.put(wap.getMAC(), new Integer(mac_addrs.size()));
+			}
+		}
+		events.add(event);
+	}
 	
 	private void tab_pop() {
 		if(pretty)
@@ -18,11 +40,6 @@ public class JSON_Output extends DefaultOutput {
 	private void tab_push() {
 		if(pretty)
 			tab += "\t";
-	}
-	
-	public JSON_Output(boolean prettyPrint) {
-		pretty = prettyPrint;
-		tab = pretty? "\n": "";
 	}
 
 	private void json(String key, int value) {
@@ -45,16 +62,16 @@ public class JSON_Output extends DefaultOutput {
 		out.deleteCharAt(out.length()-1);
 	}
 	
-	private void jsonSSIDs() {
-		json("length", ssid_names.size());
+	private void jsonIDs(Hashtable<String, Integer> list) {
+		json("length", list.size());
 		
-		Iterator<Entry<String, Integer>> set = ssid_names.entrySet().iterator();
+		Iterator<Entry<String, Integer>> set = list.entrySet().iterator();
 		while(set.hasNext()) {
 			Entry<String, Integer> e = set.next();
 			int v = ((Integer) e.getValue()).intValue();
-			String ssid = (String) e.getKey();
-			json(""+v, ssid);
-		}		
+			String id = (String) e.getKey();
+			json(""+v, id);
+		}
 	}
 
 	@Override
@@ -67,11 +84,21 @@ public class JSON_Output extends DefaultOutput {
 		json("start_time", start_time);
 		json("start_latitude", start_latitude);
 		json("start_longitude", start_longitude);
-		
+
+		// BSSIDs
+		out.append(tab+"\"bssids\":{");
+			tab_push();
+			jsonIDs(mac_addrs);
+			tab_pop();
+			end();
+		out.append(tab+"},");
+
+		// SSIDs
 		out.append(tab+"\"ssids\":{");
 			tab_push();
-			jsonSSIDs();
+			jsonIDs(ssid_names);
 			tab_pop();
+			end();
 		out.append(tab+"},");
 		
 		json("length", events.size());
@@ -96,7 +123,8 @@ public class JSON_Output extends DefaultOutput {
 				
 				out.append(tab+"\""+i+"\":{");
 				tab_push();
-				json("mac", wap.getMAC());
+				// wap.getMAC()
+				json("mac", mac_addrs.get(wap.getMAC()).intValue());
 				json("rssi", wap.getRSSI());
 				json("ssid", wap.getSSID());
 				end();
