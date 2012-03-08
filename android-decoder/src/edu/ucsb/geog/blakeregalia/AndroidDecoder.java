@@ -49,9 +49,9 @@ public class AndroidDecoder {
 	private final static long STRING_MAPPING_LENGTH = 2;
 	private final static long MINIMUM_FILE_SIZE = FILE_HEADER_LENGTH + DATA_HEADER_LENGTH + DATA_ENTRY_LENGTH;
 	
-	private final static double COORDINATE_FACTOR = 0.001; 
-	private final static double COORDINATE_PRECISION = 1000000; 
-	private final static double COORDINATE_PRECISION_INV = 1 / COORDINATE_PRECISION;
+	private final static float COORDINATE_FACTOR = 0.001f; 
+	private final static float COORDINATE_PRECISION = 1000000; 
+	private final static float COORDINATE_PRECISION_INV = 1 / COORDINATE_PRECISION;
 
 	/* precision of the recorded time-stamp values in milliseconds, value of 100 yields 0.1 second resolution */
 	private static final int TIMESTAMP_PRECISION_MS = 100;
@@ -62,45 +62,70 @@ public class AndroidDecoder {
 	}
 
 	public AndroidDecoder(String[] args) {
+		
+		if(args.length == 0) {
+			System.err.println("Usage: android-decoder [-json] [-pretty] FILE");
+			System.exit(1);
+		}
 
 		int i = args.length;
 		String file_name = args[--i];
+		
+		boolean output_json = false;
+		boolean pretty_print = false;
+		while(i-- != 0) {
+			switch(args[i].toLowerCase()) {
+			case "-json":
+				output_json = true;
+				break;
+			case "-pretty":
+				pretty_print = true;
+				break;
+			}
+		}
 
 		File dir = new File("./data");
 		String file_path = "";
 
 		try {
 			file_path = dir.getCanonicalPath()+File.separatorChar+file_name;
-			System.out.println("Looking in path "+dir.getCanonicalPath()+" for "+file_name);
 		} catch (IOException e) {
 			System.out.println("Could not find directory \"data\" located at "+System.getProperty("user.dir"));
 		}
-
+		
+		/* open the file reader for reading and decoding bytes from the binary file */
 		_FileReader fr = new _FileReader(file_path);
 
+		/* get the file size */
 		long file_size = fr.size();
-		System.out.println("Sucessfully opened \""+file_name+"\" for reading. File is "+(file_size)+"b");
 
+		/* check that it meets the minimum file size requirement */
 		if(file_size < MINIMUM_FILE_SIZE) {
 			System.err.println("The trace file is incomplete, it is not large enough to contain useable information.");
 			return;
 		}
-		
-		System.out.println("----------------------------------------------");
 
 		/* read start time - SSSSSSSS [8 bytes] */
 		long start_time = fr.read_long();
 
 		/* read start latitude/longitude - LLLLLLLLLLLLLLLL [16 bytes] */
-		double start_latitude = ((double) fr.read_long()) * COORDINATE_PRECISION_INV;
-		double start_longitude = ((double) fr.read_long()) * COORDINATE_PRECISION_INV;
+		float start_latitude = ((float) fr.read_long()) * COORDINATE_PRECISION_INV;
+		float start_longitude = ((float) fr.read_long()) * COORDINATE_PRECISION_INV;
 		
-		System.out.println("Start Time: "+(new Date(start_time)).toString());
-		System.out.println("South West Corner: "+start_latitude+", "+start_longitude);
+		/* prepare the output format */
+		DefaultOutput output;
+		if(output_json) {
+			output = new JSON_Output(pretty_print);
+		}
+		else {
+			output = new DefaultOutput();
+		}
+		
+		/* initialize the outputter */
+		output.initialize(file_size, start_time, start_latitude, start_longitude);
 
 		int b = 0;
 		while((b=fr.read()) != -1) {
-			System.out.println("");
 			
 			int offset = fr.bytes_read;
 			
@@ -120,16 +145,15 @@ public class AndroidDecoder {
 			long timestamp = start_time + c*TIMESTAMP_PRECISION_MS;
 			
 			/* read latitude */
-			double latitude = start_latitude + (((double) fr.read_int()) * COORDINATE_PRECISION_INV);
+			float latitude = start_latitude + (((float) fr.read_int()) * COORDINATE_PRECISION_INV);
 
 			/* read longitude */
-			double longitude = start_longitude + (((double) fr.read_int()) * COORDINATE_PRECISION_INV);
+			float longitude = start_longitude + (((float) fr.read_int()) * COORDINATE_PRECISION_INV);
 			
 			/* read location accuracy */
 			int accuracy = fr.read();
 
-			System.out.println(""+(new Date(timestamp)).toString()+": "+((int)wap_length)+" WAP(s); "
-					+ latitude+", "+longitude+" :"+accuracy+"m");
+			WAP_Event event = new WAP_Event(timestamp, latitude, longitude, accuracy);
 
 			/* read wap entries */
 			byte n = wap_length;
@@ -140,6 +164,7 @@ public class AndroidDecoder {
 				/* read hw addr - MMMMMM [6 bytes] */
 				byte[] byte_hw_addr = new byte[6];
 				fr.read(byte_hw_addr);
+				String mac_addr = decode_hw_addr(byte_hw_addr);
 
 				/* read rssi - R [1 byte] */
 				int rssi = ((int) fr.read_byte()) & 0xff;
@@ -147,21 +172,19 @@ public class AndroidDecoder {
 
 				/* read String ID - I [1 byte] */
 				int ssid = fr.read_byte();
-
-				System.out.print("\t");
-				System.out.print(signal+"%: ");
-				System.out.print(decode_hw_addr(byte_hw_addr));
-				System.out.print("\t"+ssid);
-				System.out.println("");
+				
+				event.add_WAP(new WAP(mac_addr, rssi, ssid));
 			}
-		}
 
-		System.out.println("=========================");
+			output.addEvent(event);
+		}
 		
 		int ssid_key = fr.read_int();
 		while(true) {
 			String ssid = fr.read_string();
-			System.out.println(ssid_key+": "+ssid);
+			
+			output.setSSID(ssid_key, ssid);
+			
 			if(fr.bytes_read == file_size) {
 				break;
 			}
@@ -169,6 +192,8 @@ public class AndroidDecoder {
 		}
 
 		fr.close();
+		
+		System.out.println(output.dump());
 	}
 	
 
