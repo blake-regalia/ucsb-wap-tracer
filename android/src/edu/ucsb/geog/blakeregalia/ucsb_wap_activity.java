@@ -179,7 +179,12 @@ public class ucsb_wap_activity extends Activity {
 
 	public void debug(String message) {
 		//		debugTextView.setText("trace file: "+(new File(files_dir, DATA_FILE_NAME)).length()+"b\n"+message);
-		debugTextView.setText("trace file: "+trace_file.length()+"b\n"+message);
+		if(trace_file != null) {
+			debugTextView.setText("trace file: "+trace_file.length()+"b\n"+message);
+		}
+		else {
+			debugTextView.setText("trace file: 0b\n"+message);
+		}
 	}
 
 	/**

@@ -179,6 +179,7 @@ public class AndroidDecoder {
 			output.addEvent(event);
 		}
 		
+		
 		int ssid_key = fr.read_int();
 		while(true) {
 			String ssid = fr.read_string();

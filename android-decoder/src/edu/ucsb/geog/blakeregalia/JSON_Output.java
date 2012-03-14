@@ -58,7 +58,27 @@ public class JSON_Output extends DefaultOutput {
 		out.append(tab+"\""+key+"\":\""+value+"\",");
 	}
 	
+	private void begin(int id) {
+		begin(id+"");
+	}
+	
+	private void begin(String id) {
+		out.append(tab+"\""+id+"\":{");
+		tab_push();
+	}
+	
 	private void end() {
+		out.deleteCharAt(out.length()-1);
+		tab_pop();
+		out.append(tab+"},");
+	}
+	
+	private void start() {
+		out.append(tab+"{");
+		tab_push();
+	}
+	
+	private void finish() {
 		out.deleteCharAt(out.length()-1);
 	}
 	
@@ -78,28 +98,22 @@ public class JSON_Output extends DefaultOutput {
 	public String dump() {
 		out = new StringBuilder();
 		
-		out.append(tab+"{");
-		tab_push();
+		start();
+		
 		json("file_size", file_size);
 		json("start_time", start_time);
 		json("start_latitude", start_latitude);
 		json("start_longitude", start_longitude);
 
 		// BSSIDs
-		out.append(tab+"\"bssids\":{");
-			tab_push();
+		begin("bssids");
 			jsonIDs(mac_addrs);
-			tab_pop();
-			end();
-		out.append(tab+"},");
+		end();
 
 		// SSIDs
-		out.append(tab+"\"ssids\":{");
-			tab_push();
+		begin("ssids");
 			jsonIDs(ssid_names);
-			tab_pop();
-			end();
-		out.append(tab+"},");
+		end();
 		
 		json("length", events.size());
 
@@ -108,9 +122,8 @@ public class JSON_Output extends DefaultOutput {
 		while(it.hasNext()) {
 			WAP_Event event = it.next();
 
-			out.append(tab+"\""+index+"\":{");
+			begin(index);
 			
-			tab_push();
 			int i = event.getNumWAPs();
 			json("time", event.getTime());
 			json("latitude", event.getLat());
@@ -120,29 +133,23 @@ public class JSON_Output extends DefaultOutput {
 			
 			while(i-- != 0) {
 				WAP wap = event.getWAP(i);
+
+				begin(i);
 				
-				out.append(tab+"\""+i+"\":{");
-				tab_push();
-				// wap.getMAC()
 				json("mac", mac_addrs.get(wap.getMAC()).intValue());
 				json("rssi", wap.getRSSI());
 				json("ssid", wap.getSSID());
+				
 				end();
-				tab_pop();
-				out.append(tab+"},");
 			}
 			end();
-			
-			tab_pop();
-			
-			out.append(tab+"},");
 			
 			index += 1;
 		}
 		end();
 		
-		tab_pop();
-		out.append(tab+"}");
+		finish();
+		
 		return out.toString();
 	}
 	
