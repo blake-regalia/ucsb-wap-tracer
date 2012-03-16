@@ -6,15 +6,12 @@ import java.util.Map.Entry;
 
 public class JSON_Output extends DefaultOutput {
 	
-	private String tab;
 	private StringBuilder out;
 	
 	private Hashtable<String, Integer> mac_addrs;
 	
-	private boolean pretty = true;
-	
 	public JSON_Output(boolean prettyPrint) {
-		pretty = prettyPrint;
+		super(prettyPrint);
 		mac_addrs = new Hashtable<String, Integer>(128);
 		tab = pretty? "\n": "";
 	}
@@ -32,16 +29,6 @@ public class JSON_Output extends DefaultOutput {
 		events.add(event);
 	}
 	
-	private void tab_pop() {
-		if(pretty)
-			tab = tab.substring(0, tab.length() - 1);
-	}
-	
-	private void tab_push() {
-		if(pretty)
-			tab += "\t";
-	}
-
 	private void json(String key, int value) {
 		out.append(tab+"\""+key+"\":"+value+",");
 	}

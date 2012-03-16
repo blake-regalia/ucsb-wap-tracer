@@ -43,11 +43,14 @@ import edu.ucsb.geog.blakeregalia.WAP_Manager.WAP_Listener;
  */
 
 public class ucsb_wap_activity extends Activity {
+	
+	private static final int VERSION = 1;
 
 	public static final int GPS_ENABLED_REQUEST_CODE = 0;
 	protected static final long WIFI_SCAN_INTERVAL_MS = 1000;
 	private static final String DATA_FILE_NAME = "trace.bin";
-
+	
+	private static long unique_id = 0x01;
 
 	public static String android_id;
 
@@ -257,6 +260,8 @@ public class ucsb_wap_activity extends Activity {
 
 		/* write the file header */
 		try {
+			data_file.write(Encoder.encode_int(VERSION));
+			data_file.write(Encoder.encode_long(unique_id));
 			data_file.write(Encoder.encode_long(start_time));
 			data_file.write(Encoder.encode_long((long) (GPS_Locator.SOUTHWEST_CAMPUS_CORNER.LATITDUE*GPS_Locator.COORDINATE_PRECISION)));
 			data_file.write(Encoder.encode_long((long) (GPS_Locator.SOUTHWEST_CAMPUS_CORNER.LONGITUDE*GPS_Locator.COORDINATE_PRECISION)));

@@ -56,6 +56,8 @@ public class AndroidDecoder {
 	/* precision of the recorded time-stamp values in milliseconds, value of 100 yields 0.1 second resolution */
 	private static final int TIMESTAMP_PRECISION_MS = 100;
 	private static final double TIMESTAMP_REDUCTION_FACTOR = 1.0 / TIMESTAMP_PRECISION_MS;
+	
+	private static final String DEFAULT_SQL_TABLE = "wireless_access_point_events";
 
 	public static void main(String[] args) {		
 		new AndroidDecoder(args);
@@ -64,22 +66,38 @@ public class AndroidDecoder {
 	public AndroidDecoder(String[] args) {
 		
 		if(args.length == 0) {
-			System.err.println("Usage: android-decoder [-json] [-pretty] FILE");
+			System.err.println("Usage: android-decoder [-json|-sql] [-pretty] FILE");
 			System.exit(1);
 		}
 
 		int i = args.length;
 		String file_name = args[--i];
 		
-		boolean output_json = false;
+		String output_type = "";
+		String sql_table = DEFAULT_SQL_TABLE;
 		boolean pretty_print = false;
 		while(i-- != 0) {
-			switch(args[i].toLowerCase()) {
+			String arg_str = args[i].toLowerCase(); 
+			switch(arg_str) {
 			case "-json":
-				output_json = true;
+				output_type = "json";
+				break;
+			case "-sql":
+				output_type = "sql";
 				break;
 			case "-pretty":
 				pretty_print = true;
+				break;
+			default:
+				int delim_equals = arg_str.indexOf('=');
+				if(delim_equals != -1) {
+					String value = arg_str.substring(delim_equals+1);
+					switch(arg_str.substring(0, delim_equals)) {
+					case "table":
+						sql_table = value;
+						break;
+					}
+				}
 				break;
 			}
 		}
@@ -104,6 +122,12 @@ public class AndroidDecoder {
 			System.err.println("The trace file is incomplete, it is not large enough to contain useable information.");
 			return;
 		}
+		
+		/* read version # */
+		int version = fr.read_int();
+		
+		/* fetch unique id */
+		long user = fr.read_long();
 
 		/* read start time - SSSSSSSS [8 bytes] */
 		long start_time = fr.read_long();
@@ -114,8 +138,11 @@ public class AndroidDecoder {
 		
 		/* prepare the output format */
 		DefaultOutput output;
-		if(output_json) {
+		if(output_type.equals("json")) {
 			output = new JSON_Output(pretty_print);
+		}
+		else if(output_type.equals("sql")) {
+			output = new SQL_Output(pretty_print, sql_table);
 		}
 		else {
 			output = new DefaultOutput();

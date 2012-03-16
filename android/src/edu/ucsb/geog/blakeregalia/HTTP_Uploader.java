@@ -78,6 +78,13 @@ public class HTTP_Uploader {
 		}*/
 	}
 	
+	private String zero_pad(int d) {
+		if(d < 10) {
+			return "0"+d;
+		}
+		return ""+d;
+	}
+	
 	public void copyFile(File upload) {
         File root = Environment.getExternalStorageDirectory();
         try {
@@ -88,7 +95,7 @@ public class HTTP_Uploader {
 		}
         
         Calendar now = Calendar.getInstance();
-        String fname = ""+(now.get(Calendar.MONTH)+1)+"."+now.get(Calendar.DAY_OF_MONTH)+"."+(now.get(Calendar.YEAR)+"").substring(2)+"-"+now.get(Calendar.HOUR_OF_DAY)+"."+now.get(Calendar.MINUTE)+"."+now.get(Calendar.SECOND)+".bin";
+        String fname = ""+(now.get(Calendar.YEAR)+"")+"."+zero_pad(now.get(Calendar.MONTH)+1)+"."+zero_pad(now.get(Calendar.DAY_OF_MONTH))+"-"+zero_pad(now.get(Calendar.HOUR_OF_DAY))+"."+zero_pad(now.get(Calendar.MINUTE))+"."+zero_pad(now.get(Calendar.SECOND))+".bin";
 
         File dir = new File(root, "./ucsb-wap-traces/");
         dir.mkdir();

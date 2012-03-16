@@ -9,6 +9,9 @@ import java.util.ListIterator;
 import java.util.Map.Entry;
 
 public class DefaultOutput {
+
+	protected boolean pretty = true;
+	protected String tab;	
 	
 	protected List<WAP_Event> events;
 	protected Hashtable<String, Integer> ssid_names;
@@ -17,8 +20,18 @@ public class DefaultOutput {
 	protected long start_time;
 	protected float start_latitude;
 	protected float start_longitude;
-	
+
 	public DefaultOutput() {
+		init();
+	}
+	
+	public DefaultOutput(boolean prettyPrint) {
+		pretty = prettyPrint;
+		init();
+	}
+	
+	private void init() {
+		tab = pretty? "\n": "";
 		events = new ArrayList<WAP_Event>();
 		ssid_names = new Hashtable<String, Integer>(64);
 	}
@@ -52,6 +65,17 @@ public class DefaultOutput {
 		
 		return list.toString();
 	}
+
+	protected void tab_pop() {
+		if(pretty)
+			tab = tab.substring(0, tab.length() - 1);
+	}
+	
+	protected void tab_push() {
+		if(pretty)
+			tab += "\t";
+	}
+
 
 	public String dump() {
 		StringBuilder out = new StringBuilder();
