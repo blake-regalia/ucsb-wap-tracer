@@ -54,7 +54,7 @@ public class ucsb_wap_activity extends Activity {
 
 	public static String android_id;
 
-	protected static final float MIN_POSITION_ACCURACY = 60.0f;
+	protected static final float MIN_POSITION_ACCURACY = 15.0f;
 
 	/* precision of the recorded time-stamp values in milliseconds, value of 100 yields 0.1 second resolution */
 	private static final int TIMESTAMP_PRECISION_MS = 100;
