@@ -102,29 +102,34 @@ public class SQL_Output extends DefaultOutput {
 	private void create_wap_table() {
 		out.append(tab+"CREATE TABLE IF NOT EXISTS `waps` (");
 		tab_push();
-		out.append(tab+"`bssid` varchar(17) NOT NULL,");
-		out.append(tab+"`ssid` varchar(32) NOT NULL");
+		out.append(tab+"`bssid` varchar(17) NOT NULL UNIQUE,");
+		out.append(tab+"`ssid` varchar(32) NOT NULL,");
+		out.append(tab+"`hits` int NOT NULL");
 		tab_pop();
 		out.append(tab+")");
 		end();
 		out.append(tab);
 	}
 	
-	private void declare_ssid(String bssid, String ssid) {
+	private void declare_ssid(String bssid, String ssid, int size) {
 		
-		out.append(tab+"INSERT INTO `waps` (");
+		out.append(tab+"INSERT IGNORE INTO `waps` (");
 		tab_push();
 		out.append(tab+"`bssid`,");
-		out.append(tab+"`ssid`");
+		out.append(tab+"`ssid`,");
+		out.append(tab+"`hits`");
 		tab_pop();
 		
 		out.append(tab+") VALUES (");
 		tab_push();
 		out.append(tab+"'"+bssid+"',");
-		out.append(tab+"'"+ssid+"'");
+		out.append(tab+"'"+ssid.replaceAll("'", "\\\\'")+"',");
+		out.append(tab+"'0'");
 		tab_pop();
 		out.append(tab+")");
 		end();
+		
+		out.append(tab+"UPDATE `waps` SET `hits`=`hits`+'"+size+"' WHERE `bssid`='"+bssid+"';");
 		
 		out.append(tab);
 	}
@@ -146,7 +151,7 @@ public class SQL_Output extends DefaultOutput {
 			String bssid = entry.getKey();
 			String ssid = ssids.get(new Integer(uwap.getSSID()));
 
-			declare_ssid(bssid, ssid);
+			declare_ssid(bssid, ssid, uwap.size());
 			
 			for(int i=0; i<uwap.size(); i++) {
 				WAP_Event evt = uwap.getEvent(i);

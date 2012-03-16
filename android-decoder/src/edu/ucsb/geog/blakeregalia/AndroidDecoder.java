@@ -242,7 +242,8 @@ public class AndroidDecoder {
 
 		fr.close();
 		
-		System.out.print(output.dump());
+		if(!debug) System.out.print(output.dump());
+		else System.out.println("program finished");
 	}
 	
 

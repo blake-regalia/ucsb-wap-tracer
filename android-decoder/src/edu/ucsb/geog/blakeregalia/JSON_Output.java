@@ -77,7 +77,7 @@ public class JSON_Output extends DefaultOutput {
 			Entry<String, Integer> e = set.next();
 			int v = ((Integer) e.getValue()).intValue();
 			String id = (String) e.getKey();
-			json(""+v, id);
+			json(""+v, id.replaceAll("\"", "\\\\\""));
 		}
 	}
 
