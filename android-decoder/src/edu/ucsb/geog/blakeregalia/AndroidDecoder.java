@@ -52,6 +52,10 @@ public class AndroidDecoder {
 	private final static float COORDINATE_FACTOR = 0.001f; 
 	private final static float COORDINATE_PRECISION = 1000000; 
 	private final static float COORDINATE_PRECISION_INV = 1 / COORDINATE_PRECISION;
+	
+	private final static int WIFI_NUM_LEVELS = 45;
+	private final static double WIFI_SIGNAL = 255.0 / WIFI_NUM_LEVELS;
+	private final static double WIFI_SIGNAL_INVERT = WIFI_NUM_LEVELS / 255.0;
 
 	/* precision of the recorded time-stamp values in milliseconds, value of 100 yields 0.1 second resolution */
 	private static final int TIMESTAMP_PRECISION_MS = 100;
@@ -66,7 +70,7 @@ public class AndroidDecoder {
 	public AndroidDecoder(String[] args) {
 		
 		if(args.length == 0) {
-			System.err.println("Usage: android-decoder [-json|-sql] [-pretty] FILE");
+			System.err.println("Usage: android-decoder [-json|-sql [table=TABLE_NAME]]  [-pretty|-debug] FILE");
 			System.exit(1);
 		}
 
@@ -76,6 +80,7 @@ public class AndroidDecoder {
 		String output_type = "";
 		String sql_table = DEFAULT_SQL_TABLE;
 		boolean pretty_print = false;
+		boolean debug = false;
 		while(i-- != 0) {
 			String arg_str = args[i].toLowerCase(); 
 			switch(arg_str) {
@@ -87,6 +92,9 @@ public class AndroidDecoder {
 				break;
 			case "-pretty":
 				pretty_print = true;
+				break;
+			case "-debug":
+				debug = true;
 				break;
 			default:
 				int delim_equals = arg_str.indexOf('=');
@@ -110,6 +118,8 @@ public class AndroidDecoder {
 		} catch (IOException e) {
 			System.err.println("Could not find file \""+file_name+"\" in "+System.getProperty("user.dir"));
 		}
+		
+		file_path = file_name;
 		
 		/* open the file reader for reading and decoding bytes from the binary file */
 		_FileReader fr = new _FileReader(file_path);
@@ -158,6 +168,8 @@ public class AndroidDecoder {
 			
 			//byte wap_length = fr.read_byte();
 			byte wap_length = (byte) (b & 0xff);
+			
+			if(debug) System.out.println("@"+fr.bytes_read+"  ------- "+wap_length+" waps....");
 
 			if(wap_length == 0) break;
 
@@ -184,6 +196,7 @@ public class AndroidDecoder {
 
 			/* read wap entries */
 			byte n = wap_length;
+			
 			while(n-- != 0) {
 				
 				offset = fr.bytes_read;
@@ -192,10 +205,16 @@ public class AndroidDecoder {
 				byte[] byte_hw_addr = new byte[6];
 				fr.read(byte_hw_addr);
 				String mac_addr = decode_hw_addr(byte_hw_addr);
+				
+				if(debug) System.out.println("@"+fr.bytes_read+"  "+mac_addr);
 
 				/* read rssi - R [1 byte] */
 				int rssi = ((int) fr.read_byte()) & 0xff;
-				int signal = (int) (((float) rssi) / 2.55f);
+//				int signal = (int) (((float) rssi) / 2.55f);
+				
+				if(version < 2) {
+					rssi = (int) Math.round((Math.round(rssi*WIFI_SIGNAL_INVERT)+1)*WIFI_SIGNAL);
+				}
 
 				/* read String ID - I [1 byte] */
 				int ssid = fr.read_byte();
@@ -209,7 +228,9 @@ public class AndroidDecoder {
 		
 		int ssid_key = fr.read_int();
 		while(true) {
+			if(debug) System.out.print("@"+fr.bytes_read+"  "+ssid_key+":");
 			String ssid = fr.read_string();
+			if(debug) System.out.println(ssid);
 			
 			output.setSSID(ssid_key, ssid);
 			

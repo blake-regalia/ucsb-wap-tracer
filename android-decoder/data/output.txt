@@ -1,6161 +1,1896 @@
-
-CREATE TABLE IF NOT EXISTS `events` (
-	`bssid` varchar(17) NOT NULL,
-	`time` varchar(13) NOT NULL,
-	`accuracy` tinyint(3) unsigned NOT NULL,
-	`latitude` double NOT NULL,
-	`longitude` double NOT NULL,
-	`rssi` tinyint(3) unsigned NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS `waps` (
-	`bssid` varchar(17) NOT NULL,
-	`ssid` varchar(32) NOT NULL
-);
-
-INSERT INTO `waps` (
-	`bssid`,
-	`ssid`
-) VALUES (
-	'40:f4:ec:12:9e:82',
-	'Intermezzo'
-);
-
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'40:f4:ec:12:9e:82',
-	'1331671364617',
-	'5',
-	'34.415794',
-	'-119.84594',
-	'56'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'40:f4:ec:12:9e:82',
-	'1331671367317',
-	'5',
-	'34.415787',
-	'-119.84597',
-	'45'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'40:f4:ec:12:9e:82',
-	'1331671369917',
-	'5',
-	'34.41578',
-	'-119.846016',
-	'45'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'40:f4:ec:12:9e:82',
-	'1331671372517',
-	'5',
-	'34.415775',
-	'-119.846054',
-	'45'
-);
-
-INSERT INTO `waps` (
-	`bssid`,
-	`ssid`
-) VALUES (
-	'40:f4:ec:12:9e:80',
-	'UCSB Wireless Web'
-);
-
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'40:f4:ec:12:9e:80',
-	'1331671364617',
-	'5',
-	'34.415794',
-	'-119.84594',
-	'39'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'40:f4:ec:12:9e:80',
-	'1331671367317',
-	'5',
-	'34.415787',
-	'-119.84597',
-	'28'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'40:f4:ec:12:9e:80',
-	'1331671369917',
-	'5',
-	'34.41578',
-	'-119.846016',
-	'28'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'40:f4:ec:12:9e:80',
-	'1331671372517',
-	'5',
-	'34.415775',
-	'-119.846054',
-	'28'
-);
-
-INSERT INTO `waps` (
-	`bssid`,
-	`ssid`
-) VALUES (
-	'00:1d:73:de:72:be',
-	'cits-wireless'
-);
-
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:1d:73:de:72:be',
-	'1331671410317',
-	'5',
-	'34.415787',
-	'-119.84658',
-	'28'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:1d:73:de:72:be',
-	'1331671412317',
-	'5',
-	'34.415787',
-	'-119.84661',
-	'28'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:1d:73:de:72:be',
-	'1331671414217',
-	'5',
-	'34.415783',
-	'-119.84665',
-	'28'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:1d:73:de:72:be',
-	'1331671437817',
-	'5',
-	'34.415783',
-	'-119.84702',
-	'0'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:1d:73:de:72:be',
-	'1331671439717',
-	'5',
-	'34.41579',
-	'-119.84705',
-	'0'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:1d:73:de:72:be',
-	'1331671441717',
-	'5',
-	'34.415794',
-	'-119.8471',
-	'0'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:1d:73:de:72:be',
-	'1331671445617',
-	'5',
-	'34.415802',
-	'-119.84716',
-	'17'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:1d:73:de:72:be',
-	'1331671447617',
-	'5',
-	'34.415802',
-	'-119.84719',
-	'17'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:1d:73:de:72:be',
-	'1331671449517',
-	'5',
-	'34.415794',
-	'-119.84722',
-	'17'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:1d:73:de:72:be',
-	'1331671456917',
-	'5',
-	'34.41579',
-	'-119.847336',
-	'11'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:1d:73:de:72:be',
-	'1331671458917',
-	'5',
-	'34.415794',
-	'-119.8474',
-	'51'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:1d:73:de:72:be',
-	'1331671460917',
-	'5',
-	'34.415806',
-	'-119.84743',
-	'51'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:1d:73:de:72:be',
-	'1331671462817',
-	'5',
-	'34.41582',
-	'-119.84745',
-	'51'
-);
-
-INSERT INTO `waps` (
-	`bssid`,
-	`ssid`
-) VALUES (
-	'00:1e:2a:de:f5:ed',
-	'BAPWLAN'
-);
-
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:1e:2a:de:f5:ed',
-	'1331671396317',
-	'5',
-	'34.41577',
-	'-119.84639',
-	'45'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:1e:2a:de:f5:ed',
-	'1331671399017',
-	'5',
-	'34.41578',
-	'-119.846436',
-	'45'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:1e:2a:de:f5:ed',
-	'1331671401817',
-	'5',
-	'34.41578',
-	'-119.84648',
-	'45'
-);
-
-INSERT INTO `waps` (
-	`bssid`,
-	`ssid`
-) VALUES (
-	'9c:4e:20:c9:af:91',
-	'9132Y'
-);
-
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'9c:4e:20:c9:af:91',
-	'1331671364617',
-	'5',
-	'34.415794',
-	'-119.84594',
-	'45'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'9c:4e:20:c9:af:91',
-	'1331671367317',
-	'5',
-	'34.415787',
-	'-119.84597',
-	'45'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'9c:4e:20:c9:af:91',
-	'1331671369917',
-	'5',
-	'34.41578',
-	'-119.846016',
-	'90'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'9c:4e:20:c9:af:91',
-	'1331671372517',
-	'5',
-	'34.415775',
-	'-119.846054',
-	'51'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'9c:4e:20:c9:af:91',
-	'1331671375117',
-	'5',
-	'34.41578',
-	'-119.84608',
-	'51'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'9c:4e:20:c9:af:91',
-	'1331671377717',
-	'5',
-	'34.41578',
-	'-119.846115',
-	'51'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'9c:4e:20:c9:af:91',
-	'1331671382917',
-	'5',
-	'34.415775',
-	'-119.84618',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'9c:4e:20:c9:af:91',
-	'1331671385517',
-	'5',
-	'34.415775',
-	'-119.84624',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'9c:4e:20:c9:af:91',
-	'1331671388117',
-	'5',
-	'34.415775',
-	'-119.84627',
-	'22'
-);
-
-INSERT INTO `waps` (
-	`bssid`,
-	`ssid`
-) VALUES (
-	'9c:4e:20:c9:af:90',
-	'UCSB Wireless Web'
-);
-
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'9c:4e:20:c9:af:90',
-	'1331671367317',
-	'5',
-	'34.415787',
-	'-119.84597',
-	'79'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'9c:4e:20:c9:af:90',
-	'1331671369917',
-	'5',
-	'34.41578',
-	'-119.846016',
-	'73'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'9c:4e:20:c9:af:90',
-	'1331671372517',
-	'5',
-	'34.415775',
-	'-119.846054',
-	'73'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'9c:4e:20:c9:af:90',
-	'1331671375117',
-	'5',
-	'34.41578',
-	'-119.84608',
-	'102'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'9c:4e:20:c9:af:90',
-	'1331671377717',
-	'5',
-	'34.41578',
-	'-119.846115',
-	'102'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'9c:4e:20:c9:af:90',
-	'1331671380317',
-	'5',
-	'34.41578',
-	'-119.846146',
-	'102'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'9c:4e:20:c9:af:90',
-	'1331671382917',
-	'5',
-	'34.415775',
-	'-119.84618',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'9c:4e:20:c9:af:90',
-	'1331671385517',
-	'5',
-	'34.415775',
-	'-119.84624',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'9c:4e:20:c9:af:90',
-	'1331671388117',
-	'5',
-	'34.415775',
-	'-119.84627',
-	'22'
-);
-
-INSERT INTO `waps` (
-	`bssid`,
-	`ssid`
-) VALUES (
-	'58:6d:8f:55:c2:76',
-	'ActgSAASB-guest'
-);
-
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:76',
-	'1331671337417',
-	'20',
-	'34.415813',
-	'-119.845604',
-	'5'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:76',
-	'1331671349317',
-	'5',
-	'34.415886',
-	'-119.84575',
-	'5'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:76',
-	'1331671364617',
-	'5',
-	'34.415794',
-	'-119.84594',
-	'73'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:76',
-	'1331671367317',
-	'5',
-	'34.415787',
-	'-119.84597',
-	'73'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:76',
-	'1331671369917',
-	'5',
-	'34.41578',
-	'-119.846016',
-	'28'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:76',
-	'1331671372517',
-	'5',
-	'34.415775',
-	'-119.846054',
-	'28'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:76',
-	'1331671375117',
-	'5',
-	'34.41578',
-	'-119.84608',
-	'28'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:76',
-	'1331671382917',
-	'5',
-	'34.415775',
-	'-119.84618',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:76',
-	'1331671385517',
-	'5',
-	'34.415775',
-	'-119.84624',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:76',
-	'1331671388117',
-	'5',
-	'34.415775',
-	'-119.84627',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:76',
-	'1331671390817',
-	'5',
-	'34.41577',
-	'-119.84631',
-	'11'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:76',
-	'1331671393617',
-	'5',
-	'34.41577',
-	'-119.84636',
-	'62'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:76',
-	'1331671396317',
-	'5',
-	'34.41577',
-	'-119.84639',
-	'85'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:76',
-	'1331671399017',
-	'5',
-	'34.41578',
-	'-119.846436',
-	'51'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:76',
-	'1331671401817',
-	'5',
-	'34.41578',
-	'-119.84648',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:76',
-	'1331671404617',
-	'5',
-	'34.415783',
-	'-119.846535',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:76',
-	'1331671407517',
-	'5',
-	'34.415787',
-	'-119.84658',
-	'51'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:76',
-	'1331671410317',
-	'5',
-	'34.415787',
-	'-119.84658',
-	'51'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:76',
-	'1331671412317',
-	'5',
-	'34.415787',
-	'-119.84661',
-	'51'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:76',
-	'1331671427917',
-	'5',
-	'34.41577',
-	'-119.84686',
-	'17'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:76',
-	'1331671429917',
-	'5',
-	'34.415775',
-	'-119.84689',
-	'17'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:76',
-	'1331671431917',
-	'5',
-	'34.41578',
-	'-119.846924',
-	'17'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:76',
-	'1331671433817',
-	'5',
-	'34.41578',
-	'-119.846954',
-	'17'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:76',
-	'1331671435817',
-	'5',
-	'34.41578',
-	'-119.84699',
-	'17'
-);
-
-INSERT INTO `waps` (
-	`bssid`,
-	`ssid`
-) VALUES (
-	'58:6d:8f:55:c2:75',
-	'ActgSAASB'
-);
-
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:75',
-	'1331671396317',
-	'5',
-	'34.41577',
-	'-119.84639',
-	'39'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:75',
-	'1331671399017',
-	'5',
-	'34.41578',
-	'-119.846436',
-	'39'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:75',
-	'1331671401817',
-	'5',
-	'34.41578',
-	'-119.84648',
-	'39'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:75',
-	'1331671427917',
-	'5',
-	'34.41577',
-	'-119.84686',
-	'56'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:75',
-	'1331671429917',
-	'5',
-	'34.415775',
-	'-119.84689',
-	'56'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:75',
-	'1331671431917',
-	'5',
-	'34.41578',
-	'-119.846924',
-	'56'
-);
-
-INSERT INTO `waps` (
-	`bssid`,
-	`ssid`
-) VALUES (
-	'58:6d:8f:55:c2:74',
-	'ActgSAASB'
-);
-
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:74',
-	'1331671337417',
-	'20',
-	'34.415813',
-	'-119.845604',
-	'11'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:74',
-	'1331671349317',
-	'5',
-	'34.415886',
-	'-119.84575',
-	'11'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:74',
-	'1331671364617',
-	'5',
-	'34.415794',
-	'-119.84594',
-	'51'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:74',
-	'1331671367317',
-	'5',
-	'34.415787',
-	'-119.84597',
-	'51'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:74',
-	'1331671369917',
-	'5',
-	'34.41578',
-	'-119.846016',
-	'51'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:74',
-	'1331671372517',
-	'5',
-	'34.415775',
-	'-119.846054',
-	'51'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:74',
-	'1331671375117',
-	'5',
-	'34.41578',
-	'-119.84608',
-	'51'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:74',
-	'1331671393617',
-	'5',
-	'34.41577',
-	'-119.84636',
-	'45'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:74',
-	'1331671396317',
-	'5',
-	'34.41577',
-	'-119.84639',
-	'85'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:74',
-	'1331671399017',
-	'5',
-	'34.41578',
-	'-119.846436',
-	'68'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:74',
-	'1331671401817',
-	'5',
-	'34.41578',
-	'-119.84648',
-	'28'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:74',
-	'1331671404617',
-	'5',
-	'34.415783',
-	'-119.846535',
-	'28'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:74',
-	'1331671407517',
-	'5',
-	'34.415787',
-	'-119.84658',
-	'62'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:74',
-	'1331671410317',
-	'5',
-	'34.415787',
-	'-119.84658',
-	'62'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:74',
-	'1331671412317',
-	'5',
-	'34.415787',
-	'-119.84661',
-	'62'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:74',
-	'1331671427917',
-	'5',
-	'34.41577',
-	'-119.84686',
-	'11'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:74',
-	'1331671429917',
-	'5',
-	'34.415775',
-	'-119.84689',
-	'11'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:74',
-	'1331671431917',
-	'5',
-	'34.41578',
-	'-119.846924',
-	'0'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:74',
-	'1331671433817',
-	'5',
-	'34.41578',
-	'-119.846954',
-	'0'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:55:c2:74',
-	'1331671435817',
-	'5',
-	'34.41578',
-	'-119.84699',
-	'0'
-);
-
-INSERT INTO `waps` (
-	`bssid`,
-	`ssid`
-) VALUES (
-	'68:ef:bd:e3:0c:a1',
-	'9132Y'
-);
-
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'68:ef:bd:e3:0c:a1',
-	'1331671393617',
-	'5',
-	'34.41577',
-	'-119.84636',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'68:ef:bd:e3:0c:a1',
-	'1331671396317',
-	'5',
-	'34.41577',
-	'-119.84639',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'68:ef:bd:e3:0c:a1',
-	'1331671399017',
-	'5',
-	'34.41578',
-	'-119.846436',
-	'22'
-);
-
-INSERT INTO `waps` (
-	`bssid`,
-	`ssid`
-) VALUES (
-	'68:ef:bd:e3:0c:a0',
-	'UCSB Wireless Web'
-);
-
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'68:ef:bd:e3:0c:a0',
-	'1331671369917',
-	'5',
-	'34.41578',
-	'-119.846016',
-	'34'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'68:ef:bd:e3:0c:a0',
-	'1331671372517',
-	'5',
-	'34.415775',
-	'-119.846054',
-	'34'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'68:ef:bd:e3:0c:a0',
-	'1331671375117',
-	'5',
-	'34.41578',
-	'-119.84608',
-	'34'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'68:ef:bd:e3:0c:a0',
-	'1331671377717',
-	'5',
-	'34.41578',
-	'-119.846115',
-	'34'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'68:ef:bd:e3:0c:a0',
-	'1331671380317',
-	'5',
-	'34.41578',
-	'-119.846146',
-	'34'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'68:ef:bd:e3:0c:a0',
-	'1331671382917',
-	'5',
-	'34.415775',
-	'-119.84618',
-	'34'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'68:ef:bd:e3:0c:a0',
-	'1331671385517',
-	'5',
-	'34.415775',
-	'-119.84624',
-	'5'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'68:ef:bd:e3:0c:a0',
-	'1331671388117',
-	'5',
-	'34.415775',
-	'-119.84627',
-	'5'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'68:ef:bd:e3:0c:a0',
-	'1331671390817',
-	'5',
-	'34.41577',
-	'-119.84631',
-	'5'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'68:ef:bd:e3:0c:a0',
-	'1331671393617',
-	'5',
-	'34.41577',
-	'-119.84636',
-	'34'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'68:ef:bd:e3:0c:a0',
-	'1331671396317',
-	'5',
-	'34.41577',
-	'-119.84639',
-	'34'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'68:ef:bd:e3:0c:a0',
-	'1331671399017',
-	'5',
-	'34.41578',
-	'-119.846436',
-	'5'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'68:ef:bd:e3:0c:a0',
-	'1331671401817',
-	'5',
-	'34.41578',
-	'-119.84648',
-	'11'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'68:ef:bd:e3:0c:a0',
-	'1331671404617',
-	'5',
-	'34.415783',
-	'-119.846535',
-	'11'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'68:ef:bd:e3:0c:a0',
-	'1331671407517',
-	'5',
-	'34.415787',
-	'-119.84658',
-	'11'
-);
-
-INSERT INTO `waps` (
-	`bssid`,
-	`ssid`
-) VALUES (
-	'00:0c:42:3a:85:bb',
-	'nanonet105'
-);
-
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:0c:42:3a:85:bb',
-	'1331671388117',
-	'5',
-	'34.415775',
-	'-119.84627',
-	'39'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:0c:42:3a:85:bb',
-	'1331671390817',
-	'5',
-	'34.41577',
-	'-119.84631',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:0c:42:3a:85:bb',
-	'1331671393617',
-	'5',
-	'34.41577',
-	'-119.84636',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:0c:42:3a:85:bb',
-	'1331671396317',
-	'5',
-	'34.41577',
-	'-119.84639',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:0c:42:3a:85:bb',
-	'1331671462817',
-	'5',
-	'34.41582',
-	'-119.84745',
-	'0'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:0c:42:3a:85:bb',
-	'1331671464817',
-	'5',
-	'34.415836',
-	'-119.847466',
-	'0'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:0c:42:3a:85:bb',
-	'1331671466717',
-	'5',
-	'34.41584',
-	'-119.84748',
-	'0'
-);
-
-INSERT INTO `waps` (
-	`bssid`,
-	`ssid`
-) VALUES (
-	'1c:17:d3:32:50:71',
-	'9132Y'
-);
-
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'1c:17:d3:32:50:71',
-	'1331671337417',
-	'20',
-	'34.415813',
-	'-119.845604',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'1c:17:d3:32:50:71',
-	'1331671349317',
-	'5',
-	'34.415886',
-	'-119.84575',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'1c:17:d3:32:50:71',
-	'1331671357317',
-	'5',
-	'34.415817',
-	'-119.84582',
-	'68'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'1c:17:d3:32:50:71',
-	'1331671364617',
-	'5',
-	'34.415794',
-	'-119.84594',
-	'113'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'1c:17:d3:32:50:71',
-	'1331671367317',
-	'5',
-	'34.415787',
-	'-119.84597',
-	'113'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'1c:17:d3:32:50:71',
-	'1331671369917',
-	'5',
-	'34.41578',
-	'-119.846016',
-	'79'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'1c:17:d3:32:50:71',
-	'1331671372517',
-	'5',
-	'34.415775',
-	'-119.846054',
-	'79'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'1c:17:d3:32:50:71',
-	'1331671375117',
-	'5',
-	'34.41578',
-	'-119.84608',
-	'79'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'1c:17:d3:32:50:71',
-	'1331671382917',
-	'5',
-	'34.415775',
-	'-119.84618',
-	'90'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'1c:17:d3:32:50:71',
-	'1331671385517',
-	'5',
-	'34.415775',
-	'-119.84624',
-	'79'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'1c:17:d3:32:50:71',
-	'1331671388117',
-	'5',
-	'34.415775',
-	'-119.84627',
-	'79'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'1c:17:d3:32:50:71',
-	'1331671390817',
-	'5',
-	'34.41577',
-	'-119.84631',
-	'79'
-);
-
-INSERT INTO `waps` (
-	`bssid`,
-	`ssid`
-) VALUES (
-	'1c:17:d3:32:50:70',
-	'UCSB Wireless Web'
-);
-
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'1c:17:d3:32:50:70',
-	'1331671337417',
-	'20',
-	'34.415813',
-	'-119.845604',
-	'28'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'1c:17:d3:32:50:70',
-	'1331671349317',
-	'5',
-	'34.415886',
-	'-119.84575',
-	'28'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'1c:17:d3:32:50:70',
-	'1331671357317',
-	'5',
-	'34.415817',
-	'-119.84582',
-	'68'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'1c:17:d3:32:50:70',
-	'1331671364617',
-	'5',
-	'34.415794',
-	'-119.84594',
-	'113'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'1c:17:d3:32:50:70',
-	'1331671367317',
-	'5',
-	'34.415787',
-	'-119.84597',
-	'90'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'1c:17:d3:32:50:70',
-	'1331671369917',
-	'5',
-	'34.41578',
-	'-119.846016',
-	'90'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'1c:17:d3:32:50:70',
-	'1331671372517',
-	'5',
-	'34.415775',
-	'-119.846054',
-	'107'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'1c:17:d3:32:50:70',
-	'1331671375117',
-	'5',
-	'34.41578',
-	'-119.84608',
-	'90'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'1c:17:d3:32:50:70',
-	'1331671377717',
-	'5',
-	'34.41578',
-	'-119.846115',
-	'90'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'1c:17:d3:32:50:70',
-	'1331671380317',
-	'5',
-	'34.41578',
-	'-119.846146',
-	'102'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'1c:17:d3:32:50:70',
-	'1331671382917',
-	'5',
-	'34.415775',
-	'-119.84618',
-	'79'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'1c:17:d3:32:50:70',
-	'1331671385517',
-	'5',
-	'34.415775',
-	'-119.84624',
-	'68'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'1c:17:d3:32:50:70',
-	'1331671388117',
-	'5',
-	'34.415775',
-	'-119.84627',
-	'96'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'1c:17:d3:32:50:70',
-	'1331671390817',
-	'5',
-	'34.41577',
-	'-119.84631',
-	'107'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'1c:17:d3:32:50:70',
-	'1331671393617',
-	'5',
-	'34.41577',
-	'-119.84636',
-	'28'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'1c:17:d3:32:50:70',
-	'1331671396317',
-	'5',
-	'34.41577',
-	'-119.84639',
-	'45'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'1c:17:d3:32:50:70',
-	'1331671399017',
-	'5',
-	'34.41578',
-	'-119.846436',
-	'45'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'1c:17:d3:32:50:70',
-	'1331671401817',
-	'5',
-	'34.41578',
-	'-119.84648',
-	'11'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'1c:17:d3:32:50:70',
-	'1331671404617',
-	'5',
-	'34.415783',
-	'-119.846535',
-	'11'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'1c:17:d3:32:50:70',
-	'1331671407517',
-	'5',
-	'34.415787',
-	'-119.84658',
-	'11'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'1c:17:d3:32:50:70',
-	'1331671410317',
-	'5',
-	'34.415787',
-	'-119.84658',
-	'11'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'1c:17:d3:32:50:70',
-	'1331671412317',
-	'5',
-	'34.415787',
-	'-119.84661',
-	'11'
-);
-
-INSERT INTO `waps` (
-	`bssid`,
-	`ssid`
-) VALUES (
-	'00:02:2d:bc:b8:57',
-	'PSetherwire'
-);
-
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:02:2d:bc:b8:57',
-	'1331671357317',
-	'5',
-	'34.415817',
-	'-119.84582',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:02:2d:bc:b8:57',
-	'1331671364617',
-	'5',
-	'34.415794',
-	'-119.84594',
-	'45'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:02:2d:bc:b8:57',
-	'1331671367317',
-	'5',
-	'34.415787',
-	'-119.84597',
-	'45'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:02:2d:bc:b8:57',
-	'1331671369917',
-	'5',
-	'34.41578',
-	'-119.846016',
-	'45'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:02:2d:bc:b8:57',
-	'1331671375117',
-	'5',
-	'34.41578',
-	'-119.84608',
-	'28'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:02:2d:bc:b8:57',
-	'1331671377717',
-	'5',
-	'34.41578',
-	'-119.846115',
-	'28'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:02:2d:bc:b8:57',
-	'1331671380317',
-	'5',
-	'34.41578',
-	'-119.846146',
-	'34'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:02:2d:bc:b8:57',
-	'1331671382917',
-	'5',
-	'34.415775',
-	'-119.84618',
-	'28'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:02:2d:bc:b8:57',
-	'1331671385517',
-	'5',
-	'34.415775',
-	'-119.84624',
-	'28'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:02:2d:bc:b8:57',
-	'1331671388117',
-	'5',
-	'34.415775',
-	'-119.84627',
-	'0'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:02:2d:bc:b8:57',
-	'1331671390817',
-	'5',
-	'34.41577',
-	'-119.84631',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:02:2d:bc:b8:57',
-	'1331671393617',
-	'5',
-	'34.41577',
-	'-119.84636',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:02:2d:bc:b8:57',
-	'1331671396317',
-	'5',
-	'34.41577',
-	'-119.84639',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:02:2d:bc:b8:57',
-	'1331671418117',
-	'5',
-	'34.415775',
-	'-119.84671',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:02:2d:bc:b8:57',
-	'1331671420117',
-	'5',
-	'34.41577',
-	'-119.84674',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:02:2d:bc:b8:57',
-	'1331671422117',
-	'5',
-	'34.415768',
-	'-119.84677',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:02:2d:bc:b8:57',
-	'1331671424017',
-	'5',
-	'34.415768',
-	'-119.8468',
-	'56'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:02:2d:bc:b8:57',
-	'1331671426017',
-	'5',
-	'34.41577',
-	'-119.84683',
-	'56'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:02:2d:bc:b8:57',
-	'1331671427917',
-	'5',
-	'34.41577',
-	'-119.84686',
-	'56'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:02:2d:bc:b8:57',
-	'1331671439717',
-	'5',
-	'34.41579',
-	'-119.84705',
-	'45'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:02:2d:bc:b8:57',
-	'1331671441717',
-	'5',
-	'34.415794',
-	'-119.8471',
-	'45'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:02:2d:bc:b8:57',
-	'1331671443717',
-	'5',
-	'34.4158',
-	'-119.84713',
-	'45'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:02:2d:bc:b8:57',
-	'1331671451517',
-	'5',
-	'34.41579',
-	'-119.84725',
-	'34'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:02:2d:bc:b8:57',
-	'1331671453517',
-	'5',
-	'34.41579',
-	'-119.84729',
-	'34'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:02:2d:bc:b8:57',
-	'1331671456917',
-	'5',
-	'34.41579',
-	'-119.847336',
-	'34'
-);
-
-INSERT INTO `waps` (
-	`bssid`,
-	`ssid`
-) VALUES (
-	'8c:b6:4f:a6:51:e2',
-	'Intermezzo'
-);
-
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'8c:b6:4f:a6:51:e2',
-	'1331671353317',
-	'5',
-	'34.415844',
-	'-119.84578',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'8c:b6:4f:a6:51:e2',
-	'1331671355217',
-	'5',
-	'34.41583',
-	'-119.845795',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'8c:b6:4f:a6:51:e2',
-	'1331671357317',
-	'5',
-	'34.415817',
-	'-119.84582',
-	'45'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'8c:b6:4f:a6:51:e2',
-	'1331671364617',
-	'5',
-	'34.415794',
-	'-119.84594',
-	'45'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'8c:b6:4f:a6:51:e2',
-	'1331671393617',
-	'5',
-	'34.41577',
-	'-119.84636',
-	'5'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'8c:b6:4f:a6:51:e2',
-	'1331671396317',
-	'5',
-	'34.41577',
-	'-119.84639',
-	'5'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'8c:b6:4f:a6:51:e2',
-	'1331671399017',
-	'5',
-	'34.41578',
-	'-119.846436',
-	'5'
-);
-
-INSERT INTO `waps` (
-	`bssid`,
-	`ssid`
-) VALUES (
-	'8c:b6:4f:a6:51:e1',
-	'9132Y'
-);
-
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'8c:b6:4f:a6:51:e1',
-	'1331671351317',
-	'5',
-	'34.41587',
-	'-119.845764',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'8c:b6:4f:a6:51:e1',
-	'1331671353317',
-	'5',
-	'34.415844',
-	'-119.84578',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'8c:b6:4f:a6:51:e1',
-	'1331671355217',
-	'5',
-	'34.41583',
-	'-119.845795',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'8c:b6:4f:a6:51:e1',
-	'1331671367317',
-	'5',
-	'34.415787',
-	'-119.84597',
-	'28'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'8c:b6:4f:a6:51:e1',
-	'1331671369917',
-	'5',
-	'34.41578',
-	'-119.846016',
-	'28'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'8c:b6:4f:a6:51:e1',
-	'1331671372517',
-	'5',
-	'34.415775',
-	'-119.846054',
-	'28'
-);
-
-INSERT INTO `waps` (
-	`bssid`,
-	`ssid`
-) VALUES (
-	'8c:b6:4f:a6:51:e0',
-	'UCSB Wireless Web'
-);
-
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'8c:b6:4f:a6:51:e0',
-	'1331671357317',
-	'5',
-	'34.415817',
-	'-119.84582',
-	'28'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'8c:b6:4f:a6:51:e0',
-	'1331671364617',
-	'5',
-	'34.415794',
-	'-119.84594',
-	'28'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'8c:b6:4f:a6:51:e0',
-	'1331671377717',
-	'5',
-	'34.41578',
-	'-119.846115',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'8c:b6:4f:a6:51:e0',
-	'1331671380317',
-	'5',
-	'34.41578',
-	'-119.846146',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'8c:b6:4f:a6:51:e0',
-	'1331671382917',
-	'5',
-	'34.415775',
-	'-119.84618',
-	'22'
-);
-
-INSERT INTO `waps` (
-	`bssid`,
-	`ssid`
-) VALUES (
-	'00:24:a5:b3:f6:9b',
-	'isber-net'
-);
-
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:24:a5:b3:f6:9b',
-	'1331671420117',
-	'5',
-	'34.41577',
-	'-119.84674',
-	'0'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:24:a5:b3:f6:9b',
-	'1331671422117',
-	'5',
-	'34.415768',
-	'-119.84677',
-	'0'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:24:a5:b3:f6:9b',
-	'1331671424017',
-	'5',
-	'34.415768',
-	'-119.8468',
-	'17'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:24:a5:b3:f6:9b',
-	'1331671426017',
-	'5',
-	'34.41577',
-	'-119.84683',
-	'17'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:24:a5:b3:f6:9b',
-	'1331671427917',
-	'5',
-	'34.41577',
-	'-119.84686',
-	'17'
-);
-
-INSERT INTO `waps` (
-	`bssid`,
-	`ssid`
-) VALUES (
-	'02:29:29:cd:ca:cb',
-	'HP-nomodel.5C6BB6'
-);
-
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'02:29:29:cd:ca:cb',
-	'1331671337417',
-	'20',
-	'34.415813',
-	'-119.845604',
-	'11'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'02:29:29:cd:ca:cb',
-	'1331671349317',
-	'5',
-	'34.415886',
-	'-119.84575',
-	'11'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'02:29:29:cd:ca:cb',
-	'1331671357317',
-	'5',
-	'34.415817',
-	'-119.84582',
-	'34'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'02:29:29:cd:ca:cb',
-	'1331671364617',
-	'5',
-	'34.415794',
-	'-119.84594',
-	'34'
-);
-
-INSERT INTO `waps` (
-	`bssid`,
-	`ssid`
-) VALUES (
-	'00:25:9c:6a:3f:ba',
-	'icess'
-);
-
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:25:9c:6a:3f:ba',
-	'1331671337417',
-	'20',
-	'34.415813',
-	'-119.845604',
-	'17'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:25:9c:6a:3f:ba',
-	'1331671349317',
-	'5',
-	'34.415886',
-	'-119.84575',
-	'17'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:25:9c:6a:3f:ba',
-	'1331671351317',
-	'5',
-	'34.41587',
-	'-119.845764',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:25:9c:6a:3f:ba',
-	'1331671353317',
-	'5',
-	'34.415844',
-	'-119.84578',
-	'34'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:25:9c:6a:3f:ba',
-	'1331671355217',
-	'5',
-	'34.41583',
-	'-119.845795',
-	'34'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:25:9c:6a:3f:ba',
-	'1331671357317',
-	'5',
-	'34.415817',
-	'-119.84582',
-	'34'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:25:9c:6a:3f:ba',
-	'1331671364617',
-	'5',
-	'34.415794',
-	'-119.84594',
-	'11'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:25:9c:6a:3f:ba',
-	'1331671367317',
-	'5',
-	'34.415787',
-	'-119.84597',
-	'28'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:25:9c:6a:3f:ba',
-	'1331671369917',
-	'5',
-	'34.41578',
-	'-119.846016',
-	'28'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:25:9c:6a:3f:ba',
-	'1331671372517',
-	'5',
-	'34.415775',
-	'-119.846054',
-	'39'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:25:9c:6a:3f:ba',
-	'1331671375117',
-	'5',
-	'34.41578',
-	'-119.84608',
-	'39'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:25:9c:6a:3f:ba',
-	'1331671377717',
-	'5',
-	'34.41578',
-	'-119.846115',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:25:9c:6a:3f:ba',
-	'1331671380317',
-	'5',
-	'34.41578',
-	'-119.846146',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:25:9c:6a:3f:ba',
-	'1331671382917',
-	'5',
-	'34.415775',
-	'-119.84618',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:25:9c:6a:3f:ba',
-	'1331671385517',
-	'5',
-	'34.415775',
-	'-119.84624',
-	'62'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:25:9c:6a:3f:ba',
-	'1331671388117',
-	'5',
-	'34.415775',
-	'-119.84627',
-	'62'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:25:9c:6a:3f:ba',
-	'1331671390817',
-	'5',
-	'34.41577',
-	'-119.84631',
-	'62'
-);
-
-INSERT INTO `waps` (
-	`bssid`,
-	`ssid`
-) VALUES (
-	'00:1d:7e:cb:cd:04',
-	'ICESS'
-);
-
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:1d:7e:cb:cd:04',
-	'1331671337417',
-	'20',
-	'34.415813',
-	'-119.845604',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:1d:7e:cb:cd:04',
-	'1331671349317',
-	'5',
-	'34.415886',
-	'-119.84575',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:1d:7e:cb:cd:04',
-	'1331671353317',
-	'5',
-	'34.415844',
-	'-119.84578',
-	'17'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:1d:7e:cb:cd:04',
-	'1331671355217',
-	'5',
-	'34.41583',
-	'-119.845795',
-	'17'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:1d:7e:cb:cd:04',
-	'1331671357317',
-	'5',
-	'34.415817',
-	'-119.84582',
-	'17'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:1d:7e:cb:cd:04',
-	'1331671377717',
-	'5',
-	'34.41578',
-	'-119.846115',
-	'45'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:1d:7e:cb:cd:04',
-	'1331671380317',
-	'5',
-	'34.41578',
-	'-119.846146',
-	'39'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:1d:7e:cb:cd:04',
-	'1331671382917',
-	'5',
-	'34.415775',
-	'-119.84618',
-	'39'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:1d:7e:cb:cd:04',
-	'1331671385517',
-	'5',
-	'34.415775',
-	'-119.84624',
-	'39'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:1d:7e:cb:cd:04',
-	'1331671388117',
-	'5',
-	'34.415775',
-	'-119.84627',
-	'11'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:1d:7e:cb:cd:04',
-	'1331671390817',
-	'5',
-	'34.41577',
-	'-119.84631',
-	'11'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:1d:7e:cb:cd:04',
-	'1331671393617',
-	'5',
-	'34.41577',
-	'-119.84636',
-	'11'
-);
-
-INSERT INTO `waps` (
-	`bssid`,
-	`ssid`
-) VALUES (
-	'02:24:64:ca:b1:c5',
-	'HP51902A'
-);
-
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'02:24:64:ca:b1:c5',
-	'1331671418117',
-	'5',
-	'34.415775',
-	'-119.84671',
-	'11'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'02:24:64:ca:b1:c5',
-	'1331671420117',
-	'5',
-	'34.41577',
-	'-119.84674',
-	'11'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'02:24:64:ca:b1:c5',
-	'1331671422117',
-	'5',
-	'34.415768',
-	'-119.84677',
-	'11'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'02:24:64:ca:b1:c5',
-	'1331671437817',
-	'5',
-	'34.415783',
-	'-119.84702',
-	'11'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'02:24:64:ca:b1:c5',
-	'1331671439717',
-	'5',
-	'34.41579',
-	'-119.84705',
-	'11'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'02:24:64:ca:b1:c5',
-	'1331671441717',
-	'5',
-	'34.415794',
-	'-119.8471',
-	'11'
-);
-
-INSERT INTO `waps` (
-	`bssid`,
-	`ssid`
-) VALUES (
-	'58:6d:8f:65:f4:a5',
-	'SS'
-);
-
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:65:f4:a5',
-	'1331671458917',
-	'5',
-	'34.415794',
-	'-119.8474',
-	'0'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:65:f4:a5',
-	'1331671460917',
-	'5',
-	'34.415806',
-	'-119.84743',
-	'0'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:65:f4:a5',
-	'1331671462817',
-	'5',
-	'34.41582',
-	'-119.84745',
-	'0'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:65:f4:a5',
-	'1331671464817',
-	'5',
-	'34.415836',
-	'-119.847466',
-	'45'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:65:f4:a5',
-	'1331671466717',
-	'5',
-	'34.41584',
-	'-119.84748',
-	'45'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:65:f4:a5',
-	'1331671468717',
-	'5',
-	'34.415836',
-	'-119.84749',
-	'45'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:65:f4:a5',
-	'1331671470717',
-	'5',
-	'34.415836',
-	'-119.84749',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:65:f4:a5',
-	'1331671472617',
-	'5',
-	'34.415836',
-	'-119.84749',
-	'28'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:65:f4:a5',
-	'1331671474617',
-	'5',
-	'34.415836',
-	'-119.84749',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'58:6d:8f:65:f4:a5',
-	'1331671476517',
-	'5',
-	'34.415836',
-	'-119.84749',
-	'22'
-);
-
-INSERT INTO `waps` (
-	`bssid`,
-	`ssid`
-) VALUES (
-	'00:0c:42:3a:85:4a',
-	'nanonet100.2'
-);
-
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:0c:42:3a:85:4a',
-	'1331671357317',
-	'5',
-	'34.415817',
-	'-119.84582',
-	'0'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:0c:42:3a:85:4a',
-	'1331671364617',
-	'5',
-	'34.415794',
-	'-119.84594',
-	'0'
-);
-
-INSERT INTO `waps` (
-	`bssid`,
-	`ssid`
-) VALUES (
-	'28:cf:da:04:a3:ff',
-	'dev access'
-);
-
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'28:cf:da:04:a3:ff',
-	'1331671427917',
-	'5',
-	'34.41577',
-	'-119.84686',
-	'17'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'28:cf:da:04:a3:ff',
-	'1331671429917',
-	'5',
-	'34.415775',
-	'-119.84689',
-	'17'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'28:cf:da:04:a3:ff',
-	'1331671431917',
-	'5',
-	'34.41578',
-	'-119.846924',
-	'17'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'28:cf:da:04:a3:ff',
-	'1331671433817',
-	'5',
-	'34.41578',
-	'-119.846954',
-	'11'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'28:cf:da:04:a3:ff',
-	'1331671435817',
-	'5',
-	'34.41578',
-	'-119.84699',
-	'39'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'28:cf:da:04:a3:ff',
-	'1331671437817',
-	'5',
-	'34.415783',
-	'-119.84702',
-	'39'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'28:cf:da:04:a3:ff',
-	'1331671439717',
-	'5',
-	'34.41579',
-	'-119.84705',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'28:cf:da:04:a3:ff',
-	'1331671441717',
-	'5',
-	'34.415794',
-	'-119.8471',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'28:cf:da:04:a3:ff',
-	'1331671443717',
-	'5',
-	'34.4158',
-	'-119.84713',
-	'17'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'28:cf:da:04:a3:ff',
-	'1331671445617',
-	'5',
-	'34.415802',
-	'-119.84716',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'28:cf:da:04:a3:ff',
-	'1331671447617',
-	'5',
-	'34.415802',
-	'-119.84719',
-	'34'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'28:cf:da:04:a3:ff',
-	'1331671449517',
-	'5',
-	'34.415794',
-	'-119.84722',
-	'34'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'28:cf:da:04:a3:ff',
-	'1331671451517',
-	'5',
-	'34.41579',
-	'-119.84725',
-	'45'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'28:cf:da:04:a3:ff',
-	'1331671453517',
-	'5',
-	'34.41579',
-	'-119.84729',
-	'45'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'28:cf:da:04:a3:ff',
-	'1331671456917',
-	'5',
-	'34.41579',
-	'-119.847336',
-	'39'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'28:cf:da:04:a3:ff',
-	'1331671458917',
-	'5',
-	'34.415794',
-	'-119.8474',
-	'56'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'28:cf:da:04:a3:ff',
-	'1331671460917',
-	'5',
-	'34.415806',
-	'-119.84743',
-	'56'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'28:cf:da:04:a3:ff',
-	'1331671462817',
-	'5',
-	'34.41582',
-	'-119.84745',
-	'62'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'28:cf:da:04:a3:ff',
-	'1331671464817',
-	'5',
-	'34.415836',
-	'-119.847466',
-	'73'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'28:cf:da:04:a3:ff',
-	'1331671466717',
-	'5',
-	'34.41584',
-	'-119.84748',
-	'73'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'28:cf:da:04:a3:ff',
-	'1331671468717',
-	'5',
-	'34.415836',
-	'-119.84749',
-	'73'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'28:cf:da:04:a3:ff',
-	'1331671470717',
-	'5',
-	'34.415836',
-	'-119.84749',
-	'17'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'28:cf:da:04:a3:ff',
-	'1331671472617',
-	'5',
-	'34.415836',
-	'-119.84749',
-	'17'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'28:cf:da:04:a3:ff',
-	'1331671474617',
-	'5',
-	'34.415836',
-	'-119.84749',
-	'17'
-);
-
-INSERT INTO `waps` (
-	`bssid`,
-	`ssid`
-) VALUES (
-	'00:16:01:12:da:9a',
-	'HRWAP'
-);
-
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:16:01:12:da:9a',
-	'1331671439717',
-	'5',
-	'34.41579',
-	'-119.84705',
-	'11'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:16:01:12:da:9a',
-	'1331671441717',
-	'5',
-	'34.415794',
-	'-119.8471',
-	'45'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:16:01:12:da:9a',
-	'1331671443717',
-	'5',
-	'34.4158',
-	'-119.84713',
-	'45'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:16:01:12:da:9a',
-	'1331671445617',
-	'5',
-	'34.415802',
-	'-119.84716',
-	'45'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:16:01:12:da:9a',
-	'1331671449517',
-	'5',
-	'34.415794',
-	'-119.84722',
-	'11'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:16:01:12:da:9a',
-	'1331671451517',
-	'5',
-	'34.41579',
-	'-119.84725',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:16:01:12:da:9a',
-	'1331671453517',
-	'5',
-	'34.41579',
-	'-119.84729',
-	'11'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:16:01:12:da:9a',
-	'1331671456917',
-	'5',
-	'34.41579',
-	'-119.847336',
-	'11'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:16:01:12:da:9a',
-	'1331671458917',
-	'5',
-	'34.415794',
-	'-119.8474',
-	'11'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:16:01:12:da:9a',
-	'1331671460917',
-	'5',
-	'34.415806',
-	'-119.84743',
-	'11'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:16:01:12:da:9a',
-	'1331671462817',
-	'5',
-	'34.41582',
-	'-119.84745',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:16:01:12:da:9a',
-	'1331671464817',
-	'5',
-	'34.415836',
-	'-119.847466',
-	'51'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:16:01:12:da:9a',
-	'1331671466717',
-	'5',
-	'34.41584',
-	'-119.84748',
-	'28'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:16:01:12:da:9a',
-	'1331671468717',
-	'5',
-	'34.415836',
-	'-119.84749',
-	'28'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:16:01:12:da:9a',
-	'1331671470717',
-	'5',
-	'34.415836',
-	'-119.84749',
-	'28'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:16:01:12:da:9a',
-	'1331671474617',
-	'5',
-	'34.415836',
-	'-119.84749',
-	'17'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:16:01:12:da:9a',
-	'1331671476517',
-	'5',
-	'34.415836',
-	'-119.84749',
-	'17'
-);
-
-INSERT INTO `waps` (
-	`bssid`,
-	`ssid`
-) VALUES (
-	'8c:b6:4f:c8:44:22',
-	'Intermezzo'
-);
-
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'8c:b6:4f:c8:44:22',
-	'1331671427917',
-	'5',
-	'34.41577',
-	'-119.84686',
-	'5'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'8c:b6:4f:c8:44:22',
-	'1331671429917',
-	'5',
-	'34.415775',
-	'-119.84689',
-	'5'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'8c:b6:4f:c8:44:22',
-	'1331671431917',
-	'5',
-	'34.41578',
-	'-119.846924',
-	'5'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'8c:b6:4f:c8:44:22',
-	'1331671453517',
-	'5',
-	'34.41579',
-	'-119.84729',
-	'17'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'8c:b6:4f:c8:44:22',
-	'1331671456917',
-	'5',
-	'34.41579',
-	'-119.847336',
-	'39'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'8c:b6:4f:c8:44:22',
-	'1331671458917',
-	'5',
-	'34.415794',
-	'-119.8474',
-	'39'
-);
-
-INSERT INTO `waps` (
-	`bssid`,
-	`ssid`
-) VALUES (
-	'00:24:a5:15:7d:60',
-	'isber-net'
-);
-
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:24:a5:15:7d:60',
-	'1331671401817',
-	'5',
-	'34.41578',
-	'-119.84648',
-	'34'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:24:a5:15:7d:60',
-	'1331671404617',
-	'5',
-	'34.415783',
-	'-119.846535',
-	'34'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:24:a5:15:7d:60',
-	'1331671407517',
-	'5',
-	'34.415787',
-	'-119.84658',
-	'34'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:24:a5:15:7d:60',
-	'1331671410317',
-	'5',
-	'34.415787',
-	'-119.84658',
-	'45'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:24:a5:15:7d:60',
-	'1331671412317',
-	'5',
-	'34.415787',
-	'-119.84661',
-	'62'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:24:a5:15:7d:60',
-	'1331671414217',
-	'5',
-	'34.415783',
-	'-119.84665',
-	'102'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:24:a5:15:7d:60',
-	'1331671416217',
-	'5',
-	'34.415783',
-	'-119.84668',
-	'79'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:24:a5:15:7d:60',
-	'1331671418117',
-	'5',
-	'34.415775',
-	'-119.84671',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:24:a5:15:7d:60',
-	'1331671420117',
-	'5',
-	'34.41577',
-	'-119.84674',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:24:a5:15:7d:60',
-	'1331671422117',
-	'5',
-	'34.415768',
-	'-119.84677',
-	'17'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:24:a5:15:7d:60',
-	'1331671424017',
-	'5',
-	'34.415768',
-	'-119.8468',
-	'17'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:24:a5:15:7d:60',
-	'1331671426017',
-	'5',
-	'34.41577',
-	'-119.84683',
-	'17'
-);
-
-INSERT INTO `waps` (
-	`bssid`,
-	`ssid`
-) VALUES (
-	'1c:17:d3:32:6d:70',
-	'UCSB Wireless Web'
-);
-
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'1c:17:d3:32:6d:70',
-	'1331671364617',
-	'5',
-	'34.415794',
-	'-119.84594',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'1c:17:d3:32:6d:70',
-	'1331671367317',
-	'5',
-	'34.415787',
-	'-119.84597',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'1c:17:d3:32:6d:70',
-	'1331671369917',
-	'5',
-	'34.41578',
-	'-119.846016',
-	'22'
-);
-
-INSERT INTO `waps` (
-	`bssid`,
-	`ssid`
-) VALUES (
-	'00:13:10:90:79:f8',
-	'Doctimus Prime G'
-);
-
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:13:10:90:79:f8',
-	'1331671337417',
-	'20',
-	'34.415813',
-	'-119.845604',
-	'85'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:13:10:90:79:f8',
-	'1331671349317',
-	'5',
-	'34.415886',
-	'-119.84575',
-	'85'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:13:10:90:79:f8',
-	'1331671364617',
-	'5',
-	'34.415794',
-	'-119.84594',
-	'51'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:13:10:90:79:f8',
-	'1331671367317',
-	'5',
-	'34.415787',
-	'-119.84597',
-	'51'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:13:10:90:79:f8',
-	'1331671369917',
-	'5',
-	'34.41578',
-	'-119.846016',
-	'51'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:13:10:90:79:f8',
-	'1331671372517',
-	'5',
-	'34.415775',
-	'-119.846054',
-	'62'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:13:10:90:79:f8',
-	'1331671375117',
-	'5',
-	'34.41578',
-	'-119.84608',
-	'5'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:13:10:90:79:f8',
-	'1331671377717',
-	'5',
-	'34.41578',
-	'-119.846115',
-	'62'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:13:10:90:79:f8',
-	'1331671380317',
-	'5',
-	'34.41578',
-	'-119.846146',
-	'62'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:13:10:90:79:f8',
-	'1331671382917',
-	'5',
-	'34.415775',
-	'-119.84618',
-	'62'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:13:10:90:79:f8',
-	'1331671385517',
-	'5',
-	'34.415775',
-	'-119.84624',
-	'62'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:13:10:90:79:f8',
-	'1331671388117',
-	'5',
-	'34.415775',
-	'-119.84627',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:13:10:90:79:f8',
-	'1331671390817',
-	'5',
-	'34.41577',
-	'-119.84631',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:13:10:90:79:f8',
-	'1331671393617',
-	'5',
-	'34.41577',
-	'-119.84636',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:13:10:90:79:f8',
-	'1331671427917',
-	'5',
-	'34.41577',
-	'-119.84686',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:13:10:90:79:f8',
-	'1331671429917',
-	'5',
-	'34.415775',
-	'-119.84689',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:13:10:90:79:f8',
-	'1331671431917',
-	'5',
-	'34.41578',
-	'-119.846924',
-	'22'
-);
-
-INSERT INTO `waps` (
-	`bssid`,
-	`ssid`
-) VALUES (
-	'00:80:48:55:6c:ab',
-	'UCSBIOGatICESS'
-);
-
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:80:48:55:6c:ab',
-	'1331671357317',
-	'5',
-	'34.415817',
-	'-119.84582',
-	'79'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:80:48:55:6c:ab',
-	'1331671364617',
-	'5',
-	'34.415794',
-	'-119.84594',
-	'79'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:80:48:55:6c:ab',
-	'1331671367317',
-	'5',
-	'34.415787',
-	'-119.84597',
-	'51'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:80:48:55:6c:ab',
-	'1331671369917',
-	'5',
-	'34.41578',
-	'-119.846016',
-	'11'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:80:48:55:6c:ab',
-	'1331671372517',
-	'5',
-	'34.415775',
-	'-119.846054',
-	'11'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:80:48:55:6c:ab',
-	'1331671375117',
-	'5',
-	'34.41578',
-	'-119.84608',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:80:48:55:6c:ab',
-	'1331671377717',
-	'5',
-	'34.41578',
-	'-119.846115',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:80:48:55:6c:ab',
-	'1331671380317',
-	'5',
-	'34.41578',
-	'-119.846146',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:80:48:55:6c:ab',
-	'1331671388117',
-	'5',
-	'34.415775',
-	'-119.84627',
-	'34'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:80:48:55:6c:ab',
-	'1331671390817',
-	'5',
-	'34.41577',
-	'-119.84631',
-	'34'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:80:48:55:6c:ab',
-	'1331671393617',
-	'5',
-	'34.41577',
-	'-119.84636',
-	'34'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:80:48:55:6c:ab',
-	'1331671433817',
-	'5',
-	'34.41578',
-	'-119.846954',
-	'45'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:80:48:55:6c:ab',
-	'1331671435817',
-	'5',
-	'34.41578',
-	'-119.84699',
-	'45'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:80:48:55:6c:ab',
-	'1331671437817',
-	'5',
-	'34.415783',
-	'-119.84702',
-	'45'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:80:48:55:6c:ab',
-	'1331671439717',
-	'5',
-	'34.41579',
-	'-119.84705',
-	'34'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:80:48:55:6c:ab',
-	'1331671441717',
-	'5',
-	'34.415794',
-	'-119.8471',
-	'79'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:80:48:55:6c:ab',
-	'1331671443717',
-	'5',
-	'34.4158',
-	'-119.84713',
-	'79'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:80:48:55:6c:ab',
-	'1331671445617',
-	'5',
-	'34.415802',
-	'-119.84716',
-	'79'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:80:48:55:6c:ab',
-	'1331671456917',
-	'5',
-	'34.41579',
-	'-119.847336',
-	'51'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:80:48:55:6c:ab',
-	'1331671458917',
-	'5',
-	'34.415794',
-	'-119.8474',
-	'51'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:80:48:55:6c:ab',
-	'1331671460917',
-	'5',
-	'34.415806',
-	'-119.84743',
-	'79'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:80:48:55:6c:ab',
-	'1331671462817',
-	'5',
-	'34.41582',
-	'-119.84745',
-	'39'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:80:48:55:6c:ab',
-	'1331671464817',
-	'5',
-	'34.415836',
-	'-119.847466',
-	'39'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:80:48:55:6c:ab',
-	'1331671466717',
-	'5',
-	'34.41584',
-	'-119.84748',
-	'39'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:80:48:55:6c:ab',
-	'1331671472617',
-	'5',
-	'34.415836',
-	'-119.84749',
-	'45'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:80:48:55:6c:ab',
-	'1331671474617',
-	'5',
-	'34.415836',
-	'-119.84749',
-	'39'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:80:48:55:6c:ab',
-	'1331671476517',
-	'5',
-	'34.415836',
-	'-119.84749',
-	'45'
-);
-
-INSERT INTO `waps` (
-	`bssid`,
-	`ssid`
-) VALUES (
-	'00:21:29:6c:31:88',
-	'Office of Research'
-);
-
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:21:29:6c:31:88',
-	'1331671364617',
-	'5',
-	'34.415794',
-	'-119.84594',
-	'39'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:21:29:6c:31:88',
-	'1331671367317',
-	'5',
-	'34.415787',
-	'-119.84597',
-	'39'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:21:29:6c:31:88',
-	'1331671369917',
-	'5',
-	'34.41578',
-	'-119.846016',
-	'39'
-);
-
-INSERT INTO `waps` (
-	`bssid`,
-	`ssid`
-) VALUES (
-	'9c:4e:20:c9:af:9e',
-	'9132Y'
-);
-
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'9c:4e:20:c9:af:9e',
-	'1331671351317',
-	'5',
-	'34.41587',
-	'-119.845764',
-	'45'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'9c:4e:20:c9:af:9e',
-	'1331671353317',
-	'5',
-	'34.415844',
-	'-119.84578',
-	'45'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'9c:4e:20:c9:af:9e',
-	'1331671355217',
-	'5',
-	'34.41583',
-	'-119.845795',
-	'45'
-);
-
-INSERT INTO `waps` (
-	`bssid`,
-	`ssid`
-) VALUES (
-	'00:25:9c:4c:00:c6',
-	'linksys'
-);
-
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:25:9c:4c:00:c6',
-	'1331671433817',
-	'5',
-	'34.41578',
-	'-119.846954',
-	'11'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:25:9c:4c:00:c6',
-	'1331671435817',
-	'5',
-	'34.41578',
-	'-119.84699',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:25:9c:4c:00:c6',
-	'1331671437817',
-	'5',
-	'34.415783',
-	'-119.84702',
-	'22'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:25:9c:4c:00:c6',
-	'1331671439717',
-	'5',
-	'34.41579',
-	'-119.84705',
-	'22'
-);
-
-INSERT INTO `waps` (
-	`bssid`,
-	`ssid`
-) VALUES (
-	'00:24:a5:b3:f6:fc',
-	'isber-net'
-);
-
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:24:a5:b3:f6:fc',
-	'1331671422117',
-	'5',
-	'34.415768',
-	'-119.84677',
-	'11'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:24:a5:b3:f6:fc',
-	'1331671424017',
-	'5',
-	'34.415768',
-	'-119.8468',
-	'5'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:24:a5:b3:f6:fc',
-	'1331671426017',
-	'5',
-	'34.41577',
-	'-119.84683',
-	'5'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:24:a5:b3:f6:fc',
-	'1331671427917',
-	'5',
-	'34.41577',
-	'-119.84686',
-	'17'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:24:a5:b3:f6:fc',
-	'1331671429917',
-	'5',
-	'34.415775',
-	'-119.84689',
-	'17'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:24:a5:b3:f6:fc',
-	'1331671431917',
-	'5',
-	'34.41578',
-	'-119.846924',
-	'45'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:24:a5:b3:f6:fc',
-	'1331671433817',
-	'5',
-	'34.41578',
-	'-119.846954',
-	'45'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:24:a5:b3:f6:fc',
-	'1331671435817',
-	'5',
-	'34.41578',
-	'-119.84699',
-	'45'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:24:a5:b3:f6:fc',
-	'1331671439717',
-	'5',
-	'34.41579',
-	'-119.84705',
-	'17'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:24:a5:b3:f6:fc',
-	'1331671441717',
-	'5',
-	'34.415794',
-	'-119.8471',
-	'17'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:24:a5:b3:f6:fc',
-	'1331671443717',
-	'5',
-	'34.4158',
-	'-119.84713',
-	'17'
-);
-
-INSERT INTO `waps` (
-	`bssid`,
-	`ssid`
-) VALUES (
-	'6e:12:c2:4e:db:1e',
-	'HP8D67A1'
-);
-
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'6e:12:c2:4e:db:1e',
-	'1331671357317',
-	'5',
-	'34.415817',
-	'-119.84582',
-	'34'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'6e:12:c2:4e:db:1e',
-	'1331671364617',
-	'5',
-	'34.415794',
-	'-119.84594',
-	'34'
-);
-
-INSERT INTO `waps` (
-	`bssid`,
-	`ssid`
-) VALUES (
-	'00:02:2d:ba:7e:28',
-	'PSetherwire'
-);
-
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:02:2d:ba:7e:28',
-	'1331671451517',
-	'5',
-	'34.41579',
-	'-119.84725',
-	'5'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:02:2d:ba:7e:28',
-	'1331671453517',
-	'5',
-	'34.41579',
-	'-119.84729',
-	'0'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:02:2d:ba:7e:28',
-	'1331671456917',
-	'5',
-	'34.41579',
-	'-119.847336',
-	'0'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:02:2d:ba:7e:28',
-	'1331671458917',
-	'5',
-	'34.415794',
-	'-119.8474',
-	'11'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:02:2d:ba:7e:28',
-	'1331671460917',
-	'5',
-	'34.415806',
-	'-119.84743',
-	'17'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:02:2d:ba:7e:28',
-	'1331671462817',
-	'5',
-	'34.41582',
-	'-119.84745',
-	'17'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:02:2d:ba:7e:28',
-	'1331671464817',
-	'5',
-	'34.415836',
-	'-119.847466',
-	'17'
-);
-INSERT INTO `events` (
-	`bssid`,
-	`time`,
-	`accuracy`,
-	`latitude`,
-	`longitude`,
-	`rssi`
-) VALUES (
-	'00:02:2d:ba:7e:28',
-	'1331671466717',
-	'5',
-	'34.41584',
-	'-119.84748',
-	'17'
-);
+@37  ------- 2 waps....
+@54  1c:17:d3:32:57:f0
+@62  00:21:e9:b8:be:f9
+@65  ------- 2 waps....
+@82  1c:17:d3:32:57:f0
+@90  00:21:e9:b8:be:f9
+@93  ------- 2 waps....
+@110  00:25:9c:5f:47:6e
+@118  00:11:92:50:12:20
+@121  ------- 4 waps....
+@138  1c:17:d3:32:57:f0
+@146  9c:4e:20:73:c1:41
+@154  00:25:9c:5f:47:6e
+@162  00:11:92:50:12:20
+@165  ------- 9 waps....
+@182  9c:4e:20:73:be:f0
+@190  00:0c:42:3a:84:e8
+@198  9c:4e:20:73:bc:50
+@206  9c:4e:20:73:bc:5f
+@214  9c:4e:20:73:bc:51
+@222  1c:17:d3:32:57:f0
+@230  9c:4e:20:73:c1:41
+@238  00:25:9c:5f:47:6e
+@246  00:11:92:50:12:20
+@249  ------- 6 waps....
+@266  00:02:2d:bc:ba:ff
+@274  9c:4e:20:73:be:f0
+@282  00:0c:42:3a:84:e8
+@290  9c:4e:20:73:bc:50
+@298  9c:4e:20:73:bc:5f
+@306  9c:4e:20:73:bc:51
+@309  ------- 3 waps....
+@326  1c:17:d3:32:7b:b0
+@334  1c:17:d3:32:6d:70
+@342  00:02:2d:bc:ba:ff
+@345  ------- 4 waps....
+@362  00:02:2d:bc:d0:0c
+@370  1c:17:d3:32:7b:b0
+@378  1c:17:d3:32:6d:70
+@386  00:02:2d:bc:ba:ff
+@389  ------- 1 waps....
+@406  00:02:2d:bc:d0:0c
+@409  ------- 1 waps....
+@426  00:02:2d:bc:d0:0c
+@429  ------- 1 waps....
+@446  9c:4e:20:73:c2:cf
+@449  ------- 4 waps....
+@466  68:ef:bd:e3:05:00
+@474  00:02:2d:bc:d0:0c
+@482  68:ef:bd:e3:05:01
+@490  9c:4e:20:73:c2:cf
+@493  ------- 4 waps....
+@510  1c:17:d3:32:56:81
+@518  68:ef:bd:e3:05:00
+@526  00:02:2d:bc:d0:0c
+@534  68:ef:bd:e3:05:01
+@537  ------- 4 waps....
+@554  00:24:6c:83:3f:91
+@562  00:24:6c:83:3f:90
+@570  00:24:6c:83:3f:92
+@578  1c:17:d3:32:56:81
+@581  ------- 5 waps....
+@598  00:02:2d:bc:af:5d
+@606  00:24:6c:83:3f:91
+@614  00:24:6c:83:3f:90
+@622  00:24:6c:83:3f:92
+@630  1c:17:d3:32:56:81
+@633  ------- 5 waps....
+@650  1c:17:d3:32:56:8e
+@658  00:02:2d:bc:af:5d
+@666  00:24:6c:83:3f:91
+@674  00:24:6c:83:3f:90
+@682  00:24:6c:83:3f:92
+@685  ------- 6 waps....
+@702  1c:17:d3:32:56:80
+@710  1c:17:d3:32:56:8e
+@718  00:02:2d:bc:af:5d
+@726  00:24:6c:83:3f:91
+@734  00:24:6c:83:3f:90
+@742  00:24:6c:83:3f:92
+@745  ------- 9 waps....
+@762  2e:26:55:61:7b:5a
+@770  f0:25:72:13:3a:80
+@778  00:06:b1:12:75:d0
+@786  1c:17:d3:32:56:80
+@794  1c:17:d3:32:56:8e
+@802  00:02:2d:bc:af:5d
+@810  00:24:6c:83:3f:91
+@818  00:24:6c:83:3f:90
+@826  00:24:6c:83:3f:92
+@829  ------- 4 waps....
+@846  f0:25:72:13:3a:82
+@854  2e:26:55:61:7b:5a
+@862  f0:25:72:13:3a:80
+@870  00:06:b1:12:75:d0
+@873  ------- 4 waps....
+@890  f0:25:72:13:3a:82
+@898  2e:26:55:61:7b:5a
+@906  f0:25:72:13:3a:80
+@914  00:06:b1:12:75:d0
+@917  ------- 2 waps....
+@934  f0:25:72:13:3a:82
+@942  00:06:b1:12:75:d0
+@945  ------- 1 waps....
+@962  00:06:b1:12:75:d0
+@965  ------- 1 waps....
+@982  00:16:01:b9:c3:3f
+@985  ------- 1 waps....
+@1002  00:16:01:b9:c3:3f
+@1005  ------- 1 waps....
+@1022  00:16:01:b9:c3:3f
+@1025  ------- 1 waps....
+@1042  00:16:01:b9:c3:3f
+@1045  ------- 3 waps....
+@1062  00:0f:66:9f:54:91
+@1070  00:0b:86:60:bb:80
+@1078  00:0b:86:60:bb:81
+@1081  ------- 4 waps....
+@1098  c0:3f:0e:cb:fc:00
+@1106  00:0f:66:9f:54:91
+@1114  00:0b:86:60:bb:80
+@1122  00:0b:86:60:bb:81
+@1125  ------- 4 waps....
+@1142  c0:3f:0e:cb:fc:00
+@1150  00:0f:66:9f:54:91
+@1158  00:0b:86:60:bb:80
+@1166  00:0b:86:60:bb:81
+@1169  ------- 2 waps....
+@1186  c0:3f:0e:cb:fc:00
+@1194  00:0f:66:9f:54:91
+@1197  ------- 2 waps....
+@1214  00:16:b6:0f:bb:55
+@1222  00:0f:66:9f:54:91
+@1225  ------- 4 waps....
+@1242  00:24:6c:58:0d:20
+@1250  00:24:6c:58:0d:21
+@1258  00:16:b6:0f:bb:55
+@1266  00:0f:66:9f:54:91
+@1269  ------- 4 waps....
+@1286  00:24:6c:58:0d:20
+@1294  00:24:6c:58:0d:21
+@1302  00:16:b6:0f:bb:55
+@1310  00:0f:66:9f:54:91
+@1313  ------- 2 waps....
+@1330  00:24:6c:58:0d:20
+@1338  00:24:6c:58:0d:21
+@1341  ------- 6 waps....
+@1358  00:24:6c:da:73:40
+@1366  00:0b:86:51:85:28
+@1374  00:0b:86:51:85:20
+@1382  00:24:6c:da:73:41
+@1390  00:0b:86:51:85:29
+@1398  00:0b:86:51:85:21
+@1401  ------- 11 waps....
+@1418  36:a9:05:0e:b8:8a
+@1426  00:0b:86:51:86:e0
+@1434  00:0b:86:51:85:60
+@1442  00:1a:1e:f3:ea:a1
+@1450  00:0b:86:51:85:61
+@1458  00:24:6c:da:73:40
+@1466  00:0b:86:51:85:28
+@1474  00:0b:86:51:85:20
+@1482  00:24:6c:da:73:41
+@1490  00:0b:86:51:85:29
+@1498  00:0b:86:51:85:21
+@1501  ------- 15 waps....
+@1518  00:0b:86:51:87:00
+@1526  00:24:6c:da:5c:00
+@1534  00:0b:86:51:87:01
+@1542  00:24:6c:da:5c:01
+@1550  36:a9:05:0e:b8:8a
+@1558  00:0b:86:51:86:e0
+@1566  00:0b:86:51:85:60
+@1574  00:1a:1e:f3:ea:a1
+@1582  00:0b:86:51:85:61
+@1590  00:24:6c:da:73:40
+@1598  00:0b:86:51:85:28
+@1606  00:0b:86:51:85:20
+@1614  00:24:6c:da:73:41
+@1622  00:0b:86:51:85:29
+@1630  00:0b:86:51:85:21
+@1633  ------- 18 waps....
+@1650  00:0b:86:50:a2:60
+@1658  00:0b:86:50:ba:48
+@1666  00:24:6c:da:70:30
+@1674  00:0b:86:50:a2:61
+@1682  00:24:6c:da:70:31
+@1690  00:0b:86:51:87:00
+@1698  00:24:6c:da:5c:00
+@1706  00:0b:86:51:87:01
+@1714  00:24:6c:da:5c:01
+@1722  36:a9:05:0e:b8:8a
+@1730  00:0b:86:51:86:e0
+@1738  00:0b:86:51:85:60
+@1746  00:1a:1e:f3:ea:a1
+@1754  00:0b:86:51:85:61
+@1762  00:0b:86:51:85:28
+@1770  00:0b:86:51:85:20
+@1778  00:0b:86:51:85:29
+@1786  00:0b:86:51:85:21
+@1789  ------- 16 waps....
+@1806  02:27:b7:bd:70:bc
+@1814  00:0b:86:5b:96:60
+@1822  00:24:6c:da:7c:f0
+@1830  00:23:69:8c:70:28
+@1838  00:0b:86:5b:96:61
+@1846  00:24:6c:da:7c:f1
+@1854  00:0b:86:50:a2:60
+@1862  00:0b:86:50:ba:48
+@1870  00:24:6c:da:70:30
+@1878  00:0b:86:50:a2:61
+@1886  00:24:6c:da:70:31
+@1894  00:0b:86:51:87:00
+@1902  00:24:6c:da:5c:00
+@1910  00:0b:86:51:87:01
+@1918  00:24:6c:da:5c:01
+@1926  36:a9:05:0e:b8:8a
+@1929  ------- 21 waps....
+@1946  00:0b:86:50:a1:e0
+@1954  00:0b:86:51:6d:c0
+@1962  00:0b:86:50:bd:c0
+@1970  00:0b:86:50:a1:e1
+@1978  00:0b:86:51:6d:c1
+@1986  00:0b:86:50:bd:c1
+@1994  02:27:b7:bd:70:bc
+@2002  00:0b:86:5b:96:60
+@2010  00:24:6c:da:7c:f0
+@2018  00:23:69:8c:70:28
+@2026  00:0b:86:5b:96:61
+@2034  00:24:6c:da:7c:f1
+@2042  00:0b:86:50:a2:60
+@2050  00:0b:86:50:ba:48
+@2058  00:24:6c:da:70:30
+@2066  00:0b:86:50:a2:61
+@2074  00:24:6c:da:70:31
+@2082  00:0b:86:51:87:00
+@2090  00:24:6c:da:5c:00
+@2098  00:0b:86:51:87:01
+@2106  00:24:6c:da:5c:01
+@2109  ------- 18 waps....
+@2126  c0:c1:c0:9d:6d:46
+@2134  c0:c1:c0:c9:c0:73
+@2142  7c:4f:b5:da:67:26
+@2150  00:24:6c:da:7c:e1
+@2158  00:0b:86:50:a1:e0
+@2166  00:0b:86:51:6d:c0
+@2174  00:0b:86:50:bd:c0
+@2182  00:0b:86:50:a1:e1
+@2190  00:0b:86:51:6d:c1
+@2198  00:0b:86:50:bd:c1
+@2206  02:27:b7:bd:70:bc
+@2214  00:0b:86:5b:96:60
+@2222  00:24:6c:da:7c:f0
+@2230  00:23:69:8c:70:28
+@2238  00:0b:86:5b:96:61
+@2246  00:24:6c:da:7c:f1
+@2254  00:0b:86:50:a2:60
+@2262  00:0b:86:50:a2:61
+@2265  ------- 16 waps....
+@2282  00:22:3f:8a:8f:e8
+@2290  30:46:9a:53:6f:e0
+@2298  c0:c1:c0:9d:6d:46
+@2306  c0:c1:c0:c9:c0:73
+@2314  7c:4f:b5:da:67:26
+@2322  00:24:6c:da:7c:e1
+@2330  00:0b:86:50:a1:e0
+@2338  00:0b:86:51:6d:c0
+@2346  00:0b:86:50:bd:c0
+@2354  00:0b:86:50:a1:e1
+@2362  00:0b:86:51:6d:c1
+@2370  00:0b:86:50:bd:c1
+@2378  00:0b:86:5b:96:60
+@2386  00:24:6c:da:7c:f0
+@2394  00:0b:86:5b:96:61
+@2402  00:24:6c:da:7c:f1
+@2405  ------- 17 waps....
+@2422  00:0b:86:50:9e:80
+@2430  e0:91:f5:fb:86:b4
+@2438  00:0b:86:50:9e:81
+@2446  94:44:52:c4:b4:02
+@2454  00:22:3f:8a:8f:e8
+@2462  30:46:9a:53:6f:e0
+@2470  c0:c1:c0:9d:6d:46
+@2478  c0:c1:c0:c9:c0:73
+@2486  7c:4f:b5:da:67:26
+@2494  00:24:6c:da:7c:e1
+@2502  00:0b:86:50:a1:e0
+@2510  00:0b:86:51:6d:c0
+@2518  00:0b:86:50:bd:c0
+@2526  00:0b:86:51:6d:c1
+@2534  00:0b:86:50:bd:c1
+@2542  00:0b:86:5b:96:60
+@2550  00:0b:86:5b:96:61
+@2553  ------- 14 waps....
+@2570  00:0b:86:51:6c:e0
+@2578  00:0b:86:50:be:a0
+@2586  00:0b:86:51:6c:e1
+@2594  00:0b:86:50:a1:e1
+@2602  00:0b:86:50:9e:80
+@2610  e0:91:f5:fb:86:b4
+@2618  00:0b:86:50:9e:81
+@2626  94:44:52:c4:b4:02
+@2634  00:22:3f:8a:8f:e8
+@2642  30:46:9a:53:6f:e0
+@2650  00:0b:86:51:6d:c0
+@2658  00:0b:86:50:bd:c0
+@2666  00:0b:86:51:6d:c1
+@2674  00:0b:86:50:bd:c1
+@2677  ------- 20 waps....
+@2694  00:24:6c:da:69:c1
+@2702  00:24:6c:da:69:d1
+@2710  7c:4f:b5:d0:bd:f3
+@2718  00:24:6c:da:69:c2
+@2726  00:24:6c:da:69:c0
+@2734  00:24:6c:da:69:d0
+@2742  00:24:6c:da:69:d2
+@2750  00:0b:86:51:6c:e0
+@2758  00:0b:86:50:be:a0
+@2766  00:0b:86:51:6c:e1
+@2774  00:0b:86:50:a1:e1
+@2782  00:0b:86:50:9e:80
+@2790  e0:91:f5:fb:86:b4
+@2798  00:0b:86:50:9e:81
+@2806  94:44:52:c4:b4:02
+@2814  30:46:9a:53:6f:e0
+@2822  00:0b:86:51:6d:c0
+@2830  00:0b:86:50:bd:c0
+@2838  00:0b:86:51:6d:c1
+@2846  00:0b:86:50:bd:c1
+@2849  ------- 24 waps....
+@2866  00:24:6c:da:6d:f0
+@2874  00:21:91:02:22:a4
+@2882  c0:3f:0e:5e:c9:be
+@2890  00:0b:86:50:a2:61
+@2898  c4:3d:c7:40:bc:93
+@2906  20:4e:7f:3d:72:cc
+@2914  00:24:6c:da:6d:f1
+@2922  00:24:6c:da:69:c1
+@2930  00:24:6c:da:69:d1
+@2938  7c:4f:b5:d0:bd:f3
+@2946  00:24:6c:da:69:c2
+@2954  00:24:6c:da:69:c0
+@2962  00:24:6c:da:69:d0
+@2970  00:24:6c:da:69:d2
+@2978  00:0b:86:51:6c:e0
+@2986  00:0b:86:50:be:a0
+@2994  00:0b:86:51:6c:e1
+@3002  00:0b:86:50:a1:e1
+@3010  00:0b:86:50:9e:81
+@3018  94:44:52:c4:b4:02
+@3026  00:0b:86:51:6d:c0
+@3034  00:0b:86:50:bd:c0
+@3042  00:0b:86:51:6d:c1
+@3050  00:0b:86:50:bd:c1
+@3053  ------- 35 waps....
+@3070  58:6d:8f:07:35:1e
+@3078  00:0b:86:50:9e:80
+@3086  00:0b:86:50:9e:88
+@3094  00:0b:86:51:79:88
+@3102  00:0b:86:51:6c:e8
+@3110  08:86:3b:39:b1:a8
+@3118  c0:3f:0e:aa:97:e2
+@3126  e0:91:f5:c7:a7:51
+@3134  00:1b:2f:ff:f5:ba
+@3142  58:6d:8f:07:35:1c
+@3150  00:0b:86:50:9e:89
+@3158  00:0b:86:51:79:89
+@3166  00:0b:86:51:6c:e9
+@3174  00:0b:86:50:be:a1
+@3182  00:24:6c:da:6d:f0
+@3190  00:21:91:02:22:a4
+@3198  c0:3f:0e:5e:c9:be
+@3206  00:0b:86:50:a2:61
+@3214  c4:3d:c7:40:bc:93
+@3222  20:4e:7f:3d:72:cc
+@3230  00:24:6c:da:6d:f1
+@3238  00:24:6c:da:69:c1
+@3246  00:24:6c:da:69:d1
+@3254  7c:4f:b5:d0:bd:f3
+@3262  00:24:6c:da:69:c2
+@3270  00:24:6c:da:69:c0
+@3278  00:24:6c:da:69:d0
+@3286  00:24:6c:da:69:d2
+@3294  00:0b:86:51:6c:e0
+@3302  00:0b:86:50:be:a0
+@3310  00:0b:86:51:6c:e1
+@3318  00:0b:86:50:9e:81
+@3326  94:44:52:c4:b4:02
+@3334  00:0b:86:50:bd:c0
+@3342  00:0b:86:50:bd:c1
+@3345  ------- 40 waps....
+@3362  00:0b:86:51:72:40
+@3370  00:24:6c:da:5f:90
+@3378  00:0b:86:51:79:80
+@3386  00:1a:1e:0a:17:a8
+@3394  00:1a:1e:0a:17:a0
+@3402  00:0b:86:51:8c:20
+@3410  58:6d:8f:07:35:1d
+@3418  00:0b:86:51:72:41
+@3426  00:0b:86:51:79:81
+@3434  00:1a:1e:0a:17:a9
+@3442  00:24:6c:da:5f:91
+@3450  00:1a:1e:0a:17:a1
+@3458  00:0b:86:51:8c:21
+@3466  58:6d:8f:07:35:1e
+@3474  00:0b:86:50:9e:80
+@3482  00:0b:86:50:9e:88
+@3490  00:0b:86:51:79:88
+@3498  00:0b:86:51:6c:e8
+@3506  08:86:3b:39:b1:a8
+@3514  c0:3f:0e:aa:97:e2
+@3522  e0:91:f5:c7:a7:51
+@3530  00:1b:2f:ff:f5:ba
+@3538  58:6d:8f:07:35:1c
+@3546  00:0b:86:50:9e:89
+@3554  00:0b:86:51:79:89
+@3562  00:0b:86:51:6c:e9
+@3570  00:0b:86:50:be:a1
+@3578  00:24:6c:da:6d:f0
+@3586  00:21:91:02:22:a4
+@3594  c0:3f:0e:5e:c9:be
+@3602  00:0b:86:50:a2:61
+@3610  c4:3d:c7:40:bc:93
+@3618  20:4e:7f:3d:72:cc
+@3626  00:24:6c:da:6d:f1
+@3634  00:0b:86:51:6c:e0
+@3642  00:0b:86:50:be:a0
+@3650  00:0b:86:51:6c:e1
+@3658  00:0b:86:50:9e:81
+@3666  94:44:52:c4:b4:02
+@3674  00:0b:86:50:bd:c0
+@3677  ------- 46 waps....
+@3694  00:0b:86:51:6e:c8
+@3702  00:0b:86:51:6e:c0
+@3710  00:0b:86:51:72:48
+@3718  00:24:6c:da:5c:70
+@3726  c0:c1:c0:c9:c0:73
+@3734  a0:21:b7:4f:87:8d
+@3742  7c:4f:b5:da:67:26
+@3750  00:24:6c:da:5f:81
+@3758  00:0b:86:51:6e:c9
+@3766  00:0b:86:51:6e:c1
+@3774  d8:30:62:2e:73:99
+@3782  00:0b:86:51:72:49
+@3790  e0:91:f5:88:de:34
+@3798  00:24:6c:da:5c:71
+@3806  00:0b:86:51:72:40
+@3814  00:24:6c:da:5f:90
+@3822  00:0b:86:51:79:80
+@3830  00:1a:1e:0a:17:a8
+@3838  00:1a:1e:0a:17:a0
+@3846  00:0b:86:51:8c:20
+@3854  58:6d:8f:07:35:1d
+@3862  00:0b:86:51:72:41
+@3870  00:0b:86:51:79:81
+@3878  00:1a:1e:0a:17:a9
+@3886  00:24:6c:da:5f:91
+@3894  00:1a:1e:0a:17:a1
+@3902  00:0b:86:51:8c:21
+@3910  58:6d:8f:07:35:1e
+@3918  00:0b:86:50:9e:80
+@3926  00:0b:86:50:9e:88
+@3934  00:0b:86:51:79:88
+@3942  00:0b:86:51:6c:e8
+@3950  08:86:3b:39:b1:a8
+@3958  c0:3f:0e:aa:97:e2
+@3966  e0:91:f5:c7:a7:51
+@3974  00:1b:2f:ff:f5:ba
+@3982  58:6d:8f:07:35:1c
+@3990  00:0b:86:50:9e:89
+@3998  00:0b:86:51:79:89
+@4006  00:0b:86:51:6c:e9
+@4014  00:0b:86:50:be:a1
+@4022  20:4e:7f:3d:72:cc
+@4030  00:0b:86:51:6c:e0
+@4038  00:0b:86:50:be:a0
+@4046  00:0b:86:51:6c:e1
+@4054  00:0b:86:50:9e:81
+@4057  ------- 46 waps....
+@4074  00:24:6c:da:5c:60
+@4082  c0:c1:c0:9d:6d:47
+@4090  00:24:6c:da:5f:80
+@4098  c0:c1:c0:9d:6d:46
+@4106  00:24:6c:da:5c:61
+@4114  00:24:b2:7f:15:0a
+@4122  00:26:f2:fc:38:e6
+@4130  00:0b:86:51:6e:c8
+@4138  00:0b:86:51:6e:c0
+@4146  00:0b:86:51:72:48
+@4154  00:24:6c:da:5c:70
+@4162  c0:c1:c0:c9:c0:73
+@4170  a0:21:b7:4f:87:8d
+@4178  7c:4f:b5:da:67:26
+@4186  00:24:6c:da:5f:81
+@4194  00:0b:86:51:6e:c9
+@4202  00:0b:86:51:6e:c1
+@4210  d8:30:62:2e:73:99
+@4218  00:0b:86:51:72:49
+@4226  e0:91:f5:88:de:34
+@4234  00:24:6c:da:5c:71
+@4242  00:0b:86:51:72:40
+@4250  00:24:6c:da:5f:90
+@4258  00:0b:86:51:79:80
+@4266  00:1a:1e:0a:17:a8
+@4274  00:1a:1e:0a:17:a0
+@4282  00:0b:86:51:8c:20
+@4290  58:6d:8f:07:35:1d
+@4298  00:0b:86:51:72:41
+@4306  00:0b:86:51:79:81
+@4314  00:1a:1e:0a:17:a9
+@4322  00:24:6c:da:5f:91
+@4330  00:1a:1e:0a:17:a1
+@4338  00:0b:86:51:8c:21
+@4346  58:6d:8f:07:35:1e
+@4354  00:0b:86:50:9e:80
+@4362  00:0b:86:51:79:88
+@4370  00:0b:86:51:6c:e8
+@4378  58:6d:8f:07:35:1c
+@4386  00:0b:86:51:79:89
+@4394  00:0b:86:51:6c:e9
+@4402  00:0b:86:50:be:a1
+@4410  00:0b:86:51:6c:e0
+@4418  00:0b:86:50:be:a0
+@4426  00:0b:86:51:6c:e1
+@4434  00:0b:86:50:9e:81
+@4437  ------- 47 waps....
+@4454  00:0b:86:50:a0:48
+@4462  a0:21:b7:a0:56:40
+@4470  00:0b:86:51:8a:e1
+@4478  00:0b:86:50:a0:49
+@4486  00:24:6c:da:5c:60
+@4494  c0:c1:c0:9d:6d:47
+@4502  00:24:6c:da:5f:80
+@4510  c0:c1:c0:9d:6d:46
+@4518  00:24:6c:da:5c:61
+@4526  00:24:b2:7f:15:0a
+@4534  00:26:f2:fc:38:e6
+@4542  00:0b:86:51:6e:c8
+@4550  00:0b:86:51:6e:c0
+@4558  00:0b:86:51:72:48
+@4566  00:24:6c:da:5c:70
+@4574  c0:c1:c0:c9:c0:73
+@4582  a0:21:b7:4f:87:8d
+@4590  7c:4f:b5:da:67:26
+@4598  00:24:6c:da:5f:81
+@4606  00:0b:86:51:6e:c9
+@4614  00:0b:86:51:6e:c1
+@4622  d8:30:62:2e:73:99
+@4630  00:0b:86:51:72:49
+@4638  e0:91:f5:88:de:34
+@4646  00:24:6c:da:5c:71
+@4654  00:0b:86:51:72:40
+@4662  00:24:6c:da:5f:90
+@4670  00:0b:86:51:79:80
+@4678  00:1a:1e:0a:17:a8
+@4686  00:1a:1e:0a:17:a0
+@4694  00:0b:86:51:8c:20
+@4702  58:6d:8f:07:35:1d
+@4710  00:0b:86:51:72:41
+@4718  00:0b:86:51:79:81
+@4726  00:1a:1e:0a:17:a9
+@4734  00:24:6c:da:5f:91
+@4742  00:1a:1e:0a:17:a1
+@4750  00:0b:86:51:8c:21
+@4758  58:6d:8f:07:35:1e
+@4766  00:0b:86:50:9e:80
+@4774  00:0b:86:51:79:88
+@4782  58:6d:8f:07:35:1c
+@4790  00:0b:86:51:79:89
+@4798  00:0b:86:50:be:a1
+@4806  00:0b:86:51:6c:e0
+@4814  00:0b:86:50:be:a0
+@4822  00:0b:86:50:9e:81
+@4825  ------- 39 waps....
+@4842  28:37:37:26:c8:01
+@4850  00:1d:7e:ce:84:b6
+@4858  00:0b:86:50:a0:48
+@4866  a0:21:b7:a0:56:40
+@4874  00:0b:86:51:8a:e1
+@4882  00:0b:86:50:a0:49
+@4890  00:24:6c:da:5c:60
+@4898  c0:c1:c0:9d:6d:47
+@4906  00:24:6c:da:5f:80
+@4914  c0:c1:c0:9d:6d:46
+@4922  00:24:6c:da:5c:61
+@4930  00:24:b2:7f:15:0a
+@4938  00:26:f2:fc:38:e6
+@4946  00:0b:86:51:72:48
+@4954  00:24:6c:da:5c:70
+@4962  c0:c1:c0:c9:c0:73
+@4970  7c:4f:b5:da:67:26
+@4978  d8:30:62:2e:73:99
+@4986  00:0b:86:51:72:49
+@4994  00:24:6c:da:5c:71
+@5002  00:0b:86:51:72:40
+@5010  00:24:6c:da:5f:90
+@5018  00:0b:86:51:79:80
+@5026  00:1a:1e:0a:17:a8
+@5034  00:1a:1e:0a:17:a0
+@5042  00:0b:86:51:8c:20
+@5050  58:6d:8f:07:35:1d
+@5058  00:0b:86:51:72:41
+@5066  00:0b:86:51:79:81
+@5074  00:1a:1e:0a:17:a9
+@5082  00:24:6c:da:5f:91
+@5090  00:1a:1e:0a:17:a1
+@5098  00:0b:86:51:8c:21
+@5106  58:6d:8f:07:35:1e
+@5114  00:0b:86:50:9e:80
+@5122  58:6d:8f:07:35:1c
+@5130  00:0b:86:50:be:a1
+@5138  00:0b:86:50:be:a0
+@5146  00:0b:86:50:9e:81
+@5149  ------- 42 waps....
+@5166  00:24:6c:da:86:a0
+@5174  00:0b:86:51:6e:c0
+@5182  00:0b:86:51:6e:c8
+@5190  e0:91:f5:88:de:34
+@5198  98:fc:11:57:04:42
+@5206  00:0b:86:51:6e:c1
+@5214  00:0b:86:51:6e:c9
+@5222  28:37:37:26:c8:01
+@5230  00:1d:7e:ce:84:b6
+@5238  00:0b:86:50:a0:48
+@5246  a0:21:b7:a0:56:40
+@5254  00:0b:86:51:8a:e1
+@5262  00:0b:86:50:a0:49
+@5270  c0:c1:c0:9d:6d:47
+@5278  c0:c1:c0:9d:6d:46
+@5286  00:24:6c:da:5c:61
+@5294  00:24:b2:7f:15:0a
+@5302  00:0b:86:51:72:48
+@5310  00:24:6c:da:5c:70
+@5318  c0:c1:c0:c9:c0:73
+@5326  7c:4f:b5:da:67:26
+@5334  d8:30:62:2e:73:99
+@5342  00:0b:86:51:72:49
+@5350  00:24:6c:da:5c:71
+@5358  00:0b:86:51:72:40
+@5366  00:24:6c:da:5f:90
+@5374  00:0b:86:51:79:80
+@5382  00:1a:1e:0a:17:a8
+@5390  00:1a:1e:0a:17:a0
+@5398  58:6d:8f:07:35:1d
+@5406  00:0b:86:51:72:41
+@5414  00:0b:86:51:79:81
+@5422  00:1a:1e:0a:17:a9
+@5430  00:24:6c:da:5f:91
+@5438  00:1a:1e:0a:17:a1
+@5446  00:0b:86:51:8c:21
+@5454  58:6d:8f:07:35:1e
+@5462  00:0b:86:50:9e:80
+@5470  58:6d:8f:07:35:1c
+@5478  00:0b:86:50:be:a1
+@5486  00:0b:86:50:be:a0
+@5494  00:0b:86:50:9e:81
+@5497  ------- 38 waps....
+@5514  00:26:f2:fc:38:e6
+@5522  00:24:6c:da:86:a0
+@5530  00:0b:86:51:6e:c0
+@5538  00:0b:86:51:6e:c8
+@5546  e0:91:f5:88:de:34
+@5554  98:fc:11:57:04:42
+@5562  00:0b:86:51:6e:c1
+@5570  00:0b:86:51:6e:c9
+@5578  28:37:37:26:c8:01
+@5586  00:1d:7e:ce:84:b6
+@5594  a0:21:b7:a0:56:40
+@5602  c0:c1:c0:9d:6d:47
+@5610  c0:c1:c0:9d:6d:46
+@5618  00:24:6c:da:5c:61
+@5626  00:24:b2:7f:15:0a
+@5634  00:0b:86:51:72:48
+@5642  00:24:6c:da:5c:70
+@5650  c0:c1:c0:c9:c0:73
+@5658  7c:4f:b5:da:67:26
+@5666  d8:30:62:2e:73:99
+@5674  00:0b:86:51:72:49
+@5682  00:24:6c:da:5c:71
+@5690  00:0b:86:51:72:40
+@5698  00:24:6c:da:5f:90
+@5706  00:0b:86:51:79:80
+@5714  00:1a:1e:0a:17:a8
+@5722  00:1a:1e:0a:17:a0
+@5730  58:6d:8f:07:35:1d
+@5738  00:0b:86:51:72:41
+@5746  00:1a:1e:0a:17:a9
+@5754  00:24:6c:da:5f:91
+@5762  00:1a:1e:0a:17:a1
+@5770  00:0b:86:51:8c:21
+@5778  58:6d:8f:07:35:1e
+@5786  00:0b:86:50:9e:80
+@5794  58:6d:8f:07:35:1c
+@5802  00:0b:86:50:be:a1
+@5810  00:0b:86:50:9e:81
+@5813  ------- 35 waps....
+@5830  00:24:6c:da:5f:80
+@5838  00:0b:86:51:8c:20
+@5846  00:24:6c:da:5f:81
+@5854  00:26:f2:fc:38:e6
+@5862  00:24:6c:da:86:a0
+@5870  00:0b:86:51:6e:c0
+@5878  00:0b:86:51:6e:c8
+@5886  e0:91:f5:88:de:34
+@5894  98:fc:11:57:04:42
+@5902  00:0b:86:51:6e:c1
+@5910  00:0b:86:51:6e:c9
+@5918  00:1d:7e:ce:84:b6
+@5926  c0:c1:c0:9d:6d:47
+@5934  c0:c1:c0:9d:6d:46
+@5942  00:24:6c:da:5c:61
+@5950  00:24:b2:7f:15:0a
+@5958  00:0b:86:51:72:48
+@5966  00:24:6c:da:5c:70
+@5974  c0:c1:c0:c9:c0:73
+@5982  7c:4f:b5:da:67:26
+@5990  00:0b:86:51:72:49
+@5998  00:24:6c:da:5c:71
+@6006  00:0b:86:51:72:40
+@6014  00:24:6c:da:5f:90
+@6022  00:1a:1e:0a:17:a8
+@6030  00:1a:1e:0a:17:a0
+@6038  58:6d:8f:07:35:1d
+@6046  00:0b:86:51:72:41
+@6054  00:1a:1e:0a:17:a9
+@6062  00:24:6c:da:5f:91
+@6070  00:1a:1e:0a:17:a1
+@6078  00:0b:86:51:8c:21
+@6086  58:6d:8f:07:35:1e
+@6094  58:6d:8f:07:35:1c
+@6102  00:0b:86:50:be:a1
+@6105  ------- 26 waps....
+@6122  00:24:6c:da:5f:80
+@6130  00:0b:86:51:8c:20
+@6138  00:24:6c:da:5f:81
+@6146  00:26:f2:fc:38:e6
+@6154  00:0b:86:51:6e:c8
+@6162  e0:91:f5:88:de:34
+@6170  00:0b:86:51:6e:c9
+@6178  c0:c1:c0:9d:6d:47
+@6186  c0:c1:c0:9d:6d:46
+@6194  00:24:6c:da:5c:61
+@6202  00:24:b2:7f:15:0a
+@6210  00:0b:86:51:72:48
+@6218  00:24:6c:da:5c:70
+@6226  00:0b:86:51:72:49
+@6234  00:24:6c:da:5c:71
+@6242  00:0b:86:51:72:40
+@6250  00:1a:1e:0a:17:a8
+@6258  00:1a:1e:0a:17:a0
+@6266  58:6d:8f:07:35:1d
+@6274  00:0b:86:51:72:41
+@6282  00:1a:1e:0a:17:a9
+@6290  00:1a:1e:0a:17:a1
+@6298  00:0b:86:51:8c:21
+@6306  58:6d:8f:07:35:1e
+@6314  58:6d:8f:07:35:1c
+@6322  00:0b:86:50:be:a1
+@6325  ------- 30 waps....
+@6342  00:24:6c:da:5f:90
+@6350  00:0b:86:50:be:a0
+@6358  28:37:37:26:c8:01
+@6366  00:1d:7e:ce:84:b6
+@6374  00:0b:86:51:6e:c1
+@6382  00:24:6c:da:5f:80
+@6390  00:0b:86:51:8c:20
+@6398  00:24:6c:da:5f:81
+@6406  00:0b:86:51:6e:c8
+@6414  e0:91:f5:88:de:34
+@6422  00:0b:86:51:6e:c9
+@6430  c0:c1:c0:9d:6d:47
+@6438  c0:c1:c0:9d:6d:46
+@6446  00:24:6c:da:5c:61
+@6454  00:24:b2:7f:15:0a
+@6462  00:0b:86:51:72:48
+@6470  00:24:6c:da:5c:70
+@6478  00:0b:86:51:72:49
+@6486  00:24:6c:da:5c:71
+@6494  00:0b:86:51:72:40
+@6502  00:1a:1e:0a:17:a8
+@6510  00:1a:1e:0a:17:a0
+@6518  58:6d:8f:07:35:1d
+@6526  00:0b:86:51:72:41
+@6534  00:1a:1e:0a:17:a9
+@6542  00:1a:1e:0a:17:a1
+@6550  00:0b:86:51:8c:21
+@6558  58:6d:8f:07:35:1e
+@6566  58:6d:8f:07:35:1c
+@6574  00:0b:86:50:be:a1
+@6577  ------- 32 waps....
+@6594  00:24:6c:da:86:a0
+@6602  00:0b:86:51:6e:c0
+@6610  00:18:f8:78:99:63
+@6618  00:24:6c:da:86:a1
+@6626  00:24:6c:da:5f:91
+@6634  00:24:6c:da:5f:90
+@6642  00:0b:86:50:be:a0
+@6650  28:37:37:26:c8:01
+@6658  00:1d:7e:ce:84:b6
+@6666  00:0b:86:51:6e:c1
+@6674  00:24:6c:da:5f:80
+@6682  00:0b:86:51:8c:20
+@6690  00:0b:86:51:6e:c8
+@6698  e0:91:f5:88:de:34
+@6706  00:0b:86:51:6e:c9
+@6714  00:24:6c:da:5c:61
+@6722  00:24:b2:7f:15:0a
+@6730  00:0b:86:51:72:48
+@6738  00:24:6c:da:5c:70
+@6746  00:0b:86:51:72:49
+@6754  00:24:6c:da:5c:71
+@6762  00:0b:86:51:72:40
+@6770  00:1a:1e:0a:17:a8
+@6778  00:1a:1e:0a:17:a0
+@6786  58:6d:8f:07:35:1d
+@6794  00:0b:86:51:72:41
+@6802  00:1a:1e:0a:17:a9
+@6810  00:1a:1e:0a:17:a1
+@6818  00:0b:86:51:8c:21
+@6826  58:6d:8f:07:35:1e
+@6834  58:6d:8f:07:35:1c
+@6842  00:0b:86:50:be:a1
+@6845  ------- 40 waps....
+@6862  00:24:6c:da:5f:40
+@6870  00:0b:86:51:88:28
+@6878  00:24:6c:da:5c:60
+@6886  98:fc:11:57:04:42
+@6894  00:0b:86:51:6c:e1
+@6902  08:86:3b:64:ce:02
+@6910  00:0b:86:51:88:29
+@6918  00:24:6c:da:5f:81
+@6926  00:24:6c:da:86:a0
+@6934  00:0b:86:51:6e:c0
+@6942  00:18:f8:78:99:63
+@6950  00:24:6c:da:86:a1
+@6958  00:24:6c:da:5f:91
+@6966  00:24:6c:da:5f:90
+@6974  00:0b:86:50:be:a0
+@6982  28:37:37:26:c8:01
+@6990  00:1d:7e:ce:84:b6
+@6998  00:0b:86:51:6e:c1
+@7006  00:24:6c:da:5f:80
+@7014  00:0b:86:51:8c:20
+@7022  00:0b:86:51:6e:c8
+@7030  e0:91:f5:88:de:34
+@7038  00:0b:86:51:6e:c9
+@7046  00:24:6c:da:5c:61
+@7054  00:24:b2:7f:15:0a
+@7062  00:0b:86:51:72:48
+@7070  00:24:6c:da:5c:70
+@7078  00:0b:86:51:72:49
+@7086  00:24:6c:da:5c:71
+@7094  00:0b:86:51:72:40
+@7102  00:1a:1e:0a:17:a8
+@7110  00:1a:1e:0a:17:a0
+@7118  58:6d:8f:07:35:1d
+@7126  00:0b:86:51:72:41
+@7134  00:1a:1e:0a:17:a9
+@7142  00:1a:1e:0a:17:a1
+@7150  00:0b:86:51:8c:21
+@7158  58:6d:8f:07:35:1e
+@7166  58:6d:8f:07:35:1c
+@7174  00:0b:86:50:be:a1
+@7177  ------- 45 waps....
+@7194  c0:c1:c0:9d:6d:47
+@7202  00:0b:86:50:9e:80
+@7210  00:0b:86:51:79:80
+@7218  00:11:24:04:8f:6f
+@7226  00:0b:86:50:9e:81
+@7234  00:24:6c:da:5f:40
+@7242  00:0b:86:51:88:28
+@7250  00:24:6c:da:5c:60
+@7258  98:fc:11:57:04:42
+@7266  00:0b:86:51:6c:e1
+@7274  08:86:3b:64:ce:02
+@7282  00:0b:86:51:88:29
+@7290  00:24:6c:da:5f:81
+@7298  00:24:6c:da:86:a0
+@7306  00:0b:86:51:6e:c0
+@7314  00:18:f8:78:99:63
+@7322  00:24:6c:da:86:a1
+@7330  00:24:6c:da:5f:91
+@7338  00:24:6c:da:5f:90
+@7346  00:0b:86:50:be:a0
+@7354  28:37:37:26:c8:01
+@7362  00:1d:7e:ce:84:b6
+@7370  00:0b:86:51:6e:c1
+@7378  00:24:6c:da:5f:80
+@7386  00:0b:86:51:8c:20
+@7394  00:0b:86:51:6e:c8
+@7402  e0:91:f5:88:de:34
+@7410  00:0b:86:51:6e:c9
+@7418  00:24:6c:da:5c:61
+@7426  00:24:b2:7f:15:0a
+@7434  00:0b:86:51:72:48
+@7442  00:24:6c:da:5c:70
+@7450  00:0b:86:51:72:49
+@7458  00:24:6c:da:5c:71
+@7466  00:0b:86:51:72:40
+@7474  00:1a:1e:0a:17:a8
+@7482  00:1a:1e:0a:17:a0
+@7490  58:6d:8f:07:35:1d
+@7498  00:0b:86:51:72:41
+@7506  00:1a:1e:0a:17:a9
+@7514  00:1a:1e:0a:17:a1
+@7522  00:0b:86:51:8c:21
+@7530  58:6d:8f:07:35:1e
+@7538  58:6d:8f:07:35:1c
+@7546  00:0b:86:50:be:a1
+@7549  ------- 42 waps....
+@7566  c0:c1:c0:9d:6d:46
+@7574  c0:c1:c0:c9:c0:73
+@7582  7c:4f:b5:da:67:26
+@7590  c0:c1:c0:9d:6d:47
+@7598  00:0b:86:50:9e:80
+@7606  00:0b:86:51:79:80
+@7614  00:11:24:04:8f:6f
+@7622  00:0b:86:50:9e:81
+@7630  00:24:6c:da:5f:40
+@7638  00:0b:86:51:88:28
+@7646  00:24:6c:da:5c:60
+@7654  98:fc:11:57:04:42
+@7662  00:0b:86:51:6c:e1
+@7670  08:86:3b:64:ce:02
+@7678  00:0b:86:51:88:29
+@7686  00:24:6c:da:5f:81
+@7694  00:0b:86:51:6e:c0
+@7702  00:24:6c:da:5f:91
+@7710  00:24:6c:da:5f:90
+@7718  00:0b:86:50:be:a0
+@7726  00:1d:7e:ce:84:b6
+@7734  00:0b:86:51:6e:c1
+@7742  00:24:6c:da:5f:80
+@7750  00:0b:86:51:8c:20
+@7758  00:0b:86:51:6e:c8
+@7766  e0:91:f5:88:de:34
+@7774  00:0b:86:51:6e:c9
+@7782  00:24:6c:da:5c:61
+@7790  00:24:b2:7f:15:0a
+@7798  00:0b:86:51:72:48
+@7806  00:0b:86:51:72:49
+@7814  00:0b:86:51:72:40
+@7822  00:1a:1e:0a:17:a8
+@7830  00:1a:1e:0a:17:a0
+@7838  58:6d:8f:07:35:1d
+@7846  00:0b:86:51:72:41
+@7854  00:1a:1e:0a:17:a9
+@7862  00:1a:1e:0a:17:a1
+@7870  00:0b:86:51:8c:21
+@7878  58:6d:8f:07:35:1e
+@7886  58:6d:8f:07:35:1c
+@7894  00:0b:86:50:be:a1
+@7897  ------- 35 waps....
+@7914  00:0b:86:51:6c:e0
+@7922  a0:21:b7:a0:56:40
+@7930  c0:c1:c0:9d:6d:46
+@7938  c0:c1:c0:c9:c0:73
+@7946  7c:4f:b5:da:67:26
+@7954  c0:c1:c0:9d:6d:47
+@7962  00:0b:86:50:9e:80
+@7970  00:0b:86:51:79:80
+@7978  00:11:24:04:8f:6f
+@7986  00:0b:86:50:9e:81
+@7994  00:24:6c:da:5c:60
+@8002  00:0b:86:51:6c:e1
+@8010  00:24:6c:da:5f:81
+@8018  00:0b:86:51:6e:c0
+@8026  00:1d:7e:ce:84:b6
+@8034  00:0b:86:51:6e:c1
+@8042  00:0b:86:51:8c:20
+@8050  00:0b:86:51:6e:c8
+@8058  e0:91:f5:88:de:34
+@8066  00:0b:86:51:6e:c9
+@8074  00:24:6c:da:5c:61
+@8082  00:24:b2:7f:15:0a
+@8090  00:0b:86:51:72:48
+@8098  00:0b:86:51:72:49
+@8106  00:0b:86:51:72:40
+@8114  00:1a:1e:0a:17:a8
+@8122  00:1a:1e:0a:17:a0
+@8130  58:6d:8f:07:35:1d
+@8138  00:0b:86:51:72:41
+@8146  00:1a:1e:0a:17:a9
+@8154  00:1a:1e:0a:17:a1
+@8162  00:0b:86:51:8c:21
+@8170  58:6d:8f:07:35:1e
+@8178  58:6d:8f:07:35:1c
+@8186  00:0b:86:50:be:a1
+@8189  ------- 38 waps....
+@8206  00:0b:86:51:77:60
+@8214  00:0b:86:51:77:68
+@8222  00:0f:66:b9:18:7c
+@8230  00:24:b2:9b:82:02
+@8238  94:44:52:bb:ac:fd
+@8246  00:0b:86:51:77:61
+@8254  7c:4f:b5:da:8f:e9
+@8262  98:fc:11:57:04:42
+@8270  28:37:37:26:c8:01
+@8278  00:0b:86:51:77:69
+@8286  00:0b:86:51:6c:e0
+@8294  a0:21:b7:a0:56:40
+@8302  c0:c1:c0:9d:6d:46
+@8310  c0:c1:c0:c9:c0:73
+@8318  7c:4f:b5:da:67:26
+@8326  c0:c1:c0:9d:6d:47
+@8334  00:11:24:04:8f:6f
+@8342  00:24:6c:da:5c:60
+@8350  00:0b:86:51:6c:e1
+@8358  00:24:6c:da:5f:81
+@8366  00:1d:7e:ce:84:b6
+@8374  00:0b:86:51:8c:20
+@8382  00:0b:86:51:6e:c8
+@8390  00:0b:86:51:6e:c9
+@8398  00:24:6c:da:5c:61
+@8406  00:24:b2:7f:15:0a
+@8414  00:0b:86:51:72:48
+@8422  00:0b:86:51:72:49
+@8430  00:0b:86:51:72:40
+@8438  00:1a:1e:0a:17:a8
+@8446  00:1a:1e:0a:17:a0
+@8454  58:6d:8f:07:35:1d
+@8462  00:0b:86:51:72:41
+@8470  00:1a:1e:0a:17:a9
+@8478  00:1a:1e:0a:17:a1
+@8486  00:0b:86:51:8c:21
+@8494  58:6d:8f:07:35:1c
+@8502  00:0b:86:50:be:a1
+@8505  ------- 44 waps....
+@8522  00:24:6c:da:87:40
+@8530  00:24:6c:da:5f:00
+@8538  00:0b:86:51:7a:28
+@8546  00:02:2d:bc:cb:91
+@8554  00:24:6c:da:87:61
+@8562  08:86:3b:b4:e9:22
+@8570  00:24:6c:da:87:41
+@8578  c4:3d:c7:41:05:e6
+@8586  00:18:f8:78:99:63
+@8594  00:24:6c:da:5f:01
+@8602  00:0b:86:51:7a:29
+@8610  00:0b:86:51:77:60
+@8618  00:0b:86:51:77:68
+@8626  00:0f:66:b9:18:7c
+@8634  00:24:b2:9b:82:02
+@8642  94:44:52:bb:ac:fd
+@8650  00:0b:86:51:77:61
+@8658  7c:4f:b5:da:8f:e9
+@8666  98:fc:11:57:04:42
+@8674  28:37:37:26:c8:01
+@8682  00:0b:86:51:77:69
+@8690  00:0b:86:51:6c:e0
+@8698  a0:21:b7:a0:56:40
+@8706  c0:c1:c0:9d:6d:46
+@8714  c0:c1:c0:c9:c0:73
+@8722  c0:c1:c0:9d:6d:47
+@8730  00:11:24:04:8f:6f
+@8738  00:24:6c:da:5c:60
+@8746  00:0b:86:51:6c:e1
+@8754  00:1d:7e:ce:84:b6
+@8762  00:0b:86:51:8c:20
+@8770  00:0b:86:51:6e:c8
+@8778  00:0b:86:51:6e:c9
+@8786  00:24:6c:da:5c:61
+@8794  00:24:b2:7f:15:0a
+@8802  00:0b:86:51:72:48
+@8810  00:0b:86:51:72:49
+@8818  00:0b:86:51:72:40
+@8826  00:1a:1e:0a:17:a8
+@8834  00:1a:1e:0a:17:a0
+@8842  00:1a:1e:0a:17:a9
+@8850  00:1a:1e:0a:17:a1
+@8858  00:0b:86:51:8c:21
+@8866  58:6d:8f:07:35:1c
+@8869  ------- 34 waps....
+@8886  00:24:a0:66:a4:ef
+@8894  00:22:3f:96:dc:94
+@8902  c4:3d:c7:b0:4f:f5
+@8910  30:46:9a:a5:98:f6
+@8918  a0:21:b7:d2:6a:23
+@8926  00:1f:33:d8:ba:d2
+@8934  58:6d:8f:15:ca:99
+@8942  00:24:6c:da:87:40
+@8950  00:24:6c:da:5f:00
+@8958  00:0b:86:51:7a:28
+@8966  00:02:2d:bc:cb:91
+@8974  00:24:6c:da:87:61
+@8982  08:86:3b:b4:e9:22
+@8990  00:24:6c:da:87:41
+@8998  c4:3d:c7:41:05:e6
+@9006  00:18:f8:78:99:63
+@9014  00:24:6c:da:5f:01
+@9022  00:0b:86:51:7a:29
+@9030  00:0b:86:51:77:60
+@9038  00:0b:86:51:77:68
+@9046  00:0f:66:b9:18:7c
+@9054  00:24:b2:9b:82:02
+@9062  94:44:52:bb:ac:fd
+@9070  00:0b:86:51:77:61
+@9078  7c:4f:b5:da:8f:e9
+@9086  98:fc:11:57:04:42
+@9094  28:37:37:26:c8:01
+@9102  00:0b:86:51:77:69
+@9110  00:11:24:04:8f:6f
+@9118  00:24:b2:7f:15:0a
+@9126  00:0b:86:51:72:40
+@9134  00:1a:1e:0a:17:a0
+@9142  00:1a:1e:0a:17:a1
+@9150  58:6d:8f:07:35:1c
+@9153  ------- 29 waps....
+@9170  00:26:82:b6:da:06
+@9178  58:6d:8f:15:ca:98
+@9186  00:24:a0:66:a4:ef
+@9194  00:22:3f:96:dc:94
+@9202  c4:3d:c7:b0:4f:f5
+@9210  30:46:9a:a5:98:f6
+@9218  a0:21:b7:d2:6a:23
+@9226  00:1f:33:d8:ba:d2
+@9234  58:6d:8f:15:ca:99
+@9242  00:24:6c:da:87:40
+@9250  00:24:6c:da:5f:00
+@9258  00:0b:86:51:7a:28
+@9266  00:02:2d:bc:cb:91
+@9274  00:24:6c:da:87:61
+@9282  08:86:3b:b4:e9:22
+@9290  00:24:6c:da:87:41
+@9298  c4:3d:c7:41:05:e6
+@9306  00:18:f8:78:99:63
+@9314  00:24:6c:da:5f:01
+@9322  00:0b:86:51:7a:29
+@9330  00:0b:86:51:77:60
+@9338  00:0b:86:51:77:68
+@9346  00:0f:66:b9:18:7c
+@9354  00:0b:86:51:77:61
+@9362  98:fc:11:57:04:42
+@9370  28:37:37:26:c8:01
+@9378  00:0b:86:51:77:69
+@9386  00:1a:1e:0a:17:a0
+@9394  00:1a:1e:0a:17:a1
+@9397  ------- 19 waps....
+@9414  00:26:82:b6:da:06
+@9422  58:6d:8f:15:ca:98
+@9430  00:24:a0:66:a4:ef
+@9438  00:22:3f:96:dc:94
+@9446  c4:3d:c7:b0:4f:f5
+@9454  30:46:9a:a5:98:f6
+@9462  a0:21:b7:d2:6a:23
+@9470  00:1f:33:d8:ba:d2
+@9478  58:6d:8f:15:ca:99
+@9486  00:02:2d:bc:cb:91
+@9494  c4:3d:c7:41:05:e6
+@9502  00:0b:86:51:77:60
+@9510  00:0b:86:51:77:68
+@9518  00:0f:66:b9:18:7c
+@9526  98:fc:11:57:04:42
+@9534  28:37:37:26:c8:01
+@9542  00:0b:86:51:77:69
+@9550  00:1a:1e:0a:17:a0
+@9558  00:1a:1e:0a:17:a1
+@9561  ------- 9 waps....
+@9578  14:d6:4d:3a:1e:99
+@9586  00:26:82:b6:da:06
+@9594  58:6d:8f:15:ca:98
+@9602  00:24:a0:66:a4:ef
+@9610  c4:3d:c7:b0:4f:f5
+@9618  a0:21:b7:d2:6a:23
+@9626  00:1f:33:d8:ba:d2
+@9634  58:6d:8f:15:ca:99
+@9642  00:0f:66:b9:18:7c
+@9645  ------- 3 waps....
+@9662  c0:c1:c0:96:80:63
+@9670  14:d6:4d:3a:1e:99
+@9678  00:24:a0:66:a4:ef
+@9681  ------- 4 waps....
+@9698  36:a9:05:0e:b8:8a
+@9706  c0:c1:c0:96:80:63
+@9714  14:d6:4d:3a:1e:99
+@9722  00:24:a0:66:a4:ef
+@9725  ------- 2 waps....
+@9742  36:a9:05:0e:b8:8a
+@9750  c0:c1:c0:96:80:63
+@9753  ------- 3 waps....
+@9770  14:d6:4d:3a:1e:99
+@9778  36:a9:05:0e:b8:8a
+@9786  c0:c1:c0:96:80:63
+@9789  ------- 1 waps....
+@9806  14:d6:4d:3a:1e:99
+@9809  ------- 3 waps....
+@9826  00:0b:86:4d:c6:c9
+@9834  00:0b:86:4d:c6:c8
+@9842  14:d6:4d:3a:1e:99
+@9845  ------- 5 waps....
+@9862  00:0b:86:4d:c6:e9
+@9870  00:1e:e5:a0:7b:07
+@9878  00:0b:86:4d:c6:e8
+@9886  00:0b:86:4d:c6:c9
+@9894  00:0b:86:4d:c6:c8
+@9897  ------- 6 waps....
+@9914  c0:c1:c0:1c:87:ad
+@9922  00:0b:86:4d:c6:e9
+@9930  00:1e:e5:a0:7b:07
+@9938  00:0b:86:4d:c6:e8
+@9946  00:0b:86:4d:c6:c9
+@9954  00:0b:86:4d:c6:c8
+@9957  ------- 9 waps....
+@9974  02:2f:3f:48:84:47
+@9982  00:1a:1e:fe:88:01
+@9990  00:24:6c:da:64:41
+@9998  00:1a:1e:fe:88:00
+@10006  00:24:6c:da:64:40
+@10014  c0:c1:c0:1c:87:ad
+@10022  00:0b:86:4d:c6:e9
+@10030  00:1e:e5:a0:7b:07
+@10038  00:0b:86:4d:c6:e8
+@10041  ------- 7 waps....
+@10058  00:0b:86:4d:c4:60
+@10066  02:2f:3f:48:84:47
+@10074  00:1a:1e:fe:88:01
+@10082  00:24:6c:da:64:41
+@10090  00:1a:1e:fe:88:00
+@10098  00:24:6c:da:64:40
+@10106  c0:c1:c0:1c:87:ad
+@10109  ------- 12 waps....
+@10126  00:0b:86:4d:9e:a1
+@10134  00:24:6c:da:6f:e1
+@10142  b8:c7:5d:0a:0b:c1
+@10150  00:0b:86:4d:9e:a0
+@10158  00:24:6c:da:6f:e0
+@10166  00:0b:86:4d:c4:60
+@10174  02:2f:3f:48:84:47
+@10182  00:1a:1e:fe:88:01
+@10190  00:24:6c:da:64:41
+@10198  00:1a:1e:fe:88:00
+@10206  00:24:6c:da:64:40
+@10214  c0:c1:c0:1c:87:ad
+@10217  ------- 12 waps....
+@10234  00:0b:86:4d:9e:a9
+@10242  00:0b:86:4d:24:a9
+@10250  00:22:75:60:8c:54
+@10258  00:0b:86:4d:24:a8
+@10266  00:0b:86:4d:9e:a1
+@10274  00:24:6c:da:6f:e1
+@10282  b8:c7:5d:0a:0b:c1
+@10290  00:0b:86:4d:9e:a0
+@10298  00:24:6c:da:6f:e0
+@10306  00:0b:86:4d:c4:60
+@10314  00:1a:1e:fe:88:01
+@10322  00:1a:1e:fe:88:00
+@10325  ------- 11 waps....
+@10342  00:0b:86:4d:2b:a9
+@10350  00:0b:86:4d:2b:a8
+@10358  00:0b:86:4d:9e:a9
+@10366  00:0b:86:4d:24:a9
+@10374  00:22:75:60:8c:54
+@10382  00:0b:86:4d:24:a8
+@10390  00:0b:86:4d:9e:a1
+@10398  00:24:6c:da:6f:e1
+@10406  b8:c7:5d:0a:0b:c1
+@10414  00:0b:86:4d:9e:a0
+@10422  00:24:6c:da:6f:e0
+@10425  ------- 10 waps....
+@10442  00:21:00:1a:26:c0
+@10450  00:21:00:1a:2b:5f
+@10458  00:21:00:1a:26:81
+@10466  00:0b:86:4d:2b:a9
+@10474  00:0b:86:4d:2b:a8
+@10482  00:0b:86:4d:9e:a9
+@10490  00:0b:86:4d:24:a9
+@10498  00:22:75:60:8c:54
+@10506  00:0b:86:4d:24:a8
+@10514  b8:c7:5d:0a:0b:c1
+@10517  ------- 10 waps....
+@10534  00:21:00:1a:23:e9
+@10542  00:21:00:1a:26:c0
+@10550  00:21:00:1a:2b:5f
+@10558  00:21:00:1a:26:81
+@10566  00:0b:86:4d:2b:a9
+@10574  00:0b:86:4d:2b:a8
+@10582  00:0b:86:4d:24:a9
+@10590  00:22:75:60:8c:54
+@10598  00:0b:86:4d:24:a8
+@10606  b8:c7:5d:0a:0b:c1
+@10609  ------- 7 waps....
+@10626  00:21:00:1a:25:88
+@10634  00:21:00:1a:23:e9
+@10642  00:21:00:1a:26:c0
+@10650  00:21:00:1a:2b:5f
+@10658  00:21:00:1a:26:81
+@10666  00:22:75:60:8c:54
+@10674  b8:c7:5d:0a:0b:c1
+@10677  ------- 5 waps....
+@10694  b8:c7:5d:0a:0b:c2
+@10702  00:21:00:1a:25:88
+@10710  00:21:00:1a:23:e9
+@10718  00:21:00:1a:26:81
+@10726  b8:c7:5d:0a:0b:c1
+@10729  ------- 8 waps....
+@10746  c0:3f:0e:ca:77:3c
+@10754  00:80:48:55:6c:ab
+@10762  a0:21:b7:d2:63:ed
+@10770  b8:c7:5d:0a:0b:c2
+@10778  00:21:00:1a:25:88
+@10786  00:21:00:1a:23:e9
+@10794  00:21:00:1a:26:81
+@10802  b8:c7:5d:0a:0b:c1
+@10805  ------- 6 waps....
+@10822  c0:3f:0e:ca:77:3c
+@10830  00:80:48:55:6c:ab
+@10838  a0:21:b7:d2:63:ed
+@10846  b8:c7:5d:0a:0b:c2
+@10854  00:21:00:1a:25:88
+@10862  b8:c7:5d:0a:0b:c1
+@10865  ------- 7 waps....
+@10882  58:6d:8f:f6:fe:f2
+@10890  a0:21:b7:bf:29:7e
+@10898  c0:3f:0e:ca:77:3c
+@10906  00:80:48:55:6c:ab
+@10914  a0:21:b7:d2:63:ed
+@10922  b8:c7:5d:0a:0b:c2
+@10930  b8:c7:5d:0a:0b:c1
+@10933  ------- 7 waps....
+@10950  58:6d:8f:f6:fe:f2
+@10958  a0:21:b7:bf:29:7e
+@10966  c0:3f:0e:ca:77:3c
+@10974  00:80:48:55:6c:ab
+@10982  a0:21:b7:d2:63:ed
+@10990  b8:c7:5d:0a:0b:c2
+@10998  b8:c7:5d:0a:0b:c1
+@11001  ------- 7 waps....
+@11018  00:21:29:73:69:25
+@11026  58:6d:8f:f6:fe:f2
+@11034  a0:21:b7:bf:29:7e
+@11042  c0:3f:0e:ca:77:3c
+@11050  00:80:48:55:6c:ab
+@11058  a0:21:b7:d2:63:ed
+@11066  b8:c7:5d:0a:0b:c1
+@11069  ------- 4 waps....
+@11086  00:21:29:73:69:25
+@11094  c0:3f:0e:ca:77:3c
+@11102  a0:21:b7:d2:63:ed
+@11110  b8:c7:5d:0a:0b:c1
+@11113  ------- 4 waps....
+@11130  00:80:48:55:6c:ab
+@11138  00:21:29:73:69:25
+@11146  a0:21:b7:d2:63:ed
+@11154  b8:c7:5d:0a:0b:c1
+@11157  ------- 3 waps....
+@11174  00:80:48:55:6c:ab
+@11182  00:21:29:73:69:25
+@11190  b8:c7:5d:0a:0b:c1
+@11193  ------- 5 waps....
+@11210  00:11:95:35:e0:bd
+@11218  c0:3f:0e:4f:b1:72
+@11226  68:7f:74:a0:44:82
+@11234  00:80:48:55:6c:ab
+@11242  00:21:29:73:69:25
+@11245  ------- 7 waps....
+@11262  00:23:69:9b:ac:8f
+@11270  94:44:52:24:57:66
+@11278  c4:3d:c7:84:7a:08
+@11286  00:11:95:35:e0:bd
+@11294  c0:3f:0e:4f:b1:72
+@11302  68:7f:74:a0:44:82
+@11310  00:21:29:73:69:25
+@11313  ------- 11 waps....
+@11330  00:24:b2:7f:2d:80
+@11338  c0:3f:0e:2b:ef:fa
+@11346  00:24:b2:9e:ff:2e
+@11354  c0:3f:0e:56:9b:68
+@11362  00:23:69:9b:ac:8f
+@11370  94:44:52:24:57:66
+@11378  c4:3d:c7:84:7a:08
+@11386  00:11:95:35:e0:bd
+@11394  c0:3f:0e:4f:b1:72
+@11402  68:7f:74:a0:44:82
+@11410  00:21:29:73:69:25
+@11413  ------- 13 waps....
+@11430  a0:21:b7:aa:6f:60
+@11438  a0:21:b7:f3:dc:09
+@11446  94:44:52:94:c6:3d
+@11454  94:44:52:94:c6:3b
+@11462  00:24:b2:7f:2d:80
+@11470  c0:3f:0e:2b:ef:fa
+@11478  00:24:b2:9e:ff:2e
+@11486  c0:3f:0e:56:9b:68
+@11494  00:23:69:9b:ac:8f
+@11502  94:44:52:24:57:66
+@11510  c4:3d:c7:84:7a:08
+@11518  00:11:95:35:e0:bd
+@11526  00:21:29:73:69:25
+@11529  ------- 14 waps....
+@11546  e0:46:9a:3c:97:62
+@11554  30:46:9a:3d:96:36
+@11562  e0:46:9a:3b:ea:1a
+@11570  00:1e:2a:6b:a9:38
+@11578  a0:21:b7:aa:6f:60
+@11586  a0:21:b7:f3:dc:09
+@11594  94:44:52:94:c6:3d
+@11602  94:44:52:94:c6:3b
+@11610  00:24:b2:7f:2d:80
+@11618  c0:3f:0e:2b:ef:fa
+@11626  00:24:b2:9e:ff:2e
+@11634  c0:3f:0e:56:9b:68
+@11642  c4:3d:c7:84:7a:08
+@11650  00:11:95:35:e0:bd
+@11653  ------- 20 waps....
+@11670  68:7f:74:b9:f4:6c
+@11678  c0:c1:c0:b3:2f:2f
+@11686  68:7f:74:b9:f4:6b
+@11694  c0:c1:c0:b3:2f:2d
+@11702  c0:c1:c0:b3:2f:2e
+@11710  68:7f:74:2e:1c:88
+@11718  00:24:b2:a8:40:fe
+@11726  e0:46:9a:3c:97:62
+@11734  30:46:9a:3d:96:36
+@11742  e0:46:9a:3b:ea:1a
+@11750  00:1e:2a:6b:a9:38
+@11758  a0:21:b7:aa:6f:60
+@11766  a0:21:b7:f3:dc:09
+@11774  94:44:52:94:c6:3d
+@11782  94:44:52:94:c6:3b
+@11790  00:24:b2:7f:2d:80
+@11798  c0:3f:0e:2b:ef:fa
+@11806  00:24:b2:9e:ff:2e
+@11814  c0:3f:0e:56:9b:68
+@11822  c4:3d:c7:84:7a:08
+@11825  ------- 14 waps....
+@11842  00:24:a5:6f:9f:85
+@11850  68:7f:74:b9:f4:6c
+@11858  c0:c1:c0:b3:2f:2f
+@11866  68:7f:74:b9:f4:6b
+@11874  c0:c1:c0:b3:2f:2d
+@11882  c0:c1:c0:b3:2f:2e
+@11890  68:7f:74:2e:1c:88
+@11898  00:24:b2:a8:40:fe
+@11906  e0:46:9a:3c:97:62
+@11914  30:46:9a:3d:96:36
+@11922  e0:46:9a:3b:ea:1a
+@11930  00:1e:2a:6b:a9:38
+@11938  a0:21:b7:aa:6f:60
+@11946  c0:3f:0e:2b:ef:fa
+@11949  ------- 15 waps....
+@11966  c0:c1:c0:bf:c4:c0
+@11974  e0:91:f5:ca:f3:b4
+@11982  a0:21:b7:c9:76:14
+@11990  c0:c1:c0:bf:c4:bf
+@11998  00:22:3f:9e:13:16
+@12006  00:24:a5:6f:9f:85
+@12014  68:7f:74:b9:f4:6c
+@12022  c0:c1:c0:b3:2f:2f
+@12030  68:7f:74:b9:f4:6b
+@12038  c0:c1:c0:b3:2f:2d
+@12046  c0:c1:c0:b3:2f:2e
+@12054  68:7f:74:2e:1c:88
+@12062  00:24:b2:a8:40:fe
+@12070  30:46:9a:3d:96:36
+@12078  e0:46:9a:3b:ea:1a
+@12081  ------- 12 waps....
+@12098  00:23:69:b3:40:f3
+@12106  c0:c1:c0:bf:c4:c0
+@12114  e0:91:f5:ca:f3:b4
+@12122  a0:21:b7:c9:76:14
+@12130  c0:c1:c0:bf:c4:bf
+@12138  00:22:3f:9e:13:16
+@12146  00:24:a5:6f:9f:85
+@12154  c0:c1:c0:b3:2f:2f
+@12162  c0:c1:c0:b3:2f:2d
+@12170  68:7f:74:2e:1c:88
+@12178  00:24:b2:a8:40:fe
+@12186  e0:46:9a:3b:ea:1a
+@12189  ------- 10 waps....
+@12206  00:23:69:b3:40:f3
+@12214  c0:c1:c0:bf:c4:c0
+@12222  e0:91:f5:ca:f3:b4
+@12230  a0:21:b7:c9:76:14
+@12238  c0:c1:c0:bf:c4:bf
+@12246  00:22:3f:9e:13:16
+@12254  00:24:a5:6f:9f:85
+@12262  c0:c1:c0:b3:2f:2f
+@12270  c0:c1:c0:b3:2f:2d
+@12278  68:7f:74:2e:1c:88
+@12281  ------- 11 waps....
+@12298  58:6d:8f:9a:3b:a0
+@12306  58:6d:8f:9a:3b:9e
+@12314  c4:3d:c7:40:bf:d0
+@12322  00:23:69:b3:40:f3
+@12330  c0:c1:c0:bf:c4:c0
+@12338  e0:91:f5:ca:f3:b4
+@12346  c0:c1:c0:bf:c4:bf
+@12354  00:22:3f:9e:13:16
+@12362  c0:c1:c0:b3:2f:2f
+@12370  c0:c1:c0:b3:2f:2d
+@12378  68:7f:74:2e:1c:88
+@12381  ------- 17 waps....
+@12398  68:7f:74:b9:f4:6c
+@12406  5e:6d:8f:f6:74:bc
+@12414  68:7f:74:b9:f4:6b
+@12422  08:86:3b:6d:fe:fd
+@12430  58:6d:8f:f6:74:bc
+@12438  00:1c:df:03:ab:42
+@12446  58:6d:8f:9a:3b:a0
+@12454  58:6d:8f:9a:3b:9e
+@12462  c4:3d:c7:40:bf:d0
+@12470  00:23:69:b3:40:f3
+@12478  c0:c1:c0:bf:c4:c0
+@12486  e0:91:f5:ca:f3:b4
+@12494  c0:c1:c0:bf:c4:bf
+@12502  00:22:3f:9e:13:16
+@12510  c0:c1:c0:b3:2f:2f
+@12518  c0:c1:c0:b3:2f:2d
+@12526  68:7f:74:2e:1c:88
+@12529  ------- 14 waps....
+@12546  00:23:69:d1:68:de
+@12554  30:46:9a:04:ab:fb
+@12562  68:7f:74:b9:f4:6c
+@12570  5e:6d:8f:f6:74:bc
+@12578  68:7f:74:b9:f4:6b
+@12586  08:86:3b:6d:fe:fd
+@12594  58:6d:8f:f6:74:bc
+@12602  00:1c:df:03:ab:42
+@12610  58:6d:8f:9a:3b:a0
+@12618  58:6d:8f:9a:3b:9e
+@12626  c4:3d:c7:40:bf:d0
+@12634  00:23:69:b3:40:f3
+@12642  e0:91:f5:ca:f3:b4
+@12650  68:7f:74:2e:1c:88
+@12653  ------- 14 waps....
+@12670  a0:21:b7:4f:86:79
+@12678  58:6d:8f:f6:74:be
+@12686  00:23:69:d1:68:de
+@12694  30:46:9a:04:ab:fb
+@12702  68:7f:74:b9:f4:6c
+@12710  5e:6d:8f:f6:74:bc
+@12718  68:7f:74:b9:f4:6b
+@12726  08:86:3b:6d:fe:fd
+@12734  58:6d:8f:f6:74:bc
+@12742  00:1c:df:03:ab:42
+@12750  58:6d:8f:9a:3b:a0
+@12758  58:6d:8f:9a:3b:9e
+@12766  c4:3d:c7:40:bf:d0
+@12774  00:23:69:b3:40:f3
+@12777  ------- 9 waps....
+@12794  00:26:f2:be:78:98
+@12802  a0:21:b7:4f:86:79
+@12810  58:6d:8f:f6:74:be
+@12818  00:23:69:d1:68:de
+@12826  30:46:9a:04:ab:fb
+@12834  5e:6d:8f:f6:74:bc
+@12842  08:86:3b:6d:fe:fd
+@12850  58:6d:8f:f6:74:bc
+@12858  00:1c:df:03:ab:42
+@12861  ------- 13 waps....
+@12878  00:22:75:62:64:30
+@12886  00:1e:2a:69:a5:3c
+@12894  e0:46:9a:79:e2:c1
+@12902  58:6d:8f:0a:f7:41
+@12910  e0:46:9a:79:e2:c2
+@12918  00:26:82:c7:b5:54
+@12926  00:26:f2:be:78:98
+@12934  a0:21:b7:4f:86:79
+@12942  58:6d:8f:f6:74:be
+@12950  30:46:9a:04:ab:fb
+@12958  5e:6d:8f:f6:74:bc
+@12966  58:6d:8f:f6:74:bc
+@12974  00:1c:df:03:ab:42
+@12977  ------- 15 waps....
+@12994  58:6d:8f:0a:f7:42
+@13002  a0:21:b7:4f:8b:16
+@13010  58:6d:8f:0a:f7:40
+@13018  00:22:75:62:64:30
+@13026  00:1e:2a:69:a5:3c
+@13034  e0:46:9a:79:e2:c1
+@13042  58:6d:8f:0a:f7:41
+@13050  e0:46:9a:79:e2:c2
+@13058  00:26:82:c7:b5:54
+@13066  00:26:f2:be:78:98
+@13074  a0:21:b7:4f:86:79
+@13082  58:6d:8f:f6:74:be
+@13090  5e:6d:8f:f6:74:bc
+@13098  58:6d:8f:f6:74:bc
+@13106  00:1c:df:03:ab:42
+@13109  ------- 15 waps....
+@13126  00:23:69:cc:25:4a
+@13134  58:6d:8f:0a:f7:42
+@13142  a0:21:b7:4f:8b:16
+@13150  58:6d:8f:0a:f7:40
+@13158  00:22:75:62:64:30
+@13166  00:1e:2a:69:a5:3c
+@13174  e0:46:9a:79:e2:c1
+@13182  58:6d:8f:0a:f7:41
+@13190  e0:46:9a:79:e2:c2
+@13198  00:26:82:c7:b5:54
+@13206  00:26:f2:be:78:98
+@13214  58:6d:8f:f6:74:be
+@13222  5e:6d:8f:f6:74:bc
+@13230  58:6d:8f:f6:74:bc
+@13238  00:1c:df:03:ab:42
+@13241  ------- 14 waps....
+@13258  00:26:5c:03:c7:50
+@13266  00:23:69:cc:25:4a
+@13274  58:6d:8f:0a:f7:42
+@13282  a0:21:b7:4f:8b:16
+@13290  58:6d:8f:0a:f7:40
+@13298  00:1e:2a:69:a5:3c
+@13306  e0:46:9a:79:e2:c1
+@13314  e0:46:9a:79:e2:c2
+@13322  00:26:82:c7:b5:54
+@13330  00:26:f2:be:78:98
+@13338  58:6d:8f:f6:74:be
+@13346  5e:6d:8f:f6:74:bc
+@13354  58:6d:8f:f6:74:bc
+@13362  00:1c:df:03:ab:42
+@13365  ------- 15 waps....
+@13382  a0:21:b7:73:37:98
+@13390  00:26:5c:03:c7:50
+@13398  00:23:69:cc:25:4a
+@13406  58:6d:8f:0a:f7:42
+@13414  a0:21:b7:4f:8b:16
+@13422  58:6d:8f:0a:f7:40
+@13430  00:1e:2a:69:a5:3c
+@13438  e0:46:9a:79:e2:c1
+@13446  e0:46:9a:79:e2:c2
+@13454  00:26:82:c7:b5:54
+@13462  00:26:f2:be:78:98
+@13470  58:6d:8f:f6:74:be
+@13478  5e:6d:8f:f6:74:bc
+@13486  58:6d:8f:f6:74:bc
+@13494  00:1c:df:03:ab:42
+@13497  ------- 16 waps....
+@13514  a0:21:b7:73:37:97
+@13522  a0:21:b7:73:37:98
+@13530  00:26:5c:03:c7:50
+@13538  00:23:69:cc:25:4a
+@13546  58:6d:8f:0a:f7:42
+@13554  a0:21:b7:4f:8b:16
+@13562  58:6d:8f:0a:f7:40
+@13570  00:1e:2a:69:a5:3c
+@13578  e0:46:9a:79:e2:c1
+@13586  e0:46:9a:79:e2:c2
+@13594  00:26:82:c7:b5:54
+@13602  00:26:f2:be:78:98
+@13610  58:6d:8f:f6:74:be
+@13618  5e:6d:8f:f6:74:bc
+@13626  58:6d:8f:f6:74:bc
+@13634  00:1c:df:03:ab:42
+@13637  ------- 16 waps....
+@13654  00:18:01:8c:e4:85
+@13662  e0:91:f5:db:d2:02
+@13670  20:4e:7f:3d:72:da
+@13678  c0:c1:c0:b2:d9:cf
+@13686  a0:21:b7:73:37:97
+@13694  a0:21:b7:73:37:98
+@13702  00:23:69:cc:25:4a
+@13710  58:6d:8f:0a:f7:42
+@13718  a0:21:b7:4f:8b:16
+@13726  58:6d:8f:0a:f7:40
+@13734  00:1e:2a:69:a5:3c
+@13742  e0:46:9a:79:e2:c2
+@13750  00:26:82:c7:b5:54
+@13758  5e:6d:8f:f6:74:bc
+@13766  58:6d:8f:f6:74:bc
+@13774  00:1c:df:03:ab:42
+@13777  ------- 12 waps....
+@13794  22:4e:7f:35:58:44
+@13802  c0:c1:c0:b2:d9:ce
+@13810  00:18:01:8c:e4:85
+@13818  e0:91:f5:db:d2:02
+@13826  20:4e:7f:3d:72:da
+@13834  c0:c1:c0:b2:d9:cf
+@13842  a0:21:b7:73:37:97
+@13850  a0:21:b7:73:37:98
+@13858  00:23:69:cc:25:4a
+@13866  58:6d:8f:0a:f7:42
+@13874  58:6d:8f:0a:f7:40
+@13882  00:26:82:c7:b5:54
+@13885  ------- 11 waps....
+@13902  00:1d:7e:5f:00:b3
+@13910  00:0f:b5:51:55:0a
+@13918  58:6d:8f:33:c1:77
+@13926  22:4e:7f:35:58:44
+@13934  c0:c1:c0:b2:d9:ce
+@13942  00:18:01:8c:e4:85
+@13950  e0:91:f5:db:d2:02
+@13958  20:4e:7f:3d:72:da
+@13966  c0:c1:c0:b2:d9:cf
+@13974  a0:21:b7:73:37:97
+@13982  a0:21:b7:73:37:98
+@13985  ------- 14 waps....
+@14002  58:6d:8f:a9:db:10
+@14010  58:6d:8f:33:c1:78
+@14018  58:6d:8f:a9:db:0e
+@14026  c0:c1:c0:ab:3a:4e
+@14034  58:6d:8f:33:c1:76
+@14042  00:1d:7e:5f:00:b3
+@14050  00:0f:b5:51:55:0a
+@14058  58:6d:8f:33:c1:77
+@14066  22:4e:7f:35:58:44
+@14074  c0:c1:c0:b2:d9:ce
+@14082  00:18:01:8c:e4:85
+@14090  e0:91:f5:db:d2:02
+@14098  c0:c1:c0:b2:d9:cf
+@14106  a0:21:b7:73:37:98
+@14109  ------- 14 waps....
+@14126  58:6d:8f:a9:db:10
+@14134  58:6d:8f:33:c1:78
+@14142  58:6d:8f:a9:db:0e
+@14150  c0:c1:c0:ab:3a:4e
+@14158  58:6d:8f:33:c1:76
+@14166  00:1d:7e:5f:00:b3
+@14174  00:0f:b5:51:55:0a
+@14182  58:6d:8f:33:c1:77
+@14190  22:4e:7f:35:58:44
+@14198  c0:c1:c0:b2:d9:ce
+@14206  00:18:01:8c:e4:85
+@14214  e0:91:f5:db:d2:02
+@14222  c0:c1:c0:b2:d9:cf
+@14230  a0:21:b7:73:37:98
+@14233  ------- 12 waps....
+@14250  58:6d:8f:a9:db:10
+@14258  58:6d:8f:33:c1:78
+@14266  58:6d:8f:a9:db:0e
+@14274  c0:c1:c0:ab:3a:4e
+@14282  58:6d:8f:33:c1:76
+@14290  00:1d:7e:5f:00:b3
+@14298  58:6d:8f:33:c1:77
+@14306  22:4e:7f:35:58:44
+@14314  c0:c1:c0:b2:d9:ce
+@14322  00:18:01:8c:e4:85
+@14330  c0:c1:c0:b2:d9:cf
+@14338  a0:21:b7:73:37:98
+@14341  ------- 12 waps....
+@14358  58:6d:8f:a9:db:10
+@14366  58:6d:8f:33:c1:78
+@14374  58:6d:8f:a9:db:0e
+@14382  c0:c1:c0:ab:3a:4e
+@14390  58:6d:8f:33:c1:76
+@14398  00:1d:7e:5f:00:b3
+@14406  58:6d:8f:33:c1:77
+@14414  22:4e:7f:35:58:44
+@14422  c0:c1:c0:b2:d9:ce
+@14430  00:18:01:8c:e4:85
+@14438  c0:c1:c0:b2:d9:cf
+@14446  a0:21:b7:73:37:98
+@14449  ------- 10 waps....
+@14466  58:6d:8f:33:c1:78
+@14474  c0:c1:c0:ab:3a:4e
+@14482  58:6d:8f:33:c1:76
+@14490  00:1d:7e:5f:00:b3
+@14498  58:6d:8f:33:c1:77
+@14506  22:4e:7f:35:58:44
+@14514  c0:c1:c0:b2:d9:ce
+@14522  00:18:01:8c:e4:85
+@14530  c0:c1:c0:b2:d9:cf
+@14538  a0:21:b7:73:37:98
+@14541  ------- 10 waps....
+@14558  e0:91:f5:db:d2:02
+@14566  58:6d:8f:33:c1:78
+@14574  c0:c1:c0:ab:3a:4e
+@14582  58:6d:8f:33:c1:76
+@14590  00:1d:7e:5f:00:b3
+@14598  58:6d:8f:33:c1:77
+@14606  c0:c1:c0:b2:d9:ce
+@14614  00:18:01:8c:e4:85
+@14622  c0:c1:c0:b2:d9:cf
+@14630  a0:21:b7:73:37:98
+@14633  ------- 11 waps....
+@14650  22:4e:7f:35:58:44
+@14658  e0:91:f5:db:d2:02
+@14666  58:6d:8f:33:c1:78
+@14674  c0:c1:c0:ab:3a:4e
+@14682  58:6d:8f:33:c1:76
+@14690  00:1d:7e:5f:00:b3
+@14698  58:6d:8f:33:c1:77
+@14706  c0:c1:c0:b2:d9:ce
+@14714  00:18:01:8c:e4:85
+@14722  c0:c1:c0:b2:d9:cf
+@14730  a0:21:b7:73:37:98
+@14733  ------- 12 waps....
+@14750  00:0f:b5:51:55:0a
+@14758  22:4e:7f:35:58:44
+@14766  e0:91:f5:db:d2:02
+@14774  58:6d:8f:33:c1:78
+@14782  c0:c1:c0:ab:3a:4e
+@14790  58:6d:8f:33:c1:76
+@14798  00:1d:7e:5f:00:b3
+@14806  58:6d:8f:33:c1:77
+@14814  c0:c1:c0:b2:d9:ce
+@14822  00:18:01:8c:e4:85
+@14830  c0:c1:c0:b2:d9:cf
+@14838  a0:21:b7:73:37:98
+@14841  ------- 15 waps....
+@14858  58:6d:8f:0a:f7:42
+@14866  20:4e:7f:3d:72:da
+@14874  58:6d:8f:0a:f7:40
+@14882  00:0f:b5:51:55:0a
+@14890  22:4e:7f:35:58:44
+@14898  e0:91:f5:db:d2:02
+@14906  58:6d:8f:33:c1:78
+@14914  c0:c1:c0:ab:3a:4e
+@14922  58:6d:8f:33:c1:76
+@14930  00:1d:7e:5f:00:b3
+@14938  58:6d:8f:33:c1:77
+@14946  c0:c1:c0:b2:d9:ce
+@14954  00:18:01:8c:e4:85
+@14962  c0:c1:c0:b2:d9:cf
+@14970  a0:21:b7:73:37:98
+@14973  ------- 15 waps....
+@14990  58:6d:8f:0a:f7:42
+@14998  20:4e:7f:3d:72:da
+@15006  58:6d:8f:0a:f7:40
+@15014  00:0f:b5:51:55:0a
+@15022  22:4e:7f:35:58:44
+@15030  e0:91:f5:db:d2:02
+@15038  58:6d:8f:33:c1:78
+@15046  c0:c1:c0:ab:3a:4e
+@15054  58:6d:8f:33:c1:76
+@15062  00:1d:7e:5f:00:b3
+@15070  58:6d:8f:33:c1:77
+@15078  c0:c1:c0:b2:d9:ce
+@15086  00:18:01:8c:e4:85
+@15094  c0:c1:c0:b2:d9:cf
+@15102  a0:21:b7:73:37:98
+@15105  ------- 15 waps....
+@15122  58:6d:8f:0a:f7:42
+@15130  20:4e:7f:3d:72:da
+@15138  58:6d:8f:0a:f7:40
+@15146  00:0f:b5:51:55:0a
+@15154  22:4e:7f:35:58:44
+@15162  e0:91:f5:db:d2:02
+@15170  58:6d:8f:33:c1:78
+@15178  c0:c1:c0:ab:3a:4e
+@15186  58:6d:8f:33:c1:76
+@15194  00:1d:7e:5f:00:b3
+@15202  58:6d:8f:33:c1:77
+@15210  c0:c1:c0:b2:d9:ce
+@15218  00:18:01:8c:e4:85
+@15226  c0:c1:c0:b2:d9:cf
+@15234  a0:21:b7:73:37:98
+@15237  ------- 11 waps....
+@15254  22:4e:7f:35:58:44
+@15262  e0:91:f5:db:d2:02
+@15270  58:6d:8f:33:c1:78
+@15278  c0:c1:c0:ab:3a:4e
+@15286  58:6d:8f:33:c1:76
+@15294  00:1d:7e:5f:00:b3
+@15302  58:6d:8f:33:c1:77
+@15310  c0:c1:c0:b2:d9:ce
+@15318  00:18:01:8c:e4:85
+@15326  c0:c1:c0:b2:d9:cf
+@15334  a0:21:b7:73:37:98
+@15337  ------- 11 waps....
+@15354  22:4e:7f:35:58:44
+@15362  e0:91:f5:db:d2:02
+@15370  58:6d:8f:33:c1:78
+@15378  c0:c1:c0:ab:3a:4e
+@15386  58:6d:8f:33:c1:76
+@15394  00:1d:7e:5f:00:b3
+@15402  58:6d:8f:33:c1:77
+@15410  c0:c1:c0:b2:d9:ce
+@15418  00:18:01:8c:e4:85
+@15426  c0:c1:c0:b2:d9:cf
+@15434  a0:21:b7:73:37:98
+@15437  ------- 13 waps....
+@15454  58:6d:8f:a9:db:10
+@15462  58:6d:8f:a9:db:0e
+@15470  22:4e:7f:35:58:44
+@15478  e0:91:f5:db:d2:02
+@15486  58:6d:8f:33:c1:78
+@15494  c0:c1:c0:ab:3a:4e
+@15502  58:6d:8f:33:c1:76
+@15510  00:1d:7e:5f:00:b3
+@15518  58:6d:8f:33:c1:77
+@15526  c0:c1:c0:b2:d9:ce
+@15534  00:18:01:8c:e4:85
+@15542  c0:c1:c0:b2:d9:cf
+@15550  a0:21:b7:73:37:98
+@15553  ------- 13 waps....
+@15570  58:6d:8f:a9:db:10
+@15578  58:6d:8f:a9:db:0e
+@15586  22:4e:7f:35:58:44
+@15594  e0:91:f5:db:d2:02
+@15602  58:6d:8f:33:c1:78
+@15610  c0:c1:c0:ab:3a:4e
+@15618  58:6d:8f:33:c1:76
+@15626  00:1d:7e:5f:00:b3
+@15634  58:6d:8f:33:c1:77
+@15642  c0:c1:c0:b2:d9:ce
+@15650  00:18:01:8c:e4:85
+@15658  c0:c1:c0:b2:d9:cf
+@15666  a0:21:b7:73:37:98
+@15669  ------- 0 waps....
+@15673  87:Club One
+@15686  66:OnyxMonkey
+@15701  80:The Sex Chamber
+@15721  239:Exception in thread "main" java.lang.NegativeArraySizeException
+	at edu.ucsb.geog.blakeregalia._FileReader.read_string(_FileReader.java:94)
+	at edu.ucsb.geog.blakeregalia.AndroidDecoder.<init>(AndroidDecoder.java:232)
+	at edu.ucsb.geog.blakeregalia.AndroidDecoder.main(AndroidDecoder.java:67)

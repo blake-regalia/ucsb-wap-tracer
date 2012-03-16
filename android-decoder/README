@@ -4,7 +4,7 @@ ECLIPSE:
 
 COMMAND LINE INTERFACE:
 
-java -jar android-decoder [-json] [-pretty] FILE
+java -jar android-decoder [-json|-sql [table=TABLE_NAME]]  [-pretty|-debug] FILE
 
 To invoke the decoder, open a command prompt or terminal and change directory to be in $PATH_TO_PROJECT/android-decoder/
 Assuming you've place the log file, `trace.bin` in the directory $PATH_TO_PROJECT/android-decoder/data/

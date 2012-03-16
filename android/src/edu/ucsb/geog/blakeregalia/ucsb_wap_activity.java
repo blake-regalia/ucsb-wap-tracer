@@ -44,7 +44,7 @@ import edu.ucsb.geog.blakeregalia.WAP_Manager.WAP_Listener;
 
 public class ucsb_wap_activity extends Activity {
 	
-	private static final int VERSION = 1;
+	private static final int VERSION = 2;
 
 	public static final int GPS_ENABLED_REQUEST_CODE = 0;
 	protected static final long WIFI_SCAN_INTERVAL_MS = 1000;
@@ -403,6 +403,8 @@ public class ucsb_wap_activity extends Activity {
 	 * 
 	 */
 	private void handle_data(int size, long time) {
+		if(size == 0) return;
+		
 		StringBuilder data = new StringBuilder();
 		WAP_Manager.AccessPointIncident wap;
 		

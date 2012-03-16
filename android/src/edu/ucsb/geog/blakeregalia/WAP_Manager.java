@@ -158,7 +158,7 @@ public class WAP_Manager {
 			bytes.append(Encoder.encode_byte(ssid.length()));
 			
 			data.append(new String(bytes.getBytes()));
-			data.append(ssid);
+			data.append(ssid.getBytes());
 		}
 
 		return data.toString().getBytes();
@@ -183,7 +183,7 @@ public class WAP_Manager {
 
 		public AccessPointIncident(ScanResult wap) {
 			access_point = wap;
-			signal_level = (int) (WifiManager.calculateSignalLevel(access_point.level, WIFI_SIGNAL_NUM_PRECISION_LEVELS) * WIFI_SIGNAL_NUM_LEVELS_FACTOR);
+			signal_level = (int) Math.round((WifiManager.calculateSignalLevel(access_point.level, WIFI_SIGNAL_NUM_PRECISION_LEVELS) * WIFI_SIGNAL_NUM_LEVELS_FACTOR))+1;
 		}
 
 		public String toString() {
