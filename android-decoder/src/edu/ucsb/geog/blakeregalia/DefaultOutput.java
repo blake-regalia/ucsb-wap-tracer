@@ -86,7 +86,8 @@ public class DefaultOutput {
 				(new Date(event.getTime()))+": "
 				+ event.getNumWAPs()+" WAP(s); "
 				+ "["+event.getLat()+", "+event.getLon()+"] "
-				+ "@"+event.getAccuracy()+"m"
+				+ "@"+event.getAccuracy()+"m; "
+				+ "GPS is "+event.getStaleness()+"s old"
 				+"\n"
 			);
 			int num_waps = event.getNumWAPs();

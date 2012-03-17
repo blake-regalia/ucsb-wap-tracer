@@ -2,12 +2,10 @@ package edu.ucsb.geog.blakeregalia;
 
 public class Encoder {
 
-	public final static long FILE_HEADER_LENGTH = 8;
-	public final static long DATA_HEADER_LENGTH = 12;
+	public final static long DATA_HEADER_LENGTH = 13;
 	public final static long DATA_ENTRY_LENGTH = 8;
 	public final static long TERMINATING_FIELD_LENGTH = 1;
 	public final static long STRING_MAPPING_LENGTH = 2;
-	public final static long MINIMUM_FILE_SIZE = FILE_HEADER_LENGTH + DATA_HEADER_LENGTH + DATA_ENTRY_LENGTH;
 
 	public static byte encode_byte(int u) {
 		return (byte) (u & 0xff);

@@ -174,6 +174,28 @@ public class GPS_Locator {
 		
 		return bytes.getBytes();
 	}
+	
+	public byte[] encode(long time) {
+		ByteBuilder bytes = new ByteBuilder(10);
+		
+		double latitude = current_location.getLatitude() - SOUTHWEST_CAMPUS_CORNER.LATITDUE;
+		double longitude = current_location.getLongitude() - SOUTHWEST_CAMPUS_CORNER.LONGITUDE;
+		int accuracy = Math.round(current_location.getAccuracy());
+		if(accuracy > 255) {
+			accuracy = 255;
+		}
+		
+		int time_difference = (int) ((time-current_location.getTime())/100);
+		if(time_difference < 0) time_difference = 0;
+		else if(time_difference > 255) time_difference = 255;
+		bytes.append(Encoder.encode_byte(time_difference));
+		
+		bytes.append_4(Encoder.encode_double_to_4_bytes(latitude, COORDINATE_PRECISION));
+		bytes.append_4(Encoder.encode_double_to_4_bytes(longitude, COORDINATE_PRECISION));
+		bytes.append(Encoder.encode_byte(accuracy));
+		
+		return bytes.getBytes();
+	}
 
 	private void showAlertDialogToEnableGPS() {
 		AlertDialog.Builder alert_dialog_builder = new AlertDialog.Builder(context);

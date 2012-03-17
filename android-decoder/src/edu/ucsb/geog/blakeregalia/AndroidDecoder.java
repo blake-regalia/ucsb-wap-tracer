@@ -8,6 +8,7 @@ import java.util.Date;
  * L: Start latitude / longitude
  * N: # of WAPS
  * T: Time offset
+ * P: GPS Stale time
  * A: Latitude
  * G: Longitude
  * X: Location Accuracy in Meters
@@ -23,8 +24,8 @@ import java.util.Date;
  * --long----long----long--
  * 
  * line header
- * NTTAAAAGGGGX
- * b-s-int-intb
+ * NTTPAAAAGGGGX
+ * b-sb-int-intb
  * 
  * 		line data
  * 		MMMMMMRI
@@ -183,6 +184,13 @@ public class AndroidDecoder {
 			char c = fr.read_char();
 			long timestamp = start_time + c*TIMESTAMP_PRECISION_MS;
 			
+			/* V3+: read gps stale time */
+			float stale_time = 0.f;
+			if(version >= 3) {
+				int stale_time_int = (int) (fr.read_byte() & 0xff);
+				stale_time = (stale_time_int) / 10.f;
+			}
+			
 			/* read latitude */
 			float latitude = start_latitude + (((float) fr.read_int()) * COORDINATE_PRECISION_INV);
 
@@ -192,7 +200,7 @@ public class AndroidDecoder {
 			/* read location accuracy */
 			int accuracy = fr.read();
 
-			WAP_Event event = new WAP_Event(timestamp, latitude, longitude, accuracy);
+			WAP_Event event = new WAP_Event(timestamp, latitude, longitude, accuracy, stale_time);
 
 			/* read wap entries */
 			byte n = wap_length;

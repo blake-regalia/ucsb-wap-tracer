@@ -18,7 +18,6 @@ import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import edu.ucsb.geog.blakeregalia.GPS_Locator.SOUTHWEST_CAMPUS_CORNER;
 import edu.ucsb.geog.blakeregalia.WAP_Manager.WAP_Listener;
 
 /**
@@ -44,7 +43,7 @@ import edu.ucsb.geog.blakeregalia.WAP_Manager.WAP_Listener;
 
 public class ucsb_wap_activity extends Activity {
 	
-	private static final int VERSION = 2;
+	private static final int VERSION = 3;
 
 	public static final int GPS_ENABLED_REQUEST_CODE = 0;
 	protected static final long WIFI_SCAN_INTERVAL_MS = 1000;
@@ -54,7 +53,7 @@ public class ucsb_wap_activity extends Activity {
 
 	public static String android_id;
 
-	protected static final float MIN_POSITION_ACCURACY = 15.0f;
+	protected static final float MIN_POSITION_ACCURACY = 65.0f;
 
 	/* precision of the recorded time-stamp values in milliseconds, value of 100 yields 0.1 second resolution */
 	private static final int TIMESTAMP_PRECISION_MS = 100;
@@ -167,10 +166,6 @@ public class ucsb_wap_activity extends Activity {
 	
 	private char reduce_timestamp(long timestamp) {
 		return (char) ((timestamp-start_time) * TIMESTAMP_REDUCTION_FACTOR);
-	}
-
-	private int decode_timestamp(char ts) {
-		return (int) ts;
 	}
 
 	@Override
@@ -308,7 +303,6 @@ public class ucsb_wap_activity extends Activity {
 						data_file.write(wap_manager.encodeSSIDs());
 						data_file.close();
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					correct_table_length(0);
@@ -346,7 +340,6 @@ public class ucsb_wap_activity extends Activity {
 			try {
 				Thread.sleep(10000);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -359,7 +352,6 @@ public class ucsb_wap_activity extends Activity {
 				try {
 					Thread.sleep(10000);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -405,7 +397,6 @@ public class ucsb_wap_activity extends Activity {
 	private void handle_data(int size, long time) {
 		if(size == 0) return;
 		
-		StringBuilder data = new StringBuilder();
 		WAP_Manager.AccessPointIncident wap;
 		
 		ByteBuilder bytes = new ByteBuilder(Encoder.DATA_HEADER_LENGTH + size*Encoder.DATA_ENTRY_LENGTH);
@@ -416,7 +407,7 @@ public class ucsb_wap_activity extends Activity {
 		/**/
 		bytes.append(encode_timestamp(time));
 		/**/
-		bytes.append(gps_locator.encode());
+		bytes.append(gps_locator.encode(time));
 
 		int i = size;
 		while(i-- != 0) {
@@ -431,29 +422,10 @@ public class ucsb_wap_activity extends Activity {
 		try {
 			data_file.write(bytes.getBytes());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			System.exit(1);
 		}
 		/**/
 	}
 
-	/**
-	 * iteratively push the string summary of each access point to the tableview
-	 */
-	private void display_scan_results_to_table(int size) {
-		TableRow tr;
-		TextView text;
-		WAP_Manager.AccessPointIncident wap;
-
-		int i = size;
-		while(i-- != 0) {
-			wap = wap_manager.getWAP(i);
-
-			tr = (TableRow) table.getChildAt(i);    		
-			text = (TextView) tr.getChildAt(0);
-
-			text.setText(wap.toString());
-		}
-	}
 }

@@ -1,12 +1,10 @@
 package edu.ucsb.geog.blakeregalia;
 
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -138,7 +136,6 @@ public class WAP_Manager {
 	public byte[] encodeSSIDs() {
 		//ByteBuilder
 		StringBuilder data = new StringBuilder();
-		int i = 0;
 		ByteBuilder zero = new ByteBuilder(1);
 		zero.append((byte) (0 & 0xff));
 		data.append(new String(zero.getBytes()));
@@ -177,7 +174,6 @@ public class WAP_Manager {
 			try {
 				Thread.sleep(10000);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

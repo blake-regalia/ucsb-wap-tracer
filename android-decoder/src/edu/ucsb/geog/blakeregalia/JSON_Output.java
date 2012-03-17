@@ -116,6 +116,7 @@ public class JSON_Output extends DefaultOutput {
 			json("latitude", event.getLat());
 			json("longitude", event.getLon());
 			json("accuracy", event.getAccuracy());
+			json("staleness", event.getStaleness());
 			json("length", i);
 			
 			while(i-- != 0) {
