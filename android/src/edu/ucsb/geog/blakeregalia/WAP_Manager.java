@@ -157,8 +157,15 @@ public class WAP_Manager {
 			bytes.append_4(Encoder.encode_int( v ));
 			bytes.append(Encoder.encode_byte(ssid.length()));
 			
+			// don't allow extended ascii codes to screw up the encoding
 			data.append(new String(bytes.getBytes()));
-			data.append(ssid.getBytes());
+			int c = ssid.length();
+			while(c-- != 0) {
+				if(ssid.charAt(c) > 255) {
+					ssid = ssid.replace(ssid.charAt(c), '?');
+				}
+			}
+			data.append(ssid);
 		}
 
 		return data.toString().getBytes();
