@@ -43,7 +43,7 @@ import edu.ucsb.geog.blakeregalia.WAP_Manager.WAP_Listener;
 
 public class ucsb_wap_activity extends Activity {
 	
-	private static final int VERSION = 3;
+	public static final int VERSION = 4;
 
 	public static final int GPS_ENABLED_REQUEST_CODE = 0;
 	protected static final long WIFI_SCAN_INTERVAL_MS = 1000;
@@ -87,6 +87,8 @@ public class ucsb_wap_activity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		//Info.init(this);
 
 		android_id = Secure.getString(this.getContentResolver(), Secure.ANDROID_ID);
 
@@ -296,7 +298,11 @@ public class ucsb_wap_activity extends Activity {
 
 
 				Location gps = gps_locator.getCurrentLocation();
-				debug("location:\n"+gps.getLatitude()+","+gps.getLongitude()+"; "+gps.getAccuracy()+"m");
+				debug("location:\n"
+						+(Math.round(gps.getLatitude()*10000)/10000.f)+","
+						+(Math.round(gps.getLongitude()*10000)/10000.f)+"; "
+						+gps.getAltitude()+"m @"
+						+gps.getAccuracy()+"m");
 
 				if(stop_scanning) {
 					try {

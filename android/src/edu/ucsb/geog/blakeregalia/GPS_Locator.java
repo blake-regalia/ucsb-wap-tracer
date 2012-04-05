@@ -176,7 +176,7 @@ public class GPS_Locator {
 	}
 	
 	public byte[] encode(long time) {
-		ByteBuilder bytes = new ByteBuilder(10);
+		ByteBuilder bytes = new ByteBuilder(8+1+1+1);
 		
 		double latitude = current_location.getLatitude() - SOUTHWEST_CAMPUS_CORNER.LATITDUE;
 		double longitude = current_location.getLongitude() - SOUTHWEST_CAMPUS_CORNER.LONGITUDE;
@@ -185,6 +185,7 @@ public class GPS_Locator {
 			accuracy = 255;
 		}
 		
+		// v3
 		int time_difference = (int) ((time-current_location.getTime())/100);
 		if(time_difference < 0) time_difference = 0;
 		else if(time_difference > 255) time_difference = 255;
@@ -192,6 +193,11 @@ public class GPS_Locator {
 		
 		bytes.append_4(Encoder.encode_double_to_4_bytes(latitude, COORDINATE_PRECISION));
 		bytes.append_4(Encoder.encode_double_to_4_bytes(longitude, COORDINATE_PRECISION));
+		
+		//v4
+		int altitude = (int) Math.round(current_location.getAltitude());
+		bytes.append(Encoder.encode_byte(altitude));
+		
 		bytes.append(Encoder.encode_byte(accuracy));
 		
 		return bytes.getBytes();

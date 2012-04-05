@@ -59,9 +59,7 @@ public class _FileReader {
 	public byte read_byte() {
 		try {
 			byte b = (byte) fis.read();
-			if(b != -1) {
-				bytes_read += 1;
-			}
+			bytes_read += 1;
 			return (byte) (b & 0xff);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

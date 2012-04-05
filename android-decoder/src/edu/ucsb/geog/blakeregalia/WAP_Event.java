@@ -7,6 +7,7 @@ public class WAP_Event {
 	private long timestamp;
 	private float latitude;
 	private float longitude;
+	private int altitude;
 	private int num_waps;
 	private int accuracy;
 	private float gps_stale_time;
@@ -21,10 +22,11 @@ public class WAP_Event {
 		wap_list = new ArrayList<WAP>();
 	}
 	
-	public WAP_Event(long time, float lat, float lng, int location_accuracy, float stale_time) {
+	public WAP_Event(long time, float lat, float lng, int alt, int location_accuracy, float stale_time) {
 		timestamp = time;
 		latitude = lat;
 		longitude = lng;
+		altitude = alt;
 		accuracy = location_accuracy;
 		gps_stale_time = stale_time;
 		num_waps = 0;
@@ -46,6 +48,10 @@ public class WAP_Event {
 	
 	public float getLon() {
 		return longitude;
+	}
+	
+	public float getAlt() {
+		return altitude;
 	}
 	
 	public int getNumWAPs() {

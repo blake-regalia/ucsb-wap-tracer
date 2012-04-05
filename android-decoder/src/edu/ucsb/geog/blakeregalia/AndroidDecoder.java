@@ -44,8 +44,9 @@ import java.util.Date;
 public class AndroidDecoder {
 
 	private final static long FILE_HEADER_LENGTH = 24;
-	private final static long DATA_HEADER_LENGTH = 12;
-	private final static long DATA_ENTRY_LENGTH = 8;
+	private static long DATA_HEADER_LENGTH = 12;
+	private static long DATA_ENTRY_LENGTH = 8;
+	
 	private final static long TERMINATING_FIELD_LENGTH = 1;
 	private final static long STRING_MAPPING_LENGTH = 2;
 	private final static long MINIMUM_FILE_SIZE = FILE_HEADER_LENGTH + DATA_HEADER_LENGTH + DATA_ENTRY_LENGTH;
@@ -137,6 +138,16 @@ public class AndroidDecoder {
 		/* read version # */
 		int version = fr.read_int();
 		
+		// changelog
+		// v3: +1 byte in data header (gps stale time)
+		if(version >= 3) {
+			DATA_HEADER_LENGTH += 1;
+		}
+		// v4: +1 byte in data header (gps altitude)
+		if(version >= 4) {
+			DATA_HEADER_LENGTH += 1;
+		}
+		
 		/* fetch unique id */
 		long user = fr.read_long();
 
@@ -197,10 +208,17 @@ public class AndroidDecoder {
 			/* read longitude */
 			float longitude = start_longitude + (((float) fr.read_int()) * COORDINATE_PRECISION_INV);
 			
+			/* V4+: read gps altitude */
+			int altitude = 0;
+			if(version >= 4) {
+				altitude = (int) (fr.read_byte() & 0xff);
+			}
+			
 			/* read location accuracy */
 			int accuracy = fr.read();
 
-			WAP_Event event = new WAP_Event(timestamp, latitude, longitude, accuracy, stale_time);
+			/* setup this event */
+			WAP_Event event = new WAP_Event(timestamp, latitude, longitude, altitude, accuracy, stale_time);
 
 			/* read wap entries */
 			byte n = wap_length;

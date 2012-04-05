@@ -2,7 +2,8 @@ package edu.ucsb.geog.blakeregalia;
 
 public class Encoder {
 
-	public final static long DATA_HEADER_LENGTH = 13;
+	//											v1/2  v3  v4
+	public final static long DATA_HEADER_LENGTH = 12 + 1 + 1;
 	public final static long DATA_ENTRY_LENGTH = 8;
 	public final static long TERMINATING_FIELD_LENGTH = 1;
 	public final static long STRING_MAPPING_LENGTH = 2;
