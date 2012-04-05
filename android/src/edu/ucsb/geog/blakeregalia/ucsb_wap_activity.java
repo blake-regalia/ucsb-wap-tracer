@@ -44,36 +44,43 @@ import edu.ucsb.geog.blakeregalia.WAP_Manager.WAP_Listener;
 public class ucsb_wap_activity extends Activity {
 	
 	public static final int VERSION = 4;
-
-	public static final int GPS_ENABLED_REQUEST_CODE = 0;
-	protected static final long WIFI_SCAN_INTERVAL_MS = 1000;
-	private static final String DATA_FILE_NAME = "trace.bin";
 	
-	private static long unique_id = 0x01;
+	/** wifi scanning **/
+	protected static final long WIFI_SCAN_INTERVAL_MS = 100;
+	private static final int MAX_NUM_WAPS = 255;
+	
+	/** data file **/
+	private static final String DATA_FILE_NAME = "trace.bin";
 
+	/** gps tracking **/
+	protected static final float MIN_POSITION_ACCURACY = 15.0f;
+
+	/** precision of the recorded time-stamp values in milliseconds, value of 10 yields 0.1 second resolution **/
+	private static final int TIMESTAMP_PRECISION_MS = 10;
+	private static final double TIMESTAMP_REDUCTION_FACTOR = 0.1 / TIMESTAMP_PRECISION_MS;
+
+	/** context-free constants **/
+	public static final int GPS_ENABLED_REQUEST_CODE = 0;
+	private static long unique_id = 0x01;
 	public static String android_id;
 
-	protected static final float MIN_POSITION_ACCURACY = 65.0f;
-
-	/* precision of the recorded time-stamp values in milliseconds, value of 100 yields 0.1 second resolution */
-	private static final int TIMESTAMP_PRECISION_MS = 100;
-	private static final double TIMESTAMP_REDUCTION_FACTOR = 1.0 / TIMESTAMP_PRECISION_MS;
-
-	private static final int MAX_NUM_WAPS = 255;
-
+	/** objects **/
 	private WAP_Manager wap_manager;
 	private GPS_Locator gps_locator;
 	private HTTP_Uploader http_uploader;
 
+	/** ui **/
 	private TableLayout table; 
 	private TextView debugTextView;
 	private Button action_button;
 
+	/** io **/
 	private File files_dir;
 	private File trace_file;
 	private FileOutputStream data_file;
+	
+	/** private globals **/
 	private long start_time;
-
 	private boolean wifi_ready = false;
 	private boolean gps_ready = false;
 	private boolean stop_scanning = false;
@@ -158,7 +165,7 @@ public class ucsb_wap_activity extends Activity {
 	 * turns a 8-byte long representing a timestamp to a 2-byte char
 	 * this offers at most 65535 unique entries
 	 * translated to available time span in minutes => 65535*(1 minute / 60 seconds)*(1 second / 10 deciseconds) = 109 minutes & 13.5 seconds
-	 * @param ts
+	 * @param timestamp
 	 * @return
 	 */
 	private byte[] encode_timestamp(long timestamp) {
@@ -178,7 +185,6 @@ public class ucsb_wap_activity extends Activity {
 	}
 
 	public void debug(String message) {
-		//		debugTextView.setText("trace file: "+(new File(files_dir, DATA_FILE_NAME)).length()+"b\n"+message);
 		if(trace_file != null) {
 			debugTextView.setText("trace file: "+trace_file.length()+"b\n"+message);
 		}
@@ -218,8 +224,11 @@ public class ucsb_wap_activity extends Activity {
 		});
 	}
 
+	
+	/**
+	 * wifi & gps interfaces are enabled and ready
+	 */
 	private void hardware_ready() {
-
 		files_dir = this.getFilesDir();
 		try {
 			trace_file = new File(files_dir, DATA_FILE_NAME);
@@ -232,6 +241,7 @@ public class ucsb_wap_activity extends Activity {
 
 		gps_locator.useNetworkProvider();
 
+		/* wait for gps fix */
 		gps_locator.waitForPositionFix(new GPS_Locator.Position_Fix_Listener() {
 			public void onReady() {
 				device_ready();
@@ -312,14 +322,7 @@ public class ucsb_wap_activity extends Activity {
 						e.printStackTrace();
 					}
 					correct_table_length(0);
-					/*
-					debug("renaming file");
-					File upload_file = new File(files_dir, "upload.bin");
-					trace_file.renameTo(upload_file);
-					trace_file = upload_file;
-					upload_file.canRead()
-					debug("establishing connection with server...");*/
-//					check_network();
+
 					debug("saving file...");
 					http_uploader.save(trace_file);
 					set_action_mode(Action_Mode.UPLOAD);
