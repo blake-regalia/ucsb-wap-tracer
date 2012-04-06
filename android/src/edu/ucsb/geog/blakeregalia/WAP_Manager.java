@@ -258,6 +258,7 @@ public class WAP_Manager {
 			String hw_addr = access_point.BSSID;
 			
 			return hex_to_byte(hw_addr.replaceAll(":", ""));
+
 			/*
 			byte[] b = new byte[6];
 			char d, e;

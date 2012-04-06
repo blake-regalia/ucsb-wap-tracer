@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="edu.ucsb.geog.blakeregalia"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk android:minSdkVersion="7" />
+
+    <uses-feature android:name="android.hardware.wifi" />
+
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
+    <uses-permission android:name="android.permission.BROADCAST_WAP_PUSH" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <application
+        android:debuggable="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name" >
+        
+        <activity
+            android:name=".WAP_Tracer_Activity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" 
+            android:launchMode="singleTask" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        
+        <activity
+            android:name=".Alert_Enable_GPS"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" >
+            <intent-filter>
+				<action android:name="com.ucsb.geog.blakeregalia.Alert_Enable_GPS" />
+            </intent-filter>
+        </activity>
+        
+        <activity
+            android:name=".Activity_Enable_WiFi"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" >
+            <intent-filter>
+				<action android:name="com.ucsb.geog.blakeregalia.Activity_Enable_WiFi" />
+            </intent-filter>
+        </activity>
+
+        <service
+            android:name=".WAP_Tracer_Service"
+            android:enabled="true" >
+            <intent-filter>
+                <action android:name="edu.ucsb.geog.blakeregalia.WAP_Tracer_Service" />
+            </intent-filter>
+        </service>
+        
+        <receiver android:name="Start_Service_onBoot_Receiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" >
+                </action>
+
+                <category android:name="android.intent.category.HOME" >
+                </category>
+            </intent-filter>
+        </receiver>
+        
+</application>
+
+</manifest>

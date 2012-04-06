@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="welcome">This application lets you manage the status of the service</string>
+    <string name="app_name">UCSB Geog Tracer</string>
+    <string name="wifi_unavailable">If you are seeing this, your device does not support WiFi. This app will not work</string>
+
+</resources>
