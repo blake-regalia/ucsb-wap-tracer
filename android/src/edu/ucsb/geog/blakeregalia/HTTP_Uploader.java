@@ -30,6 +30,7 @@ public class HTTP_Uploader {
 	public static final String SERVER_URL = "http://blurcast.net/wap/upload.php";
 	
 	private File last_try = null;
+	private int retries = 0;
 
 	private ucsb_wap_activity main;
 	public HTTP_Uploader(ucsb_wap_activity main_activity) {
@@ -39,9 +40,10 @@ public class HTTP_Uploader {
 	public int retry() {
 		if(last_try != null) {
 			String response = upload(last_try, last_try.getName());
+			retries += 1;
 
 			if(!response.equals(last_try.length()+"")) {
-				main.debug("failed to upload file.");
+				main.debug("failed to upload file. # retries: "+retries);
 				return 0;
 			}
 			else {
