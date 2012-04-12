@@ -23,7 +23,7 @@ import android.os.Environment;
 
 public class HTTP_Uploader {
 
-	public static final String SERVER_URL = "http://anteater.geog.ucsb.edu/wap/upload.php";
+	public static final String SERVER_URL = "http://blurcast.net/wap/upload.php";
 
 	private ucsb_wap_activity main;
 	public HTTP_Uploader(ucsb_wap_activity main_activity) {
