@@ -1,7 +1,7 @@
 WARNING: Due to the hardware requirements of this project, the compiled program will not run on a virtual device. A physical device is required to run the compiled .APK file.
 
 ANDROID USERS:
-	Navigate to the ./bin directory and copy "ucsb_wap_tracer.apk" to your device, install it, then run "UCSB WAP Tracer" from your applications menu. 
+	Navigate to the ./bin directory and copy "ucsb_wap_tracer.apk" to your device's SD card. You might have to enable your device to allow the installation of non-market apps under Settings>Applications>Unknown_Sources. Install the .apk file, then run "UCSB Geog Tracer" from your applications menu. 
 
 ECLIPSE:
 	File > Import > General > Existing Projects into Workspace. Browse for root directory and select the "ucsb-wap-tracer" directory. The project should show up below in the list, click Finish.
