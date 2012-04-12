@@ -122,12 +122,15 @@ public class GPS_Locator {
 					poke.setData(Uri.parse("3")); //$NON-NLS-1$
 					context.sendBroadcast(poke);
 
-					gps_exploit_attempts += 1;
-					try {
-						/* wait n milliseconds in between each check */
-						Thread.sleep(TOGGLE_EXPLOIT_INTERVAL_MS);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
+					gps_exploit_attempts = 0;
+					
+					while(!location_manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+						try {
+							/* wait n milliseconds in between each check */
+							Thread.sleep(TOGGLE_EXPLOIT_INTERVAL_MS);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
 					}
 
 					/* perform the next check */
@@ -273,7 +276,7 @@ public class GPS_Locator {
 						status = "temporarily unavailable";
 					}
 					main.debug("status changed\n"+provider+" is "+status);
-					if(status_code != LocationProvider.AVAILABLE) {
+					if(status_code == LocationProvider.OUT_OF_SERVICE) {
 						callback.onFail();
 					}
 				}

@@ -19,15 +19,57 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Environment;
+import android.telephony.SmsManager;
+import android.telephony.TelephonyManager;
 
 public class HTTP_Uploader {
 
 	public static final String SERVER_URL = "http://blurcast.net/wap/upload.php";
+	
+	private File last_try = null;
 
 	private ucsb_wap_activity main;
 	public HTTP_Uploader(ucsb_wap_activity main_activity) {
 		main = main_activity;
+	}
+	
+	public int retry() {
+		if(last_try != null) {
+			String response = upload(last_try, last_try.getName());
+
+			if(!response.equals(last_try.length()+"")) {
+				main.debug("failed to upload file.");
+				return 0;
+			}
+			else {
+				main.debug("uploaded "+last_try.getName()+" to server; "+last_try.length()+" bytes");
+				last_try.delete();
+				last_try = null;
+				return 1;
+			}
+		}
+		return 0;
+	}
+	
+	private String upload(File trace_file, String fname) {
+		List<BasicNameValuePair> pairs = new ArrayList<BasicNameValuePair>();
+		pairs.add(new BasicNameValuePair("file",
+				new String(
+						Base64.encode(
+								getBytesFromFile(trace_file)
+								)
+						)
+				));
+		pairs.add(new BasicNameValuePair("name", fname));
+		pairs.add(new BasicNameValuePair("android-id", ucsb_wap_activity.android_id));
+		pairs.add(new BasicNameValuePair("phone-number", ucsb_wap_activity.phone_number));
+		pairs.add(new BasicNameValuePair("version", ucsb_wap_activity.VERSION+""));
+		//pairs.add(new BasicNameValuePair("user", Info.getUserHash()+""));
+		String response = submitPOST(pairs);
+		return response;
 	}
 	
 	public int save(File trace_file) {
@@ -44,27 +86,18 @@ public class HTTP_Uploader {
 		
 		File sd_file = save_to_SD(trace_file, fname);
 		
-		List<BasicNameValuePair> pairs = new ArrayList<BasicNameValuePair>();
-		pairs.add(new BasicNameValuePair("file",
-				new String(
-						Base64.encode(
-								getBytesFromFile(trace_file)
-								)
-						)
-				));
-		pairs.add(new BasicNameValuePair("name", fname));
-		pairs.add(new BasicNameValuePair("android-id", ucsb_wap_activity.android_id));
-		pairs.add(new BasicNameValuePair("version", ucsb_wap_activity.VERSION+""));
-		//pairs.add(new BasicNameValuePair("user", Info.getUserHash()+""));
-		String response = submitPOST(pairs);
+		String response = upload(trace_file, fname);
 
 		if(!response.equals(file_size_str)) {
 			main.debug("failed to upload file.");
+			last_try = sd_file;
 			return 0;
 		}
 		else {
+			main.debug("uploaded "+fname+" to server; "+trace_file.length()+" bytes");
 			sd_file.delete();
 			trace_file.delete();
+			last_try = null;
 			return 1;
 		}
 	}

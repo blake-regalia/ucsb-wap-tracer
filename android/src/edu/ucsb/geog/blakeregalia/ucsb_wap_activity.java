@@ -9,10 +9,13 @@ import java.util.Date;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.provider.Settings.Secure;
+import android.telephony.SmsManager;
+import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TableLayout;
@@ -63,6 +66,7 @@ public class ucsb_wap_activity extends Activity {
 	public static final int GPS_ENABLED_REQUEST_CODE = 0;
 	private static long unique_id = 0x01;
 	public static String android_id;
+	public static String phone_number;
 
 	/** objects **/
 	private WAP_Manager wap_manager;
@@ -86,7 +90,7 @@ public class ucsb_wap_activity extends Activity {
 	private boolean stop_scanning = false;
 
 	private enum Action_Mode {
-		EXIT, START, STOP, UPLOAD
+		EXIT, START, STOP, UPLOAD, RETRY
 	}
 	private Action_Mode action_mode;
 
@@ -98,6 +102,7 @@ public class ucsb_wap_activity extends Activity {
 		//Info.init(this);
 
 		android_id = Secure.getString(this.getContentResolver(), Secure.ANDROID_ID);
+		phone_number = getPhone();
 
 		/* establish wap_manager */
 		wap_manager = new WAP_Manager(this);
@@ -132,6 +137,9 @@ public class ucsb_wap_activity extends Activity {
 				case UPLOAD:
 					action_upload();
 					break;
+				case RETRY:
+					action_retry();
+					break;
 				}
 			}
 		});
@@ -140,6 +148,20 @@ public class ucsb_wap_activity extends Activity {
 
 		/* startup */
 		initialize();
+	}
+	
+
+	private String getPhone() {
+		String pn = null;
+		if(this.getPackageManager().hasSystemFeature(PackageManager.FEATURE_TELEPHONY)) {
+			TelephonyManager mTelephonyManager =(TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
+			
+			pn = mTelephonyManager.getLine1Number();
+		}
+		if(pn == null) {
+			return "";
+		}
+		return pn;
 	}
 
 	private void set_action_mode(Action_Mode to) {
@@ -157,6 +179,10 @@ public class ucsb_wap_activity extends Activity {
 		case UPLOAD:
 			action_button.setText("Upload");
 			break;
+		case RETRY:
+			action_button.setText("Retry");
+			break;
+
 		}
 		action_button.setEnabled(true);
 	}
@@ -324,8 +350,12 @@ public class ucsb_wap_activity extends Activity {
 					correct_table_length(0);
 
 					debug("saving file...");
-					http_uploader.save(trace_file);
-					set_action_mode(Action_Mode.UPLOAD);
+					if(http_uploader.save(trace_file) == 0) {
+						set_action_mode(Action_Mode.RETRY);
+					}
+					else {
+						set_action_mode(Action_Mode.EXIT);
+					}
 				}
 				else {
 
@@ -340,6 +370,15 @@ public class ucsb_wap_activity extends Activity {
 				}
 			}
 		};
+	}
+	
+	private void action_retry() {
+		if(http_uploader.retry() == 0) {
+			set_action_mode(Action_Mode.RETRY);
+		}
+		else {
+			set_action_mode(Action_Mode.EXIT);
+		}
 	}
 
 	private void check_network() {
