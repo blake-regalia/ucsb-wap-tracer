@@ -1,4 +1,3 @@
-This APK may or may not crash unexpectedly. If you experience frequent crashes, please inform me at: blake.regalia@gmail.com 
 
 Copy "ucsb_wap_tracer.apk" to your device, install it, then run "UCSB Geog Tracer" from your applications menu.
 
@@ -10,3 +9,4 @@ The application will then attempt to upload the trace file to our server. If for
 The logs will be saved at: /sdcard/ucsb-wap-traces/*.bin
 You may copy these .bin files over to your computer, package them into a .zip file, and then send them as an email attachment to blake  
 
+This APK may or may not crash unexpectedly. If you experience frequent crashes, please inform me at: blake.regalia@gmail.com 
