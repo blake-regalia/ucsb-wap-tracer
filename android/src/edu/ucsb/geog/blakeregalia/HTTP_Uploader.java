@@ -27,7 +27,7 @@ import android.telephony.TelephonyManager;
 
 public class HTTP_Uploader {
 
-	public static final String SERVER_URL = "http://blurcast.net/wap/upload.php";
+	public static final String SERVER_URL = "http://anteater.geog.ucsb.edu/wap/upload.php";
 	
 	private File last_try = null;
 	private int retries = 0;
