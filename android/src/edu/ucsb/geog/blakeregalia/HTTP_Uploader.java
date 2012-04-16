@@ -27,7 +27,7 @@ import android.telephony.TelephonyManager;
 
 public class HTTP_Uploader {
 
-	public static final String SERVER_URL = "http://anteater.geog.ucsb.edu/wap/upload.php";
+	public static final String SERVER_URL = "http://anteater.geog.ucsb.edu/wap/mobile.php";
 	
 	private File last_try = null;
 	private int retries = 0;
@@ -58,7 +58,7 @@ public class HTTP_Uploader {
 	
 	private String upload(File trace_file, String fname) {
 		List<BasicNameValuePair> pairs = new ArrayList<BasicNameValuePair>();
-		pairs.add(new BasicNameValuePair("file",
+		pairs.add(new BasicNameValuePair("data",
 				new String(
 						Base64.encode(
 								getBytesFromFile(trace_file)
@@ -164,13 +164,14 @@ public class HTTP_Uploader {
             HttpEntity entity = http_response.getEntity();
             DataInputStream dis = new DataInputStream(entity.getContent());
             
-			System.out.println(http_response.toString());
 			StringBuilder rep = new StringBuilder();
 			String tmp;
 			while((tmp = dis.readLine()) != null) {
 				rep.append(tmp);
 			}
 			response_str = rep.toString();
+
+			System.out.println(response_str);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}  

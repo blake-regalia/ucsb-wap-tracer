@@ -46,7 +46,7 @@ import edu.ucsb.geog.blakeregalia.WAP_Manager.WAP_Listener;
 
 public class ucsb_wap_activity extends Activity {
 	
-	public static final int VERSION = 4;
+	public static final int VERSION = 5;
 	
 	/** wifi scanning **/
 	protected static final long WIFI_SCAN_INTERVAL_MS = 100;
@@ -94,21 +94,14 @@ public class ucsb_wap_activity extends Activity {
 	}
 	private Action_Mode action_mode;
 
+	protected boolean done_collecting = false;
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
 		//Info.init(this);
-
-		android_id = Secure.getString(this.getContentResolver(), Secure.ANDROID_ID);
-		phone_number = getPhone();
-
-		/* establish wap_manager */
-		wap_manager = new WAP_Manager(this);
-
-		/* establish gps_locator */
-		gps_locator = new GPS_Locator(this);
 		
 		/* set content view */
 		setContentView(R.layout.main);
@@ -118,6 +111,19 @@ public class ucsb_wap_activity extends Activity {
 
 		/* fetch top text view for printing status */
 		debugTextView = (TextView) findViewById(R.id.debugTextView);
+		
+		
+
+		android_id = Secure.getString(this.getContentResolver(), Secure.ANDROID_ID);
+		
+		phone_number = getPhone();
+
+		/* establish wap_manager */
+		wap_manager = new WAP_Manager(this);
+
+		/* establish gps_locator */
+		gps_locator = new GPS_Locator(this);
+		
 
 		/* fetch action button */
 		action_button = (Button) findViewById(R.id.action);
@@ -152,6 +158,7 @@ public class ucsb_wap_activity extends Activity {
 	
 
 	private String getPhone() {
+		debug("reading phone...",true);
 		String pn = null;
 		if(this.getPackageManager().hasSystemFeature(PackageManager.FEATURE_TELEPHONY)) {
 			TelephonyManager mTelephonyManager =(TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
@@ -159,7 +166,7 @@ public class ucsb_wap_activity extends Activity {
 			pn = mTelephonyManager.getLine1Number();
 		}
 		if(pn == null) {
-			return "";
+			return "not a phone";
 		}
 		return pn;
 	}
@@ -216,6 +223,15 @@ public class ucsb_wap_activity extends Activity {
 		}
 		else {
 			debugTextView.setText("trace file: 0b\n"+message);
+		}
+	}
+
+	public void debug(String message, boolean dont_show_trace_file) {
+		if(dont_show_trace_file) {
+			debugTextView.setText(message);
+		}
+		else {
+			debug(message);
 		}
 	}
 
@@ -322,6 +338,10 @@ public class ucsb_wap_activity extends Activity {
 			 * gets called once the scan has completed
 			 */
 			public void onComplete(int size, long time) {
+				
+				if(done_collecting ) {
+					return;
+				}
 
 				/* assure number of rows */
 				correct_table_length(size);
@@ -341,6 +361,8 @@ public class ucsb_wap_activity extends Activity {
 						+gps.getAccuracy()+"m");
 
 				if(stop_scanning) {
+					done_collecting = true;
+					
 					try {
 						data_file.write(wap_manager.encodeSSIDs());
 						data_file.close();
