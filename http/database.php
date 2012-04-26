@@ -1,10 +1,8 @@
 <?php
 
-$DATABASE = array(
-	'HOST' => ini_get("mysql.default_host"),
-	'USER' => ini_get("mysql.default_user"),
-	'PASS' => ini_get("mysql.default_password"),
-);
+if(!isset($DATABASE)) {
+	require("database.config.php");
+}
 
 
 class MySQL_Pointer {
@@ -58,7 +56,6 @@ class MySQL_Pointer {
 	
 	function dropTable($table) {
 		$sql = "DROP TABLE `".$this->database."`.`".$table."`";
-		echo $sql."\n";
 		return $this->attempt($sql);
 	}
 	
@@ -108,7 +105,6 @@ class MySQL_Pointer {
 		$sql = "CREATE TABLE IF NOT EXISTS `".$name."` (";
 		$sql .= implode(",", $fields);
 		$sql .= ");";
-		echo $sql;
 		return $this->attempt($sql);
 	}
 	
@@ -125,7 +121,7 @@ class MySQL_Pointer {
 		$link = mysql_connect($server, $user, $pass, $new, $flags);
 		
 		if($link === FALSE) {
-			$this->error('failed to connect to MySQL server');
+			die('failed to connect to MySQL server');
 			exit;
 		}
 		else {

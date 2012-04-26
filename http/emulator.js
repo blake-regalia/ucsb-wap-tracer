@@ -1,18 +1,63 @@
 
-
+var Query;
 
 $(document).ready(function() {
-	GoogleMaps();
+	var o = $('#options').append(
+		'<div id="roadmap"><input type="checkbox"></input>  Roadmap Base layer</div>'
+	);
+	var roadmap = function(b) {
+		GoogleMaps.getMap().setMapTypeId(b?'roadmap':'BasicMap');
+	};
+	o.find('#roadmap').click(function() {
+		var opp = !$(this).find('input').attr('checked');
+		$(this).find('input').attr('checked',opp);
+		console.log('omg', opp);
+		roadmap(!!$(this).find('input').attr('checked'));
+	}).find('input').click(function(e) {
+		e.stopImmediatePropagation();
+		roadmap(!!$(this).attr('checked'));
+	});
 	
-	var query = parseQuery(window.location.search);
+	GoogleMaps();
+	Query = parseQuery(window.location.search);
+	var query = Query;
+	
+	$.getJSON('ref/campus.buildings.json', function(json) {
+		UCSB_Campus_Buildings.load(json).drawOver(GoogleMaps.getMap());
+	});
 	
 	if(query.file) {
 		new Trace(query.file);
+	}
+	else if(query.view === 'traces') {
+		var prefix = (query.user && query.user.length)? '^'+query.user: '';
+		$.ajax({
+			url: 'index.php?file='+prefix+'*',
+			dataType: 'json',
+			success: function(json) {
+				var i = json.length;
+				while(i--) {
+					setTimeout(new Trace(json[i]), 0);
+				}
+			},
+		});
 	}
 	else {
 		
 		WAP.hits(function(results) {
 			var list = this;
+			
+			if(query.family) {
+				var family = {};
+				var fam_len = parseInt(query.family);
+				for(var e in list) {
+					var name = e.substr(0,fam_len);
+					if(!family[name]) family[name] = 0;
+					family[name] += parseInt(list[e]);
+				}
+				list = family;
+//				console.log(list);
+			}
 			
 			var sort = {};
 			var max = 0;
@@ -61,6 +106,19 @@ $(document).ready(function() {
 		ssid: function(ssid) {
 			global.setSSID(ssid);
 			WAP.ssid(ssid, function(list) {
+				
+				if(Query.family) {
+					var family = {};
+					var fam_len = parseInt(Query.family);
+					for(var e in list) {
+						var name = e.substr(0,fam_len);
+						if(!family[name]) family[name] = 0;
+						family[name] += parseInt(list[e]);
+					}
+					list = family;
+				}
+				
+				
 				var sort = {};
 				var max = 0;
 				$.each(list, function(k,v) {
@@ -120,7 +178,7 @@ var parseQuery = function(query) {
 		},
 		2: function(c) {
 			if(c === '&') {
-				obj[key] = tmp.substr(0,tmp.length-1);
+				obj[key] = decodeURIComponent(tmp.substr(0,tmp.length-1));
 				tmp = '';
 				mode = 1;
 			}
@@ -135,7 +193,7 @@ var parseQuery = function(query) {
 		obj[tmp] = true;
 	}
 	else if(mode === 2) {
-		obj[key] = tmp;
+		obj[key] = decodeURIComponent(tmp);
 	}
 	return obj;
 };
@@ -409,6 +467,9 @@ var shift_lon = 0;
 			options
 		);
 		
+		map.mapTypes.set('BasicMap', new BasicMap());
+		
+		map.setMapTypeId('BasicMap');
 	};
 	$.extend(global, {
 		getMap: function() {
@@ -499,7 +560,7 @@ var shift_lon = 0;
 			*/
 			
 			google.maps.event.addListener(map, 'mousemouse', function(e) {
-				console.log(e);
+//				console.log(e);
 			});
 		},
 	});
@@ -518,7 +579,7 @@ var shift_lon = 0;
 				public.clean();
 				_wlog = wlog;
 				
-				console.log(wlog);
+//				console.log(wlog);
 				
 				var marker = {setMap:function(){}};
 				
@@ -549,7 +610,7 @@ var shift_lon = 0;
 				var time_span = wlog[wlog.length-1].time-wlog.start_time;
 				while(i--) {
 					var event = wlog[i];
-					console.log(event);
+//					console.log(event);
 					var spot = new google.maps.LatLng(event.latitude+shift_lat, event.longitude+shift_lon);
 					//path.push(spot);
 					
@@ -604,7 +665,7 @@ var shift_lon = 0;
 				}
 				
 				google.maps.event.addListener(map, 'mousemove', function(e) {
-					console.log(e);
+//					console.log(e);
 				});
 			},
 		};
@@ -656,5 +717,90 @@ var shift_lon = 0;
 			')'].str()
 		},
 	
+	});
+})();
+
+
+window.UCSB_Campus_Buildings = {
+	data: false,
+	overlays: [],
+	load: function(DATA) {
+		this.data = DATA;
+		return this;
+	},
+	drawOver: function(google_map) {
+		var polyline = {
+			geodesic: true,
+			strokeWeight: 2,
+			map: google_map
+		};
+		var data = this.data;
+		var i = data.length;
+		while(i--) {
+			var building = data[i];
+			var k = building.length;
+			while(k--) {
+				var rings = building[k].geometry.rings;
+				var r = rings.length;
+				while(r--) {
+					var ring = rings[r];
+					var pts = new google.maps.MVCArray();
+					var h = ring.length;
+					while(h--) {
+						pts.push(new google.maps.LatLng(ring[h][1], ring[h][0]));
+					}
+					pts.push(new google.maps.LatLng(ring[0][1],ring[0][0]));
+					polyline.path = pts;
+					this.overlays.push(new google.maps.Polyline(polyline));
+				}
+			}
+		}
+		return this;
+	},
+	clear: function() {
+		var i = overlays.length;
+		while(i--) {
+			overlays[i].setMap(null);
+		}
+		overlays.length = 0;
+	},
+};
+
+
+(function() {
+	var __func__ = 'BasicMap';
+	var dim = '256px';
+	var construct = function() {
+		var self = {
+			
+		};
+		var public = function() {
+			
+		};
+		$.extend(public, {
+			tileSize: new google.maps.Size(256, 256),
+			maxZoom: 23,
+			minZoom: 15,
+			getTile: function(crd, zoom, owner) {
+				var div = owner.createElement('DIV');
+				div.className = 'tile';
+				return div;
+			},
+		});
+		return public;
+	};
+	var global = window[__func__] = function() {
+		if(this !== window) {
+			var instance = construct.apply(this, arguments);
+			return instance;
+		}
+		else {
+			
+		}
+	};
+	$.extend(global, {
+		toString: function() {
+			return __func__+'()';
+		}
 	});
 })();

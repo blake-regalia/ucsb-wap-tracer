@@ -1,14 +1,37 @@
 <?php
 
+/*
+//$cmd = 'cmd /C run.bat';
+//shell_exec($cmd);
+$WshShell = new COM("WScript.Shell");
+$oExec = $WshShell->Run('run.bat', 0, false);
+echo 'done';
+exit;
+*/
+
+require("database.config.php");
+
+
+$LOCAL = true;
+
 /*** generate ***/
 
 /** global vars **/
-$JAVA_PATH = '"C:\\Program Files\\Java\\jre7\\bin\\java.exe"';
-$MYSQL_PATH = '"D:\\HTTP\\xampp\\mysql\\bin\\mysql.exe"';
+
+$unix;
+if (substr(php_uname(), 0, 7) == "Windows") {
+	$unix = false;
+} else {
+	$unix = true;
+}
+
+$JAVA_PATH = $unix? 'java': '"C:\\Program Files\\Java\\jre7\\bin\\java.exe"';
+$MYSQL_PATH = $unix? 'mysql': '"D:\\HTTP\\xampp\\mysql\\bin\\mysql.exe"';
+$SCRIPT_EXT = $unix? 'sh': 'bat';
 
 $PHP_DATABASE_FILE = "database.php";
 
-$DATABASE_NAME = "ucsb_wap_tracer";
+$DATABASE_NAME = $DATABASE['db_name'];
 $WAPS_TABLE_NAME = "waps";
 $EVENTS_TABLE_NAME = "events";
 
@@ -26,30 +49,42 @@ function decode_bin($input) {
 
 function decode_bin_to_file($input, $output) {
 	global $JAVA_PATH;
-	return exec_in_background($JAVA_PATH, ' -jar android-decoder.jar '.$input.' > '.$output);
+	return shell_exec($JAVA_PATH.' -jar android-decoder.jar '.$input.' > '.$output);
 }
 
-function exec_in_background($exe, $args = "") { 
-	if (substr(php_uname(), 0, 7) == "Windows"){ 
-		$cmd = "start \"bla\" " . $exe . " " . $args;
-		pclose(popen($cmd, "r"));
-		return $cmd;
+function decode_bin_to_file_output_script($input, $output) {
+	global $JAVA_PATH;
+	return $JAVA_PATH.' -jar android-decoder.jar '.$input.' > '.$output;
+}
+
+function exec_in_background($cmd, $args = "") { 
+	if (substr(php_uname(), 0, 7) == "Windows") {
+		$WshShell = new COM("WScript.Shell");
+		$oExec = $WshShell->Run($cmd, 0, false);
+		return $oExec;
 	} else { 
-		exec("./" . $exe . " " . escapeshellarg($args) . " > /dev/null &");    
+		exec("./".$cmd." > /dev/null &");
 	} 
 } 
 
 
-function get_all_files($data_dir) {
+function get_new_files($data_dir) {
+	$array = array();
+	return $array;
+}
+
+function get_all_files($data_dir, $ext) {
 	$array = array();
 	chdir($data_dir);
 	$data_dir_files = scandir('.');
 	foreach($data_dir_files as $user_dir) {
-		if($user_dir != '.' && $user_dir != '..') {
+		if($user_dir != '.' && $user_dir != '..' && $user_dir[0] != '~') {
 			chdir($user_dir);
 			$user_dir_files = scandir('.');
 			foreach($user_dir_files as $trace_file) {
-				if($trace_file != '.' && $trace_file != '..') {
+				$full_path = $data_dir.'/'.$user_dir.'/'.$trace_file;
+				$pi = pathinfo($full_path);
+				if($pi['extension'] == $ext) {
 					$array[] = array(
 						'user' => $user_dir,
 						'trace' => $trace_file,
@@ -64,6 +99,10 @@ function get_all_files($data_dir) {
 	return $array;
 }
 
+function mysql_load_redirect($file) {
+	header('Location: generate.php?sql='.$file);
+	exit;
+}
 
 /****/
 
@@ -85,61 +124,116 @@ if(isset($_GET['json'])) {
 			chdir('..');
 		}
 		
-		$files = get_all_files('data');
-		
-		ob_start();
-		foreach($files as $file) {
-			$json_path = 'json/'.$file['user'].'_'.$file['trace'].'.json';
-			decode_bin_to_file('-json '.$PRETTY.'"'.$file['path'].'"', $json_path);
-			echo $json_path;
-			ob_flush(); flush();
-		}
-		exit;
+		$files = get_all_files('data','bin');
 	}
+	else if($_GET['json'] == 'new') {
+		$files = get_new_files('data');
+	}
+	else {
+		die('wrong args');
+	}
+	
+	$batch = array();
+	
+	ob_start();
+	foreach($files as $file) {
+		$json_path = 'json/'.$file['user'].'_'.$file['trace'].'.json';
+		$batch[] = decode_bin_to_file_output_script('-json '.$PRETTY.'"'.$file['path'].'"', $json_path);
+		echo $json_path." <br />\n";
+		ob_flush(); flush();
+	}
+	
+	file_put_contents('json.'.$SCRIPT_EXT, implode("\n", $batch));
+	exit;
 }
 
 // sql
 else if(isset($_GET['sql'])) {
 	
-	if($_GET['sql'] == 'all') {
-		
+	$arg = $_GET['sql'];
+	
+	if($arg == 'all') {
+
 		// empty sql directory
-		if(!is_dir('sql')) mkdir('sql');
+		if(!is_dir('sql')) {
+			mkdir('sql');
+			if(!is_dir('sql')) {
+				die('failed to create directory');
+			}
+		}
+
 		else {
 			chdir('sql');
 			$sql_files = scandir('.');
 			foreach($sql_files as $file) {
 				if($file != '.' && $file != '..') {
-					unlink($file);
+					unlink($file).'!';
 				}
 			}
 			chdir('..');
 		}
 		
-		// load the database class
-		include_once($PHP_DATABASE_FILE);
-		
-		// initialize an instance to database table
-		$WAPs = new MySQL_Pointer($DATABASE_NAME);
-		
-		$files = get_all_files('data');
-		
-		// delete the tables that are already there
-		$WAPs->dropTable($WAPS_TABLE_NAME);
-		$WAPs->dropTable($EVENTS_TABLE_NAME);
-		
-		ob_start();
-		foreach($files as $file) {
-			$sql_path = 'sql/'.$file['user'].'_'.$file['trace'].'.sql';
-			echo decode_bin_to_file('-sql table='.$EVENTS_TABLE_NAME.' '.$PRETTY.' "'.$file['path'].'"', $sql_path);
-			echo "\n";
-			$script = $MYSQL_PATH.' --user='.$DATABASE['USER'].' --password='.$DATABASE['PASS'].' "'.$DATABASE_NAME.'" < "'.$ABSOLUTE_PATH.'/'.$sql_path.'"';
-			shell_exec($script);
-			echo $script."\n";
-			ob_flush(); flush();
-		}
-		exit;
+		$files = get_all_files('data','bin');
 	}
+	else if($arg == 'new') {
+		$files = get_new_files('data');
+	}
+	
+	
+	// load the database class
+	require($PHP_DATABASE_FILE);
+	
+	// initialize an instance to database table
+	$WAPs = new MySQL_Pointer($DATABASE_NAME);
+	
+	// delete the tables that are already there
+	$WAPs->dropTable($WAPS_TABLE_NAME);
+	$WAPs->dropTable($EVENTS_TABLE_NAME);
+
+	$mysql = array();
+	if($unix) {
+		$mysql[] = '#!/bin/bash';
+	}
+	
+	foreach($files as $file) {
+		$sql_path = 'sql/'.$file['user'].'_'.$file['trace'].'.sql';
+		decode_bin_to_file('-sql table='.$EVENTS_TABLE_NAME.' '.$PRETTY.' "'.$file['path'].'"', $sql_path);
+		
+		$script = $MYSQL_PATH.' --user='.$DATABASE['USER'].' --password='.$DATABASE['PASS'].' "'.$DATABASE_NAME.'" < "'.$ABSOLUTE_PATH.'/'.$sql_path.'"';
+		//shell_exec($script);
+		echo $script."\n";
+		
+		$mysql[] = $script;
+	}
+	
+	file_put_contents('mysql.'.$SCRIPT_EXT, implode("\n", $mysql));
+	
+	exit;
+	
+	/*
+	
+	else if(substr($arg,strrpos($arg,'.')) === '.sql') {
+		$sql_files = scandir('sql');
+		$sql_path = $arg;
+		
+		$script = $MYSQL_PATH.' --user='.$DATABASE['USER'].' --password='.$DATABASE['PASS'].' "'.$DATABASE_NAME.'" < "'.$ABSOLUTE_PATH.'/'.$sql_path.'"';
+		shell_exec($script);
+		/*
+		
+		$over = preg_split('/\n/', file_get_contents('sql/files.txt'));
+		
+		print_r($over);
+		
+		if(in_array($f, $sql_files))
+			foreach($lines 
+		foreach($sql_files as $file) {
+			
+		}
+		file_put_contents('sql/files.txt', $target, FILE_APPEND);
+		echo $arg;
+		exit;*
+	}
+	*/
 }
 
 

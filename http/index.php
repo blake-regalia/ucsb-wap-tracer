@@ -2,9 +2,14 @@
 $JAVA_PATH = '"C:\\Program Files\\Java\\jre7\\bin\\java.exe"';
 $MYSQL_PATH = '"D:\\HTTP\\xampp\\mysql\\bin\\mysql.exe"';
 $PHP_DATABASE_FILE = "database.php";
-$DATABASE_NAME = "ucsb_wap_tracer";
 $WAPS_TABLE_NAME = "waps";
 $EVENTS_TABLE_NAME = "events";
+
+// set up the essential database configurations
+$PHP_DATABASE_CONFIG_FILE = "database.config.php";
+require($PHP_DATABASE_CONFIG_FILE);
+$DATABASE_NAME = $DATABASE['db_name'];
+
 $ABSOLUTE_PATH = substr($_SERVER['SCRIPT_FILENAME'], 0, strrpos($_SERVER['SCRIPT_FILENAME'],'/'));
 $STRICT = FALSE;
 
@@ -104,7 +109,29 @@ if(sizeof($_FILES) !== 0) {
 		exit;
 	}
 }
-else if(isset($_GET['file']) || isset($_GET['view'])) {
+else if(isset($_GET['file'])) {
+	if(strpos($_GET['file'], '*') === FALSE) {
+		readfile('index.html');
+	}
+	$regex = $_GET['file'];
+	
+	$regex = preg_replace('/[^\^a-z\-_0-9\*\.]/i', '', $regex);
+	$regex = preg_replace('/[\*]/i', '.*', $regex);
+	$regex = preg_replace('/[\-]/i', '\\-', $regex);
+	$regex = '/'.$regex.'/i';
+	
+	$json_files = scandir('json');
+	$json = array();
+	
+	foreach($json_files as $file) {
+		if($file != '.' && $file != '..' && preg_match($regex, $file)) {
+			$json[] = $file;
+		}
+	}
+	echo json_encode($json);
+	exit;
+}
+else if(isset($_GET['view'])) {
 	readfile('index.html');
 	exit;
 }
@@ -113,7 +140,7 @@ else if(isset($_GET['file']) || isset($_GET['view'])) {
 else if(isset($_GET['bssid'])) {
 	
 	// load the database class
-	include_once($PHP_DATABASE_FILE);
+	require($PHP_DATABASE_FILE);
 	
 	// initialize an instance to database table
 	$WAPs = new MySQL_Pointer($DATABASE_NAME);

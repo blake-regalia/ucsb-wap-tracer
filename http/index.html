@@ -5,21 +5,32 @@
 	<script type="text/javascript" src="unra.js"></script>
 	<script type="text/javascript" src="emulator.js"></script>
 	<style>
-#controls {
+#controls,#options {
 	position: fixed;
-	right: 0;
 	top: 0;
 	height: 100%;
 	width: 15%;
-	background-color: white;
+	background-color: ;
 	overflow-y: scroll;
+	background-color: #A0A0A0;
+}
+#controls {
+	right: 0;
+}
+#options {
+	left: 0;
 }
 #map_canvas {
-	width: 85%;
+	width: 70%;
 	height: 100%;
 	position: absolute;
-	left: 0;
+	left: 15%;
 	top: 0;
+}
+.tile {
+	background-color: #e3e0f8;
+	width: 256px;
+	height: 256px;
 }
 .link {
 	color: navy;
@@ -38,6 +49,8 @@
 	</style>
 </head>
 <body>
+	<div id="options">
+	</div>
 	<div id="map_canvas"></div>
 	<div id="controls">
 		<div id="title"></div>
