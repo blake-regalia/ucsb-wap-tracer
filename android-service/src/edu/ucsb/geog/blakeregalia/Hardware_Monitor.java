@@ -1,9 +1,7 @@
 package edu.ucsb.geog.blakeregalia;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -15,6 +13,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.Looper;
 
 /**
  * This class is responsible for monitoring and starting hardware interfaces
@@ -30,7 +29,7 @@ public class Hardware_Monitor {
 	public static final String ENABLE_GPS = "enable_gps";
 	public static final String ENABLE_WIFI = "enable_wifi";
 	
-	private static final boolean USE_GPS_TOGGLE_EXPLOIT_IF_AVAILABLE = true;
+	private static final boolean USE_GPS_TOGGLE_EXPLOIT_IF_AVAILABLE = false;
 	
 	/** objects */
 	private Context context;
@@ -86,22 +85,35 @@ public class Hardware_Monitor {
 	}
 	
 
-	private void toggle_gps(final Runnable ready) {
-		System.out.println("toggle exploit available");
+	private void toggle_gps(final Runnable ready, final Runnable hw_fail, Looper looper) {
+
+		System.out.println(">/<: GPS");
 		
-		/*
 		// callback the listener once gps is enabled
-		location_manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, new LocationListener() {
-			public void onLocationChanged(Location location) {}
-			public void onProviderDisabled(String provider) {}
-			public void onProviderEnabled(String provider) {
-				System.out.println("gps enabled!");
-				location_manager.removeUpdates(this);
-				callback(ready);
+		/*
+		Thread thread = (new Thread(new Runnable() {
+			public void run() {
+			/**/
+				location_manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, new LocationListener() {
+					public void onLocationChanged(Location location) {}
+					public void onProviderDisabled(String provider) {}
+					public void onProviderEnabled(String provider) {
+						
+						System.out.println("--> gps enabled");
+						
+						location_manager.removeUpdates(this);
+						callback(ready);
+					}
+					public void onStatusChanged(String provider, int status, Bundle extras) {}
+				}, looper);
+				/*
 			}
-			public void onStatusChanged(String provider, int status, Bundle extras) {}
-		});
-		*/
+		}));
+
+		thread.setDaemon(true);
+		thread.start();
+		
+		/**/
 		
 		
 		// exploit a bug in the power manager widget
@@ -111,7 +123,7 @@ public class Hardware_Monitor {
 		poke.setData(Uri.parse("3")); //$NON-NLS-1$
 		context.sendBroadcast(poke);
 
-		System.out.println("waiting for gps enabled...");
+		System.out.println("...");
 	}	
 	
 	
@@ -124,8 +136,6 @@ public class Hardware_Monitor {
 	
 	
 	private void enable_gps_alert_dialog() {
-		if(context == null) System.err.println("context is null");
-		if(Alert_Enable_GPS.class == null) System.err.println("gps_class is null");
 		context.startActivity(
 				new Intent(context, Alert_Enable_GPS.class)
 				.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -144,7 +154,7 @@ public class Hardware_Monitor {
 		return enabled;
 	}
 	
-	public boolean enable(int hardware, Runnable ready, Runnable hardware_fail) {
+	public boolean enable(int hardware, Runnable ready, Runnable hardware_fail, Looper looper) {
 		boolean rx = true;
 		if((GPS & hardware) != 0) {
 			if(gps_enabled()) {
@@ -152,9 +162,11 @@ public class Hardware_Monitor {
 			}
 			else {
 				if(can_toggle_gps) {
-					toggle_gps(ready);
+					toggle_gps(ready, hardware_fail, looper);
 				}
-				enable_gps_alert_dialog();
+				else {
+				 enable_gps_alert_dialog();
+				}
 				rx &= false;
 			}
 		}

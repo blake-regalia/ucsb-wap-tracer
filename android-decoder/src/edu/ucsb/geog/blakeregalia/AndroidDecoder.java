@@ -5,16 +5,21 @@ import java.util.Date;
 
 /**
  * S: Start time
- * L: Start latitude / longitude
+ * L: Reference latitude / longitude
+ * 
  * N: # of WAPS
  * T: Time offset
  * P: GPS Stale time
  * A: Latitude
  * G: Longitude
+ * W: Altitude in meters
  * X: Location Accuracy in Meters
+ * 
  * M: MAC address
+ * F: Frequency of the wap
  * R: RSSI signal strength
  * I: SSID name of network key
+ * 
  * k: key of SSID
  * s: length of SSID string
  * D: SSID string
@@ -24,12 +29,12 @@ import java.util.Date;
  * --long----long----long--
  * 
  * line header
- * NTTPAAAAGGGGX
- * b-sb-int-intb
+ * NTT PAAAAGGGGWX
+ * b-s b-int-intb
  * 
  * 		line data
- * 		MMMMMMRI
- * 		--mac-bb
+ * 		MMMMMMFFRI
+ * 		--mac-bbbb
  * 
  * 0
  * -

@@ -238,7 +238,7 @@ public class WAP_Manager {
 			if(signal_level < 0) signal_level = 255;
 			if(signal_level > 255) signal_level = 255;
 			return (byte) (signal_level & 0xff);
-		}
+		} 
 		
 		private byte[] hex_to_byte(String s) {
 		    int len = s.length();
