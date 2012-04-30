@@ -382,16 +382,15 @@ public class MainService extends Service {
 				case OBJECTIVE.START_GPS:
 					debug("GPS: "+hardware_monitor.is_enabled(HardwareMonitor.GPS));
 
-					// gps is disabled, the hardware monitor wants this thread to stop
+					// gps is disabled, the hardware monitor wants this loop to stop
 					if(!hardware_monitor.enable(HardwareMonitor.GPS, gps_ready, gps_fail, mServiceLooper)) {
 						return;
 					}
 
 				case OBJECTIVE.START_WIFI:
 					debug("WIFI: "+hardware_monitor.is_enabled(HardwareMonitor.WIFI));
-					
-					//notification.postNotification(ActivityAlertUser.class, ACTIVITY_INTENT.WIFI_FAIL, false, "This app can't run on your device", "Touch here for more information");
 
+					// wifi is disabled, the hardware monitor wants this loop to stop
 					if(!hardware_monitor.enable(HardwareMonitor.WIFI, wifi_ready, wifi_fail, mServiceLooper)) {
 						return; 
 					}
@@ -401,6 +400,7 @@ public class MainService extends Service {
 						return;						
 					}
 				case OBJECTIVE.SCAN_WIFI:
+					// wifi was disabled, break the switch and let the loop jump to the start_wifi objective
 					if(!hardware_monitor.is_enabled(HardwareMonitor.WIFI)) {
 						debug("wifi was disabled");
 						objective = OBJECTIVE.START_WIFI;
