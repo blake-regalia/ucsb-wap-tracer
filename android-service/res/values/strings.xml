@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="app_name">UCSB Geog Survey</string>
     <string name="welcome">This application lets you manage the status of the service</string>
-    <string name="app_name">UCSB Geog Tracer</string>
-    <string name="wifi_unavailable"></string>
+    <string name="wifi_fail_title">This app can\'t run on your device</string>
+    <string name="wifi_fail_content">Sorry, it appears that this application cannot control your WiFi radio. Thank you for participating in the study, but your device is unable to contribute data to the project at this time.</string>
+    <string name="gps_enable_title">GPS must remain enabled</string>
+    <string name="gps_enable_content">This application requires the ability to use your device\'s GPS at certain times throughout the day. Enabling GPS does not actually turn on the unit or waste battery. Other apps that use GPS frequently may hinder your battery life, it is recommended you terminate these apps if you are able to. </string>
+    <string name="gps_enable_prompt">This app only uses GPS when necessary.\nPlease enable GPS</string>
+    <string name="gps_enable_toast">Please enable GPS\nPress the back button for more information</string>
 
 </resources>
