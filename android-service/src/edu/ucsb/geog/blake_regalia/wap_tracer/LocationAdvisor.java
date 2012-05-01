@@ -67,6 +67,7 @@ public class LocationAdvisor {
 	private Runnable callback_incaseof_position_lost = null;
 	private Looper service_thread_looper = null;
 	
+	private boolean isOldFix = false;
 
 	public LocationAdvisor(Context _context) {
 		context = _context;
@@ -115,6 +116,8 @@ public class LocationAdvisor {
 			// start a timeout thread to return the best location after a period of inactivity
 			startTimeout(boundary_check_timeout);
 
+			System.out.println("starting boundary timeout: id="+timeout);
+
 			break;
 			
 		case TRACE_LOCATION_LISTENER:
@@ -127,15 +130,20 @@ public class LocationAdvisor {
 		if(active_listener == null) {
 			System.err.println("active listener is null");
 		}
-
-		// start by passing the method the last known locations
-		List<String> matchingProviders = location_manager.getAllProviders();
-		for (String provider: matchingProviders) {
-			Location location = location_manager.getLastKnownLocation(provider);
-			if (location != null) {
-				location.setProvider(provider);
-				active_listener.onLocationChanged(location);
+		else {
+			isOldFix = true;
+			System.out.println("isOldFix <= true");
+			// start by passing the method the last known locations
+			List<String> matchingProviders = location_manager.getAllProviders();
+			for (String provider: matchingProviders) {
+				Location location = location_manager.getLastKnownLocation(provider);
+				if (location != null) {
+					location.setProvider(provider);
+					active_listener.onLocationChanged(location);
+				}
 			}
+			System.out.println("isOldFix <= false");
+			isOldFix = false;
 		}
 
 		// if the method accepted one of the last known locations and that's all we need
@@ -203,6 +211,7 @@ public class LocationAdvisor {
 
 	private void stopTimeout() {
 		if(timeout != -1) {
+			System.out.println("clearing timeout: "+timeout);
 			Timeout.clearTimeout(timeout);
 			timeout = -1;
 		}
@@ -233,16 +242,6 @@ public class LocationAdvisor {
 		System.out.println("executing callback...");
 		callback(callback_incaseof_position_lost);
 		callback_incaseof_position_lost = null;
-	}
-	
-
-	private void restartListener() {
-		obtainLocation(
-			0,
-			callback_pending_location_fix,
-			callback_incaseof_hardware_fail,
-			service_thread_looper
-		);
 	}
 	
 	
@@ -393,13 +392,17 @@ public class LocationAdvisor {
 				
 				// report position lost when poor accuracy breaks threshold
 				if(accuracy > TRACE_LOCATION_MIN_ACCURACY_M) {
-					System.out.println("### location accuracy too poor: "+location.getAccuracy());
-					positionLost();
-					return;
+					System.out.println("### is old fix? ==> "+isOldFix);
+					if(!isOldFix) {
+						System.out.println("### location accuracy too poor: "+location.getAccuracy());
+						positionLost();
+						return;
+					}
 				}
-				
-				// store this location
-				last_location = location;
+				else {
+					// store this location
+					last_location = location;
+				}
 
 			}
 			

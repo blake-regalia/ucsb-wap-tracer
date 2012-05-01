@@ -18,6 +18,9 @@ import android.widget.Toast;
 public class MainService extends Service {
 	
 	public static boolean serviceRunning = false;
+	private static boolean isTracing = false;
+	private int wifiScanTimeout = -1;
+	private long wakeTime;
 
 	/** service fields **/
 	private Looper mServiceLooper;
@@ -44,7 +47,7 @@ public class MainService extends Service {
 		public static final String START = "start";
 		public static final String START_GPS  = "start gps";
 		public static final String START_WIFI = "start wifi";
-		public static final String TEST_RUNNING = "test running";
+		public static final String FORCE_CHECK = "force check";
 		public static final String KILL_SERVICE = "kill service";
 	}
 	
@@ -52,6 +55,7 @@ public class MainService extends Service {
 	public static class ACTIVITY_INTENT {
 		public static final String GPS_ENABLE = "gps-enable";
 		public static final String WIFI_FAIL = "wifi-fail";
+		public static final String DO_NOTHING = "do-nothing";
 	}
 
 	/** context-free constants: **/
@@ -163,9 +167,11 @@ public class MainService extends Service {
 			else if(intentObjective.equals(INTENT_OBJECTIVE.START_WIFI)) {
 				notification.clear();
 			}
-			// the service is starting up again because WIFI was just enabled
-			else if(intentObjective.equals(INTENT_OBJECTIVE.TEST_RUNNING)) {
-				return START_NOT_STICKY;
+			// an activity wants to check for gps position
+			else if(intentObjective.equals(INTENT_OBJECTIVE.FORCE_CHECK)) {
+				if(!isTracing) {
+					wakeTime = 0;
+				}
 			}
 			// the service is trying to be killed
 			else if(intentObjective.equals(INTENT_OBJECTIVE.KILL_SERVICE)) {
@@ -184,18 +190,25 @@ public class MainService extends Service {
 		return START_STICKY;
 	}
 
-
-
+	/** abort tracing; attempt to stop writing to the file, close resources, listeners, etc. */
+	private void stopTrace() {
+		isTracing = false;
+		if(wifiScanTimeout != -1) {
+			Timeout.clearTimeout(wifiScanTimeout);
+		}
+		wireless.abort();
+		locator.shutDown();
+		tracer.close();
+		tracer.save();
+		notification.clear();
+		System.out.println("Tracing complete");
+	}
 
 	/** handler class receives messages from the thread  **/
 	private final class ServiceHandler extends Handler {
 
 		private Context mContext;
 		private Location mLastLocation;
-
-		private int wifiScanTimeout = -1;
-
-		private long wakeTime;
 
 		/** this helper function calls the message handling function, passing it the intended objective in message form */
 		private void start(int objective) {
@@ -207,15 +220,6 @@ public class MainService extends Service {
 		/** print messages for the debugger of this program */
 		private void debug(String text) {
 			System.out.println(text);
-		}
-
-		/** abort tracing; attempt to stop writing to the file, close resources, listeners, etc. */
-		private void stopTrace() {
-			tracer.close();
-			wireless.abort();
-			locator.shutDown();
-			tracer.save();
-			debug("Tracing complete");
 		}
 
 		/** launches an activity on the UI thread */
@@ -354,6 +358,9 @@ public class MainService extends Service {
 		@SuppressWarnings("unused")
 		private Runnable wifi_scan_trace = new Runnable() {
 			public void run() {
+				if(!isTracing) {
+					start(OBJECTIVE.INITIALIZE);
+				}
 				tracer.recordEvent(wireless.getResults(), locator.getLocation());
 				if(WIFI_SCAN_INTERVAL_MS == 0) {
 					scan_for_waps.run();
@@ -427,6 +434,7 @@ public class MainService extends Service {
 						break;
 					}
 
+					System.out.println("MainService::WAKE_GPS: locator.obtainLocation()");
 					locator.obtainLocation(LocationAdvisor.BOUNDARY_CHECK_LISTENER, location_fix, hw_disabled, mServiceLooper);
 
 					debug("waiting for location...");
@@ -458,6 +466,7 @@ public class MainService extends Service {
 				case OBJECTIVE.BEGIN_TRACE:
 					debug("** starting scan");
 					locator.obtainLocation(LocationAdvisor.TRACE_LOCATION_LISTENER, null, gps_position_lost_during_trace, gps_disabled_during_trace, mServiceLooper);
+					notification.postNotification(ActivityAlertUser.class, ACTIVITY_INTENT.DO_NOTHING, false, "Your location is being recorded", "");
 					tracer.startNewTrace(client);
 					wireless.scan(wifi_scan_trace, wifi_disabled_during_trace);
 					return;
@@ -500,9 +509,7 @@ public class MainService extends Service {
 	@Override
 	public void onDestroy() {
 		serviceRunning = false;
-		notification.clear();
-		wireless.abort();
-		locator.shutDown();
+		stopTrace();
 		Toast.makeText(this, "service done", Toast.LENGTH_SHORT).show(); 
 	}
 

@@ -3,19 +3,36 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
-
+
     <TextView
         android:id="@+id/textView1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
         android:layout_marginTop="5dp"
-        android:text="@string/app_name"
+        android:text="Application Service Control"
         android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <ListView
-        android:id="@+id/controlsListView"
+
+    <TextView
+        android:id="@+id/appStatus"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:text="Loading..." />
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" >
-    </ListView>
+
+        <ListView
+            android:id="@+id/controlsListView"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_alignParentBottom="true">
+        </ListView>
+
+    </RelativeLayout>
 
 </LinearLayout>

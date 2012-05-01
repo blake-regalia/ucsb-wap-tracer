@@ -49,6 +49,7 @@ public class TraceManager {
 	private File trace_file = null;
 	private FileOutputStream data = null;
 	
+	private boolean isTraceInitialized = false;
 	private long startTime;
 
 	public TraceManager(Context _context) {
@@ -83,6 +84,7 @@ public class TraceManager {
 			System.err.println(e.getMessage());
 		}
 
+		isTraceInitialized = true;
 	}
 	
 	private byte[] encode_gps(Location location, long time) {
@@ -263,7 +265,8 @@ public class TraceManager {
 	}
 	
 	
-	public void close() { 
+	public void close() {
+		if(!isTraceInitialized) return;
 		try {
 			data.write(encodeSSIDs());
 			data.close();
@@ -282,6 +285,7 @@ public class TraceManager {
 	}
 	
 	public int save() {
+		if(trace_file == null) return 0;
 		String file_size_str = trace_file.length()+"";
 
         Calendar now = Calendar.getInstance();
@@ -311,6 +315,7 @@ public class TraceManager {
 		String response = request.submit(HttpRequest.POST);
 
 		if(!response.equals(file_size_str)) {
+			System.out.println("server said: "+response);
 			System.out.println("failed to upload file.");
 			return 0;
 		}

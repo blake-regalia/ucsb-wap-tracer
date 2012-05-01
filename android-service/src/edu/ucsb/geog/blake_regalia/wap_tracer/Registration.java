@@ -33,12 +33,19 @@ public class Registration {
 	public Registration(Context _context) {
 		context = _context;
 		
+		System.out.println("File?");
+		
 		try {
 			FileInputStream fis = context.openFileInput(REGISTRATION_FILENAME);
 			long length = (new File(REGISTRATION_FILENAME)).length();
 			String registration = new String(getBytesFromInputStream(fis, length));
+
+			System.out.println(registration);
 			
 			int lineBreak = registration.indexOf('\n');
+			
+			System.out.println(lineBreak);
+			
 			// if this device has already registered
 			if(lineBreak != -1) {
 				androidId = registration.substring(0,  lineBreak);
@@ -111,19 +118,7 @@ public class Registration {
 		
 		File file = context.getFileStreamPath(REGISTRATION_FILENAME);
 		
-		if(file.exists()) {
-			FileInputStream fis;
-			try {
-				fis = context.openFileInput(REGISTRATION_FILENAME);
-
-				DataInputStream din = new DataInputStream(fis);
-				BufferedReader br = new BufferedReader(new InputStreamReader(din));
-				String registrationData = br.readLine();
-				
-				br.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+		if(phoneNumber != null) {
 			return true;
 		}
 		
@@ -131,7 +126,10 @@ public class Registration {
 			
 			// device has telephone
 			if(mSmsManager != null) {
+				
 				phoneNumber = mTelephonyManager.getLine1Number();
+
+				System.out.println(phoneNumber);
 				
 				// if this phone number is available
 				if(phoneNumber != null && phoneNumber.length() > 5) {
