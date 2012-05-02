@@ -334,7 +334,6 @@ public class MainService extends Service {
 			}
 		};
 
-		// *** WARNING: SHOULD NEVER BE CALLED***
 		// runs if the gps is disabled and cannot be enabled via program
 		private Runnable gps_fail = new Runnable() {
 			public void run() {

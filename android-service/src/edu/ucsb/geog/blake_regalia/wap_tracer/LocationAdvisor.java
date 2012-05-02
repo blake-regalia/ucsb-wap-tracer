@@ -350,6 +350,7 @@ public class LocationAdvisor {
 		Log.d(TAG, "location is good enough for boundary check");
 		
 				locationFixed();
+				return;
 			}
 			// if location listener has been called several times..
 			else if(active_location_events >= BOUNDARY_CHECK_MAX_NUM_EVENTS) {
@@ -357,6 +358,7 @@ public class LocationAdvisor {
 		Log.d(TAG, "location changed enough times, using best location");
 				
 				locationFixed();
+				return;
 			}
 			
 			// start a timeout thread to return the best location after a period of inactivity

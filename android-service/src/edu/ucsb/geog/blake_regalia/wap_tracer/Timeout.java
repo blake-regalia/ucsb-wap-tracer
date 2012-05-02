@@ -32,7 +32,7 @@ public class Timeout {
 					Log.e("Timeout","task was cancelled but it's still running!");		
 				}
 				else {
-					indicies[mId] = false;
+					freeSlot(mId);
 					mTask.run();
 				}
 			}
@@ -42,6 +42,21 @@ public class Timeout {
 	private void cancel() {
 		cancelled = true;
 		mTimer.cancel();
+		freeSlot(mId);
+	}
+	
+	private static void freeSlot(int id) {
+		indicies[id] = false;
+		Log.i("Timeout", "freed slot: "+id+"; ");
+		print();
+	}
+	
+	private static void print() {
+		StringBuilder sb = new StringBuilder();
+		for(int i=0; i<mSize; i++) {
+			sb.append(", "+(indicies[i]?"1":"0"));
+		}
+		Log.i("Timeout", sb.toString());
 	}
 	
 	public static int setTimeout(Runnable task, long delay) {
@@ -55,13 +70,20 @@ public class Timeout {
 		}
 		timeouts[index] = new Timeout(index, task, delay);
 		indicies[index] = true;
+		
+//		Log.i("Timeout", "took new slot: "+index+";");
+//		print();
+		
 		return index;
 	}
 	
 	public static void clearTimeout(int id) {
+//		Log.i("Timeout", "clearing Timeout: "+id);
+		
 		Timeout timeout = timeouts[id];
 		timeout.cancel();
 		timeouts[id] = null;
-		indicies[id] = false;
+
+		freeSlot(id);
 	}
 }
