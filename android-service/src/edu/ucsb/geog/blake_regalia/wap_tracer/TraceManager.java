@@ -317,7 +317,11 @@ public class TraceManager {
 		
 		String response = request.submit(HttpRequest.POST);
 
-		if(!response.equals(file_size_str)) {
+		if(response == null) {
+			System.out.println("no internet connection");
+			return -1;
+		}
+		else if(!response.equals(file_size_str)) {
 			System.out.println("server said: "+response);
 			System.out.println("failed to upload file.");
 			return -1;
