@@ -35,10 +35,11 @@ public class TraceManager {
 	
 
 	private static final int INITIAL_HASHTABLE_SIZE 			= 64;
-	private static final int WIFI_SIGNAL_NUM_PRECISION_LEVELS 	= 45;
-	private static final int WIFI_SIGNAL_MAX_DATA_LEVEL 		= 255;
-	private static final double WIFI_SIGNAL_MAX_DATA_LEVEL_INV 	= 1.0 / WIFI_SIGNAL_MAX_DATA_LEVEL;
-	private static final double WIFI_SIGNAL_NUM_LEVELS_FACTOR 	= ((double) WIFI_SIGNAL_MAX_DATA_LEVEL) / WIFI_SIGNAL_NUM_PRECISION_LEVELS;
+	public static final int WIFI_SIGNAL_NUM_PRECISION_LEVELS 	= 45;
+	
+	public static final int WIFI_SIGNAL_MAX_DATA_LEVEL 		= 255;
+	public static final double WIFI_SIGNAL_MAX_DATA_LEVEL_INV 	= 1.0 / WIFI_SIGNAL_MAX_DATA_LEVEL;
+	public static final double WIFI_SIGNAL_NUM_LEVELS_FACTOR 	= ((double) WIFI_SIGNAL_MAX_DATA_LEVEL) / WIFI_SIGNAL_NUM_PRECISION_LEVELS;
 
 
 	protected Hashtable<String, Integer> ssid_names;
@@ -202,6 +203,7 @@ public class TraceManager {
 
 		    return bytes;
 		} catch (IOException e) {
+			System.err.println("getBytesFromFile("+file.getName()+");");
 			e.printStackTrace();
 		}
 	    return new byte[0];
@@ -257,7 +259,7 @@ public class TraceManager {
 		try {
 			data.write(bytes.getBytes());
 		} catch (IOException e) {
-			System.err.println(e.getMessage());
+			System.err.println("recordEvent();  "+e.getMessage());
 			e.printStackTrace();
 		}
 		

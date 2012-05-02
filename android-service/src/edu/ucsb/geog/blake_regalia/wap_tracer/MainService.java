@@ -2,17 +2,20 @@ package edu.ucsb.geog.blake_regalia.wap_tracer;
 
 
 import java.util.Date;
+import java.util.List;
 
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.net.wifi.ScanResult;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
+import android.util.Log;
 import android.widget.Toast;
 
 public class MainService extends Service {
@@ -57,6 +60,13 @@ public class MainService extends Service {
 		public static final String WIFI_FAIL = "wifi-fail";
 		public static final String DO_NOTHING = "do-nothing";
 	}
+	
+	public static final String BROADCAST_UPDATES = MainService.class.getPackage().getName()+".UPDATES";
+	public static class UPDATES {
+		public static final String TRACING = "tracing";
+		public static final String SIMPLE = "simple";
+		public static final String SLEEPING = "sleeping";
+	}
 
 	/** context-free constants: **/
 	// how long to wait between [after a scan completes, is encoded, and saved] and [starting a new scan]
@@ -90,6 +100,16 @@ public class MainService extends Service {
 			"nanonet_Eng1"
 	};
 
+	/** broadcast fields */
+	private static List<ScanResult> lastScanResults;
+	private static Location lastLocation;
+
+	public static List<ScanResult> getLastScan() {
+		return lastScanResults;
+	}
+	public static Location getLastLocation() {
+		return lastLocation;
+	}
 
 	/** this gets called once the service is born **/
 	@Override
@@ -139,6 +159,8 @@ public class MainService extends Service {
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		
 		serviceRunning = true;
+		
+		Log.e("MainService", "startService("+intent+")");
 
 		// by default, assume this service was started for the first time
 		int objective = OBJECTIVE.INITIALIZE;
@@ -190,6 +212,22 @@ public class MainService extends Service {
 		return START_STICKY;
 	}
 
+	
+	/** broadcasts a message of the given type, for Activities to receive updates */
+	private void broadcast(String type) {
+		Intent intent = new Intent(BROADCAST_UPDATES);
+		intent.putExtra("type", type);
+        sendBroadcast(intent);
+	}
+	
+	/** broadcasts a message of the given type with extra string, for Activities to receive updates */
+	private void broadcast(String type, String extra) {
+		Intent intent = new Intent(BROADCAST_UPDATES);
+		intent.putExtra("type", type);
+		intent.putExtra(type, extra);
+        sendBroadcast(intent);
+	}
+
 	/** abort tracing; attempt to stop writing to the file, close resources, listeners, etc. */
 	private void stopTrace() {
 		isTracing = false;
@@ -199,6 +237,7 @@ public class MainService extends Service {
 		wireless.abort();
 		locator.shutDown();
 		tracer.close();
+		broadcast(UPDATES.SIMPLE, "Attempting to upload trace file...");
 		tracer.save();
 		notification.clear();
 		System.out.println("Tracing complete");
@@ -219,7 +258,7 @@ public class MainService extends Service {
 
 		/** print messages for the debugger of this program */
 		private void debug(String text) {
-			System.out.println(text);
+			Log.i("MainService", text);
 		}
 
 		/** launches an activity on the UI thread */
@@ -360,8 +399,14 @@ public class MainService extends Service {
 			public void run() {
 				if(!isTracing) {
 					start(OBJECTIVE.INITIALIZE);
+					return;
 				}
-				tracer.recordEvent(wireless.getResults(), locator.getLocation());
+				lastScanResults = wireless.getResults();
+				lastLocation = locator.getLocation();
+				tracer.recordEvent(lastScanResults, lastLocation);
+				
+				broadcast(UPDATES.TRACING);
+		        
 				if(WIFI_SCAN_INTERVAL_MS == 0) {
 					scan_for_waps.run();
 				}
@@ -380,6 +425,8 @@ public class MainService extends Service {
 		public void handleMessage(Message msg) {
 
 			int objective = msg.arg1;
+			
+			Log.e("MainService", "handleMessage("+objective+")");
 
 			while(true) {
 				switch(objective) {
@@ -387,6 +434,7 @@ public class MainService extends Service {
 				case OBJECTIVE.INITIALIZE:
 
 				case OBJECTIVE.START_GPS:
+					broadcast(UPDATES.SIMPLE, "Waiting for GPS to enable...");
 					debug("GPS: "+hardware_monitor.is_enabled(HardwareMonitor.GPS));
 
 					// gps is disabled, the hardware monitor wants this loop to stop
@@ -395,6 +443,7 @@ public class MainService extends Service {
 					}
 
 				case OBJECTIVE.START_WIFI:
+					broadcast(UPDATES.SIMPLE, "Waiting for WiFi to enable...");
 					debug("WIFI: "+hardware_monitor.is_enabled(HardwareMonitor.WIFI));
 
 					// wifi is disabled, the hardware monitor wants this loop to stop
@@ -403,10 +452,13 @@ public class MainService extends Service {
 					}
 
 				case OBJECTIVE.REGISTER:
+					broadcast(UPDATES.SIMPLE, "Registering device...");
 					if(!client.register(registration_success, registration_failure)) {
 						return;						
 					}
+					
 				case OBJECTIVE.SCAN_WIFI:
+					broadcast(UPDATES.SIMPLE, "Scanning nearby access points...");
 					// wifi was disabled, break the switch and let the loop jump to the start_wifi objective
 					if(!hardware_monitor.is_enabled(HardwareMonitor.WIFI)) {
 						debug("wifi was disabled");
@@ -427,6 +479,7 @@ public class MainService extends Service {
 					return;
 
 				case OBJECTIVE.WAKE_GPS:
+					broadcast(UPDATES.SIMPLE, "Getting a location fix...");
 					// make sure the gps is enabled
 					if(!hardware_monitor.is_enabled(HardwareMonitor.GPS)) {
 						debug("gps was disabled");
@@ -444,6 +497,7 @@ public class MainService extends Service {
 
 
 				case OBJECTIVE.CHECK_BOUNDARY:
+					broadcast(UPDATES.SIMPLE, "Checking your location...");
 					debug("** check boundary");
 
 					Location location = locator.getLocation();
@@ -464,6 +518,8 @@ public class MainService extends Service {
 
 
 				case OBJECTIVE.BEGIN_TRACE:
+					isTracing = true;
+					broadcast(UPDATES.SIMPLE, "Starting trace...");
 					debug("** starting scan");
 					locator.obtainLocation(LocationAdvisor.TRACE_LOCATION_LISTENER, null, gps_position_lost_during_trace, gps_disabled_during_trace, mServiceLooper);
 					notification.postNotification(ActivityAlertUser.class, ACTIVITY_INTENT.DO_NOTHING, false, "Your location is being recorded", "");
@@ -473,6 +529,7 @@ public class MainService extends Service {
 
 
 				case OBJECTIVE.GOTO_SLEEP:
+					broadcast(UPDATES.SLEEPING, "Sleeping for a few minutes before checking location again. Press \"Begin Tracing\" to initiate a trace.");
 					debug("** going to sleep");
 					wakeTime = System.currentTimeMillis() + SSID_CHECK_INTERVAL_MS;
 					objective = OBJECTIVE.SLEEP_EYES_OPEN;
@@ -508,6 +565,7 @@ public class MainService extends Service {
 
 	@Override
 	public void onDestroy() {
+		broadcast(UPDATES.SIMPLE, "Service stopped.");
 		serviceRunning = false;
 		stopTrace();
 		Toast.makeText(this, "service done", Toast.LENGTH_SHORT).show(); 

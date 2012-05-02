@@ -27,6 +27,7 @@
         android:debuggable="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name" >
+        
         <activity
             android:name=".ActivityControl"
             android:label="@string/app_name"
@@ -34,8 +35,12 @@
             android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                
+
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            
+            <intent-filter>
+                <action android:name="edu.ucsb.geog.blake_regalia.wap_tracer.UPDATES" />
             </intent-filter>
         </activity>
         
@@ -50,17 +55,10 @@
         </activity>
 
         <service
-            android:name=".WAP_Tracer_Service"
-            android:enabled="true" >
-            <intent-filter>
-                <action android:name="edu.ucsb.geog.blakeregalia.WAP_Tracer_Service" />
-            </intent-filter>
-        </service>
-        <service
             android:name="edu.ucsb.geog.blake_regalia.wap_tracer.MainService"
             android:enabled="true" >
             <intent-filter>
-                <action android:name="edu.ucsb.geog.blakeregalia.MainService" />
+                <action android:name="edu.ucsb.geog.blake_regalia.wap_tracer.MainService" />
             </intent-filter>
         </service>
 

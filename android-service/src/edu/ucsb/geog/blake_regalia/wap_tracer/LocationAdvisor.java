@@ -2,7 +2,6 @@ package edu.ucsb.geog.blake_regalia.wap_tracer;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Timer;
 import java.util.TimerTask;
 
 import android.content.Context;
@@ -15,8 +14,11 @@ import android.location.LocationProvider;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Looper;
+import android.util.Log;
 
 public class LocationAdvisor {
+	
+	private static final String TAG = "LocationAdvisor::";
 	
 	public static final int GPS = (1 << 0);
 	public static final int WIFI = (1 << 1);
@@ -103,7 +105,7 @@ public class LocationAdvisor {
 		// make sure there are no listeners requestion location updates
 		stopListener();
 
-		System.out.println("** requestLocationUpdates()");
+		Log.d(TAG, "requesting location updates");
 		
 		boolean requires_only_one_location = false;
 		
@@ -116,23 +118,21 @@ public class LocationAdvisor {
 			// start a timeout thread to return the best location after a period of inactivity
 			startTimeout(boundary_check_timeout);
 
-			System.out.println("starting boundary timeout: id="+timeout);
-
 			break;
 			
 		case TRACE_LOCATION_LISTENER:
 			setActiveListener(new trace_location_listener());
 			break;
-		default:
-			System.err.println("ERROR: listener = "+listener+"; not a defined value");
 		}
 		
 		if(active_listener == null) {
-			System.err.println("active listener is null");
+			Log.d(TAG, "active listener is null");
 		}
 		else {
 			isOldFix = true;
-			System.out.println("isOldFix <= true");
+			
+			Log.d(TAG, "BEGIN: old fix");
+			
 			// start by passing the method the last known locations
 			List<String> matchingProviders = location_manager.getAllProviders();
 			for (String provider: matchingProviders) {
@@ -140,18 +140,21 @@ public class LocationAdvisor {
 				if (location != null) {
 					location.setProvider(provider);
 					active_listener.onLocationChanged(location);
+					// if the method accepted one of the last known locations and that's all we need
+					if(active_listener == null) {
+						if(!requires_only_one_location) {
+							System.err.println("ERROR: LocationListener should expect more than one location");
+						}
+						return;
+					}
 				}
 			}
-			System.out.println("isOldFix <= false");
+
+			Log.d(TAG, "END: old fix");
 			isOldFix = false;
 		}
-
-		// if the method accepted one of the last known locations and that's all we need
-		if(requires_only_one_location && active_listener == null) {
-			return;
-		}
 		
-		// otherwise, begin listening for updates
+		// begin listening for updates
 		active_location_events = 0;
 		if(use_gps) {
 			//location_manager.addGpsStatusListener(mStatusListener);
@@ -174,8 +177,6 @@ public class LocationAdvisor {
 		if(use_wifi) {
 			location_manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, active_listener, looper);
 		}
-		
-		System.out.println("...");
 	}
 	
 	private void setActiveListener(LocationListener listener) {
@@ -189,7 +190,7 @@ public class LocationAdvisor {
 	}
 	
 	private void stopListener() {
-		System.out.println("** removeUpdates()");
+		Log.d(TAG, "removing updates");
 		if(active_listener != null) {
 			location_manager.removeUpdates(active_listener);
 			active_listener = null;
@@ -211,35 +212,35 @@ public class LocationAdvisor {
 
 	private void stopTimeout() {
 		if(timeout != -1) {
-			System.out.println("clearing timeout: "+timeout);
 			Timeout.clearTimeout(timeout);
 			timeout = -1;
 		}
 	}
 	
+	private void stop() {
+		stopTimeout();
+		stopListener();
+	}
+	
 	private void locationFixed() {
 		// if this location hasn't been fixed yet
 		if(active_listener != null) {
-			stopTimeout();
-			stopListener();
+			stop();
 			callback(callback_pending_location_fix);
 			callback_pending_location_fix = null;
 		}
 	}
 
 	private void hardwareFail() {
-		System.out.println("## hardware failed");
-		stopListener();
-		stopTimeout();
+		stop();
 		callback(callback_incaseof_hardware_fail);
 		callback_incaseof_hardware_fail = null;
 	}
 	
 	private void positionLost() {
-		System.out.println("## position lost");
-		stopListener();
-		stopTimeout();
-		System.out.println("executing callback...");
+		Log.d(TAG, "## position lost");
+		stop();
+		Log.d(TAG, "executing callback...");
 		callback(callback_incaseof_position_lost);
 		callback_incaseof_position_lost = null;
 	}
@@ -254,7 +255,7 @@ public class LocationAdvisor {
 		}
 		
 		public synchronized void onProviderDisabled(String provider) {
-			System.out.println("provider failed: "+provider);
+			Log.d(TAG, "provider failed: "+provider);
 			WifiManager wifi_manager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
 			
 			boolean fail = true;
@@ -301,9 +302,8 @@ public class LocationAdvisor {
 				str = arg0+" temporarily unavailable";
 				break;
 			}
-			
-			//Toast.makeText(context, "status change event: "+str, Toast.LENGTH_SHORT).show();
-			System.out.println("status change event: "+str);
+
+			Log.d(TAG, "status change event: "+str);
 			
 		}
 	}
@@ -313,12 +313,12 @@ public class LocationAdvisor {
 	public class boundary_check_listener extends basic_location_listener {
 		public synchronized void onLocationChanged(Location location) {
 
-		System.out.println("location change event: "+active_location_events+" => "+location.getProvider());
+		Log.d(TAG, "boundary check: location change event: "+active_location_events+" => "+location.getProvider());
 		
 		//Toast.makeText(context, "location change event: "+active_location_events, Toast.LENGTH_SHORT).show();
 			
 			if(!location.hasAccuracy()) {
-				System.out.println("### location has no accuracy");
+				System.err.println("### location has no accuracy");
 				// no accuracy!?
 				return;
 			}
@@ -334,7 +334,7 @@ public class LocationAdvisor {
 				// and new enough
 					&& (location.getTime() > expiration)) {
 				
-		System.out.println("location is accurate & new enough to use");
+		Log.d(TAG, "location is accurate & new enough to use");
 				
 				// save it if we don't have one saved
 				if(last_location == null
@@ -343,7 +343,7 @@ public class LocationAdvisor {
 					// or if this location is more accurate
 						|| (last_location.getAccuracy() <= location.getAccuracy()) ) {
 
-		System.out.println("location was saved");
+		Log.d(TAG, "location was saved");
 					last_location = location;
 				}
 			}
@@ -351,19 +351,18 @@ public class LocationAdvisor {
 			// as soon as there is a location that has good enough accurcy
 			if(last_location != null && last_location.getAccuracy() <= BOUNDARY_CHECK_GOOD_ACCURACY_M) {
 				
-		System.out.println("location is good enough for boundary check");
+		Log.d(TAG, "location is good enough for boundary check");
 		
 				locationFixed();
 			}
 			// if location listener has been called several times..
 			else if(active_location_events >= BOUNDARY_CHECK_MAX_NUM_EVENTS) {
 				
-		System.out.println("location changed enough times, using best location");
+		Log.d(TAG, "location changed enough times, using best location");
 				
 				locationFixed();
 			}
 			
-			stopTimeout();
 			// start a timeout thread to return the best location after a period of inactivity
 			startTimeout(boundary_check_timeout);
 
@@ -376,10 +375,10 @@ public class LocationAdvisor {
 	public class trace_location_listener extends basic_location_listener {
 		public synchronized void onLocationChanged(Location location) {
 
-			System.out.println("location change event: "+active_location_events+" => "+location.getProvider());
+			Log.d(TAG, "trace location: location change event: "+active_location_events+" => "+location.getProvider());
 
 			if(!location.hasAccuracy()) {
-				System.out.println("### location has no accuracy");
+				System.err.println("### location has no accuracy");
 				// no accuracy!?
 				return;
 			}
@@ -392,9 +391,9 @@ public class LocationAdvisor {
 				
 				// report position lost when poor accuracy breaks threshold
 				if(accuracy > TRACE_LOCATION_MIN_ACCURACY_M) {
-					System.out.println("### is old fix? ==> "+isOldFix);
+					Log.d(TAG, "### is old fix? ==> "+isOldFix);
 					if(!isOldFix) {
-						System.out.println("### location accuracy too poor: "+location.getAccuracy());
+						Log.d(TAG, "### location accuracy too poor: "+location.getAccuracy());
 						positionLost();
 						return;
 					}
@@ -438,122 +437,6 @@ public class LocationAdvisor {
 		}
 	}
 	
-	
-	public class boundary_check_listener_origin implements LocationListener {
-		public synchronized void onLocationChanged(Location location) {
-
-		System.out.println("location change event: "+active_location_events+" => "+location.getProvider());
-		
-		//Toast.makeText(context, "location change event: "+active_location_events, Toast.LENGTH_SHORT).show();
-			
-			if(!location.hasAccuracy()) {
-				System.out.println("### location has no accuracy");
-				// no accuracy!?
-				return;
-			}
-			
-			if(location.getAccuracy() > LOCATION_TOO_INACCURATE) {
-				return;
-			}
-
-			long expiration = ((new Date()).getTime() - BOUNDARY_CHECK_MAX_AGE_MS);
-			
-			// if this location is accurate enough
-			if(location.getAccuracy() <= BOUNDARY_CHECK_MIN_ACCURACY_M
-				// and new enough
-					&& (location.getTime() > expiration)) {
-				
-		System.out.println("location is accurate & new enough to use");
-				
-				// save it if we don't have one saved
-				if(last_location == null
-					// or if the one we have is too old
-						|| (last_location.getTime() > expiration)
-					// or if this location is more accurate
-						|| (last_location.getAccuracy() <= location.getAccuracy()) ) {
-
-		System.out.println("location was saved");
-					last_location = location;
-				}
-			}
-
-			// as soon as there is a location that has good enough accurcy
-			if(last_location != null && last_location.getAccuracy() <= BOUNDARY_CHECK_GOOD_ACCURACY_M) {
-				
-		System.out.println("location is good enough for boundary check");
-		
-				locationFixed();
-			}
-			// if location listener has been called several times..
-			else if(active_location_events >= BOUNDARY_CHECK_MAX_NUM_EVENTS) {
-				
-		System.out.println("location changed enough times, using best location");
-				
-				locationFixed();
-			}
-			
-			stopTimeout();
-			// start a timeout thread to return the best location after a period of inactivity
-			startTimeout(boundary_check_timeout);
-			
-			active_location_events += 1;
-		}
-		
-		public synchronized void onProviderDisabled(String provider) {
-			System.out.println("provider failed: "+provider);
-			WifiManager wifi_manager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-			
-			boolean fail = true;
-			
-			if(provider.equals(LocationManager.NETWORK_PROVIDER)) {
-				switch(wifi_manager.getWifiState()) {
-				case WifiManager.WIFI_STATE_DISABLED:
-					System.out.println("WIFI: disabled");
-					break;
-				case WifiManager.WIFI_STATE_ENABLED:
-					System.out.println("WIFI: enabled");
-					fail = false;
-					break;
-				case WifiManager.WIFI_STATE_DISABLING:
-					System.out.println("WIFI: disabling");
-					break;
-				case WifiManager.WIFI_STATE_ENABLING:
-					System.out.println("WIFI: enabling");
-					break;
-				default:
-					System.out.println("WIFI: unknown");
-					break;
-				}
-			}
-			if(fail) {
-				hardwareFail();
-			}
-			else {
-//				restart_listener();
-			}
-		}
-		public void onProviderEnabled(String arg0) {
-		}
-		public synchronized void onStatusChanged(String arg0, int arg1, Bundle arg2) {
-			String str = "unknown";
-			switch(arg1) {
-			case LocationProvider.OUT_OF_SERVICE:
-				str = arg0+" out of service";
-				break;
-			case LocationProvider.AVAILABLE:
-				str = arg0+" available";
-				break;
-			case LocationProvider.TEMPORARILY_UNAVAILABLE:
-				str = arg0+" temporarily unavailable";
-				break;
-			}
-			
-			//Toast.makeText(context, "status change event: "+str, Toast.LENGTH_SHORT).show();
-			System.out.println("status change event: "+str);
-			
-		}
-	}
-	
 	private TimerTask boundary_check_timeout = new TimerTask() {
 		public void run() {
 			long end_time = System.currentTimeMillis() + BOUNDARY_CHECK_TIMEOUT_MS;
@@ -563,11 +446,11 @@ public class LocationAdvisor {
 				} catch (Exception e) {}
 			}
 			if(last_location != null) {
-				System.out.println("location updating timed out, using best estimate");
+				Log.d(TAG, "location updating timed out, using best estimate");
 				locationFixed();
 			}
 			else {
-				System.out.println("No good locations...");
+				Log.d(TAG, "No good locations...");
 				locationFixed();
 			}
 		}
@@ -579,8 +462,8 @@ public class LocationAdvisor {
 	 * 
 	 */
 	public void shutDown() {
-		stopListener();
-		stopTimeout();
+		Log.w(TAG, "shutting down");
+		stop();
 	}
 
 	

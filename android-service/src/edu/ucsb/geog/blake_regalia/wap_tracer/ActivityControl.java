@@ -1,11 +1,18 @@
 package edu.ucsb.geog.blake_regalia.wap_tracer;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.location.Location;
+import android.net.wifi.ScanResult;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +38,7 @@ public class ActivityControl extends Activity {
 	private TextView checkForceTitleTextView;
 	private TextView checkForceSubtitleTextView;
 
+	private TextView infoTextView;
 	private TextView appStatus;
 	private Registration registration;
 
@@ -41,7 +49,7 @@ public class ActivityControl extends Activity {
 	};
 	private Runnable registrationFailure = new Runnable() {
 		public void run() {
-			appStatus.setText("Failed to register at this time. An internet connection is required");
+			appStatus.setText("An internet connection is recommended for automatic uploads");
 		}
 	};
 	
@@ -53,6 +61,7 @@ public class ActivityControl extends Activity {
 
 		this.setContentView(R.layout.controls);
 		
+		infoTextView = (TextView) this.findViewById(R.id.infoTextView);
 		appStatus = (TextView) this.findViewById(R.id.appStatus);
 		registration = new Registration(this);
 		appStatus.setText("Registering device...");
@@ -106,11 +115,6 @@ public class ActivityControl extends Activity {
 					mControlsAdapter.editItem(0, getControlSwitchTitle(CONTROL_SWITCH_OFF), getControlSwitchSubtitle(CONTROL_SWITCH_OFF));
 					mControlsAdapter.disableItem(1);
 					
-					/*
-					titleText.setText(getControlSwitchTitle(CONTROL_SWITCH_OFF));
-					subtitleText.setText(getControlSwitchSubtitle(CONTROL_SWITCH_OFF));
-
-					setSwitchState(CONTROL_SWITCH_OFF);*/
 				}
 				else if(text.equals(CONTROL_CHECK_FORCE)) {
 					if(titleText.isEnabled()) {
@@ -120,7 +124,59 @@ public class ActivityControl extends Activity {
 
 			}
 		});
+		
 	}
+	
+	@Override
+	public void onResume() {
+		this.registerReceiver(mReceiver, new IntentFilter(MainService.BROADCAST_UPDATES));
+		super.onResume();
+	}
+	
+	@Override
+	public void onPause() {
+		this.unregisterReceiver(mReceiver);
+		super.onPause();
+	}
+
+	private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+
+			boolean enableTraceButton = false;
+			
+			String type = intent.getStringExtra("type");
+
+			Log.i("Broadcast", type+":"+intent.getStringExtra(type));
+			
+			if(type.equals(MainService.UPDATES.TRACING)) {
+				StringBuilder info = new StringBuilder();
+				List<ScanResult> list = MainService.getLastScan();
+				Location location = MainService.getLastLocation();
+				int len = list.size();
+				info.append(String.format("%.5f", location.getLatitude())+", "+String.format("%.3f", location.getLongitude())+" @"+location.getAccuracy()+"m");
+				for(int i=0; i<len; i++) {
+					ScanResult scan = list.get(i);
+					int signal_level = (int) Math.round((WifiManager.calculateSignalLevel(scan.level, TraceManager.WIFI_SIGNAL_NUM_PRECISION_LEVELS) * 2.2222));
+					String t = (signal_level < 10)? " "+signal_level: ""+signal_level;
+					String s = (scan.SSID.equals("UCSB Wireless Web"))? " *": "";
+					info.append("\n"+t+"%  "+scan.BSSID+s);
+				}
+				infoTextView.setText(info.toString());
+			}
+			else if(type.equals(MainService.UPDATES.SIMPLE)) {
+				String simple = intent.getStringExtra(MainService.UPDATES.SIMPLE);
+				infoTextView.setText(simple);
+			}
+			else if(type.equals(MainService.UPDATES.SLEEPING)) {
+				String text = intent.getStringExtra(MainService.UPDATES.SLEEPING);
+				infoTextView.setText(text);
+				enableTraceButton = true;
+			}
+			
+			mControlsAdapter.setItemEnabled(1, enableTraceButton);
+		}		
+	};
 
 	private int CONTROL_SWITCH_READ = 0x01;
 	private int CONTROL_SWITCH_ON   = 0x02;
@@ -195,6 +251,12 @@ public class ActivityControl extends Activity {
 			control.mTitle = title;
 			control.mSubtitle = subtitle;
 			control.mEnabled = CONTROL_SWITCH_READ;
+			notifyDataSetChanged();
+		}
+		
+		public void setItemEnabled(int index, boolean enabled) {
+			Control control = items.get(index);
+			control.mEnabled = enabled? CONTROL_SWITCH_ON: CONTROL_SWITCH_OFF;
 			notifyDataSetChanged();
 		}
 
