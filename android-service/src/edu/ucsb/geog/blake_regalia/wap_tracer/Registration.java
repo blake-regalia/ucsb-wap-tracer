@@ -138,7 +138,7 @@ public class Registration {
 					hpr.addPair("android-id", androidId);
 					String response_str = hpr.submit(HttpRequest.POST);
 					
-					if(response_str.equals(androidId+":"+phoneNumber)) {
+					if(response_str != null && response_str.equals(androidId+":"+phoneNumber)) {
 						saveRegistration();
 						return true;
 					}

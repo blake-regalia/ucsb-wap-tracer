@@ -36,8 +36,8 @@ public class LocationAdvisor {
 
 	// minimum 60m accuracy
 	protected static final int TRACE_LOCATION_MIN_ACCURACY_M = 60;
-	// maximum 30s old fix
-	protected static final long TRACE_LOCATION_MAX_AGE_MS = 30 * 1000;
+	// maximum 20s old fix
+	protected static final long TRACE_LOCATION_MAX_AGE_MS = 20 * 1000;
 	// good enough to use wifi location
 	protected static final int TRACE_LOCATION_GOOD_ACCURACY_M = 6;
 	// decent enough to use wifi location when gps chip is lagging
@@ -70,6 +70,7 @@ public class LocationAdvisor {
 	private Looper service_thread_looper = null;
 	
 	private boolean isOldFix = false;
+	private boolean waitingOnFirstFix = false;
 
 	public LocationAdvisor(Context _context) {
 		context = _context;
@@ -116,19 +117,24 @@ public class LocationAdvisor {
 			requires_only_one_location = true;
 
 			// start a timeout thread to return the best location after a period of inactivity
-			startTimeout(boundary_check_timeout);
+			startTimeout(boundary_check_timeout, BOUNDARY_CHECK_TIMEOUT_MS);
 
 			break;
 			
 		case TRACE_LOCATION_LISTENER:
 			setActiveListener(new trace_location_listener());
+			
+			waitingOnFirstFix = true;
+			
+			// start a timeout thread to notify the service of position lost after period of inactivity
+			startTimeout(trace_location_timeout, TRACE_LOCATION_MAX_AGE_MS);
 			break;
 		}
 		
 		if(active_listener == null) {
 			Log.d(TAG, "active listener is null");
 		}
-		else {
+		else if(requires_only_one_location) {
 			isOldFix = true;
 			
 			Log.d(TAG, "BEGIN: old fix");
@@ -157,21 +163,6 @@ public class LocationAdvisor {
 		// begin listening for updates
 		active_location_events = 0;
 		if(use_gps) {
-			//location_manager.addGpsStatusListener(mStatusListener);
-			if(active_listener == null) {
-				System.err.println("active listener is null!");
-				switch(listener) {
-				case BOUNDARY_CHECK_LISTENER:
-					System.err.println("Boundary check");
-					break;
-				case TRACE_LOCATION_LISTENER:
-					System.err.println("Trace location");
-					break;
-				default:
-					System.err.println("????");
-				}
-				System.exit(1);
-			}
 			location_manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, active_listener, looper);
 		}
 		if(use_wifi) {
@@ -205,9 +196,9 @@ public class LocationAdvisor {
 		thread.start();
 	}
 	
-	private void startTimeout(Runnable task) {
+	private void startTimeout(Runnable task, long timeout) {
 		stopTimeout();
-		timeout = Timeout.setTimeout(task, BOUNDARY_CHECK_TIMEOUT_MS);
+		timeout = Timeout.setTimeout(task, timeout);
 	}
 
 	private void stopTimeout() {
@@ -316,6 +307,11 @@ public class LocationAdvisor {
 		Log.d(TAG, "boundary check: location change event: "+active_location_events+" => "+location.getProvider());
 		
 		//Toast.makeText(context, "location change event: "+active_location_events, Toast.LENGTH_SHORT).show();
+			if(active_listener == null) {
+				Log.e(TAG, "boundary check:: location changed when should have unregistered");
+				location_manager.removeUpdates(this);
+				return;
+			}
 			
 			if(!location.hasAccuracy()) {
 				System.err.println("### location has no accuracy");
@@ -364,7 +360,7 @@ public class LocationAdvisor {
 			}
 			
 			// start a timeout thread to return the best location after a period of inactivity
-			startTimeout(boundary_check_timeout);
+			startTimeout(boundary_check_timeout, BOUNDARY_CHECK_TIMEOUT_MS);
 
 			active_location_events += 1;
 		}
@@ -375,6 +371,14 @@ public class LocationAdvisor {
 	public class trace_location_listener extends basic_location_listener {
 		public synchronized void onLocationChanged(Location location) {
 
+			if(active_listener == null) {
+				Log.e(TAG, "trace location:: location changed when should have unregistered");
+				location_manager.removeUpdates(this);
+				return;
+			}
+			
+			boolean usingNewLocation = false;
+			
 			Log.d(TAG, "trace location: location change event: "+active_location_events+" => "+location.getProvider());
 
 			if(!location.hasAccuracy()) {
@@ -401,6 +405,7 @@ public class LocationAdvisor {
 				else {
 					// store this location
 					last_location = location;
+					usingNewLocation = true;
 				}
 
 			}
@@ -411,11 +416,13 @@ public class LocationAdvisor {
 				// if this location is VERY good (from wifi), then use it
 				if(accuracy <= TRACE_LOCATION_GOOD_ACCURACY_M) {
 					last_location = location;
+					usingNewLocation = true;
 				}
 
 				// if we don't have a location yet, accept anything
 				else if(last_location == null) {
 					last_location = location;
+					usingNewLocation = true;
 				}
 				
 				// if this position is accurate enough, and the GPS location is too old, then reluctantly accept it
@@ -423,27 +430,26 @@ public class LocationAdvisor {
 					long gps_old = ((new Date()).getTime() - TRACE_LOCATION_GPS_OLD_MS);
 					if((accuracy <= TRACE_LOCATION_DECENT_ACCURACY_M) && (last_location.getTime() > gps_old)) {
 						last_location = location;
+						usingNewLocation = true;
 					}
 				}
 			}
 			
-			/*
-			long expiration = ((new Date()).getTime() - TRACE_LOCATION_MAX_AGE_MS);
-			if(last_location.getTime() > expiration) {
-				System.out.println("### location expired, more than "+TRACE_LOCATION_MAX_AGE_MS+"ms old");
-				position_lost();
+			if(usingNewLocation) {
+				if(waitingOnFirstFix) {
+					callback(callback_pending_location_fix);
+					waitingOnFirstFix = false;
+				}
+				// start a timeout thread to notify the service of position lost after period of inactivity
+				startTimeout(trace_location_timeout, TRACE_LOCATION_MAX_AGE_MS);
 			}
-			*/
 		}
 	}
-	
-	private TimerTask boundary_check_timeout = new TimerTask() {
+
+	private Runnable boundary_check_timeout = new Runnable() {
 		public void run() {
-			long end_time = System.currentTimeMillis() + BOUNDARY_CHECK_TIMEOUT_MS;
-			while (System.currentTimeMillis() < end_time) {
-				try {
-					wait(end_time - System.currentTimeMillis());
-				} catch (Exception e) {}
+			if(timeout == -1) {
+				Log.e(TAG, "boundary check timeout:: should it have been called?");
 			}
 			if(last_location != null) {
 				Log.d(TAG, "location updating timed out, using best estimate");
@@ -453,6 +459,15 @@ public class LocationAdvisor {
 				Log.d(TAG, "No good locations...");
 				locationFixed();
 			}
+		}
+	};
+	
+	private Runnable trace_location_timeout = new Runnable() {
+		public void run() {
+			if(timeout == -1) {
+				Log.e(TAG, "trace location timeout:: should it have been called?");
+			}
+			positionLost();
 		}
 	};
 	

@@ -3,19 +3,23 @@ package edu.ucsb.geog.blake_regalia.wap_tracer;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import android.util.Log;
+
 public class Timeout {
 	
 	private static final int DEFAULT_SIZE = 16;
+	private static int mSize = DEFAULT_SIZE;
+	
+	private static Timeout[] timeouts = new Timeout[mSize];
+	private static boolean[] indicies = new boolean[mSize];
+
+	private static int index = 0;
+
 	
 	private int mId;
 	private Timer mTimer;
 	private Runnable mTask;
 	private boolean cancelled = false;
-	
-	private static Timeout[] timeouts = new Timeout[DEFAULT_SIZE];
-	private static boolean[] indicies = new boolean[DEFAULT_SIZE];
-
-	private static int index = 0;
 	
 	private Timeout(int id, Runnable task, final long delay) {
 		mId = id;
@@ -24,11 +28,13 @@ public class Timeout {
 		mTimer.schedule(new TimerTask() {
 			@Override
 			public void run() {
-				indicies[mId] = false;
 				if(cancelled) {
-					System.out.println("task was cancelled but it's still running!");					
+					Log.e("Timeout","task was cancelled but it's still running!");		
 				}
-				if(!cancelled) mTask.run();
+				else {
+					indicies[mId] = false;
+					mTask.run();
+				}
 			}
 		}, delay);
 	}
@@ -38,15 +44,11 @@ public class Timeout {
 		mTimer.cancel();
 	}
 	
-	public static void setSize(int size) {
-		timeouts = new Timeout[size];
-		indicies = new boolean[size];
-	}
-	
 	public static int setTimeout(Runnable task, long delay) {
 		int began = index;
 		while(indicies[index] == true) {
 			index += 1;
+			index %= mSize;
 			if(index == began) {
 				System.err.println("ERROR: RAN OUT OF TIMEOUTS");
 			}

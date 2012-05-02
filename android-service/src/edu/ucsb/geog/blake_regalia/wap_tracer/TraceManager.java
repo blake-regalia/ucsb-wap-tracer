@@ -239,7 +239,7 @@ public class TraceManager {
 			
 			// encode frequency
 			bytes.append_2(
-					Encoder.encode_short((short) wap.frequency)
+					Encoder.encode_char((char) wap.frequency)
 					);	
 			
 			// encode signal strength
@@ -286,9 +286,10 @@ public class TraceManager {
 		return ""+d;
 	}
 	
-	public int save() {
+	public long save() {
 		if(trace_file == null) return 0;
-		String file_size_str = trace_file.length()+"";
+		long fileSize = trace_file.length();
+		String file_size_str = fileSize+"";
 
         Calendar now = Calendar.getInstance();
         String fname = ""+(now.get(Calendar.YEAR)+"")+"."
@@ -319,13 +320,13 @@ public class TraceManager {
 		if(!response.equals(file_size_str)) {
 			System.out.println("server said: "+response);
 			System.out.println("failed to upload file.");
-			return 0;
+			return -1;
 		}
 		else {
 			System.out.println("uploaded "+fname+" to server; "+file_size_str+" bytes");
 			sd_file.delete();
 			trace_file.delete();
-			return 1;
+			return fileSize;
 		}
 	}
 

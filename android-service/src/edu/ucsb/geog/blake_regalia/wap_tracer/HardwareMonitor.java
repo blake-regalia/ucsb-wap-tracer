@@ -31,7 +31,7 @@ public class HardwareMonitor {
 	public static final String ENABLE_GPS = "enable_gps";
 	public static final String ENABLE_WIFI = "enable_wifi";
 
-	private static final boolean USE_GPS_TOGGLE_EXPLOIT_IF_AVAILABLE = false;
+	private static final boolean USE_GPS_TOGGLE_EXPLOIT_IF_AVAILABLE = true;
 
 	/** objects */
 	private Context context;

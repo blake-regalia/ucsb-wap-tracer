@@ -19,24 +19,43 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
         android:text="Loading..." />
-
-    <TextView
-        android:id="@+id/infoTextView"
+
+    <ScrollView
+        android:id="@+id/scrollView1"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="" />
+        android:layout_height="fill_parent"
+        android:layout_weight="1" >
 
+        <LinearLayout
+            android:id="@+id/linearLayout1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/infoTextView"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="" />
+
+        </LinearLayout>
+    </ScrollView>
+
     <RelativeLayout
         android:id="@+id/relativeLayout"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp" >
-
+        android:minHeight="140dp"
+        android:layout_weight="1.5"
+        android:layout_marginBottom="10dp"
+         >
+
         <ListView
             android:id="@+id/controlsListView"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true" >
+
         </ListView>
     </RelativeLayout>
 

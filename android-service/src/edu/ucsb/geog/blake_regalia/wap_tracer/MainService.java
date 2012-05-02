@@ -60,11 +60,16 @@ public class MainService extends Service {
 		public static final String WIFI_FAIL = "wifi-fail";
 		public static final String DO_NOTHING = "do-nothing";
 	}
-	
+
+	/** context-free constants: broadcast updates define what the service is telling an activity about **/
 	public static final String BROADCAST_UPDATES = MainService.class.getPackage().getName()+".UPDATES";
 	public static class UPDATES {
 		public static final String TRACING = "tracing";
 		public static final String SIMPLE = "simple";
+		public static final String UPLOADED = "upload";
+		public static final String OUT_OF_BOUNDS = "bounds";
+		public static final String LOCATION_UNKNOWN = "location";
+		public static final String GPS_LOST = "gps lost";
 		public static final String SLEEPING = "sleeping";
 	}
 
@@ -198,10 +203,13 @@ public class MainService extends Service {
 			// the service is trying to be killed
 			else if(intentObjective.equals(INTENT_OBJECTIVE.KILL_SERVICE)) {
 				System.out.println("*** shutting down... ***");
+				serviceRunning = false;
 				stopSelf();
 				return START_NOT_STICKY;
 			}
 		}
+		
+		serviceRunning = true;
 
 		// don't worry about unique start ids, this service should only be running one process at a time
 		Message msg = mServiceHandler.obtainMessage();
@@ -230,15 +238,23 @@ public class MainService extends Service {
 
 	/** abort tracing; attempt to stop writing to the file, close resources, listeners, etc. */
 	private void stopTrace() {
-		isTracing = false;
 		if(wifiScanTimeout != -1) {
 			Timeout.clearTimeout(wifiScanTimeout);
 		}
 		wireless.abort();
 		locator.shutDown();
-		tracer.close();
-		broadcast(UPDATES.SIMPLE, "Attempting to upload trace file...");
-		tracer.save();
+		if(isTracing) {
+			tracer.close();
+			broadcast(UPDATES.SIMPLE, "Attempting to upload trace file...");
+			long bytes = tracer.save();
+			if(bytes != -1) {
+				broadcast(UPDATES.UPLOADED, "Upload successful. Contributed "+bytes+"-bytes of data.");			
+			}
+			else {
+				broadcast(UPDATES.UPLOADED, "Upload failed. No active internet connection");
+			}
+			isTracing = false;
+		}
 		notification.clear();
 		System.out.println("Tracing complete");
 	}
@@ -332,6 +348,15 @@ public class MainService extends Service {
 				start(OBJECTIVE.WAKE_GPS + 1);
 			}
 		};
+		
+		// runs when the gps is ready for a trace
+		private Runnable begin_tracing = new Runnable() {
+			public void run() {
+				notification.postNotification(ActivityAlertUser.class, ACTIVITY_INTENT.DO_NOTHING, false, "Your location is being recorded", "");
+				tracer.startNewTrace(client);
+				wireless.scan(wifi_scan_trace, wifi_disabled_during_trace);				
+			}
+		};
 
 		// runs if gps was disabled during the trace
 		private Runnable gps_disabled_during_trace = new Runnable() {
@@ -345,6 +370,7 @@ public class MainService extends Service {
 		private Runnable gps_position_lost_during_trace = new Runnable() {
 			public void run() {
 				stopTrace();
+				broadcast(UPDATES.GPS_LOST);
 				start(OBJECTIVE.LOST_POSITION);
 			}
 		};
@@ -429,6 +455,8 @@ public class MainService extends Service {
 			Log.e("MainService", "handleMessage("+objective+")");
 
 			while(true) {
+				if(!serviceRunning) return;
+					
 				switch(objective) {
 
 				case OBJECTIVE.INITIALIZE:
@@ -505,11 +533,13 @@ public class MainService extends Service {
 					// if the gps location timed out, go back to idle mode
 					if(location == null) {
 						debug("** location advisor timed out. failed to get a position fix");
+						broadcast(UPDATES.LOCATION_UNKNOWN);
 						objective = OBJECTIVE.GOTO_SLEEP; 
 						break;
 					}
 
 					if(!campus_boundary.check(location)) {
+						broadcast(UPDATES.OUT_OF_BOUNDS);
 						objective = OBJECTIVE.GOTO_SLEEP;
 						break;
 					}
@@ -521,10 +551,7 @@ public class MainService extends Service {
 					isTracing = true;
 					broadcast(UPDATES.SIMPLE, "Starting trace...");
 					debug("** starting scan");
-					locator.obtainLocation(LocationAdvisor.TRACE_LOCATION_LISTENER, null, gps_position_lost_during_trace, gps_disabled_during_trace, mServiceLooper);
-					notification.postNotification(ActivityAlertUser.class, ACTIVITY_INTENT.DO_NOTHING, false, "Your location is being recorded", "");
-					tracer.startNewTrace(client);
-					wireless.scan(wifi_scan_trace, wifi_disabled_during_trace);
+					locator.obtainLocation(LocationAdvisor.TRACE_LOCATION_LISTENER, begin_tracing, gps_position_lost_during_trace, gps_disabled_during_trace, mServiceLooper);
 					return;
 
 

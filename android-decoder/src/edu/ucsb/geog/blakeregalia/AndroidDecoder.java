@@ -4,6 +4,8 @@ import java.io.*;
 import java.util.Date;
 
 /**
+ * V: Version
+ * Z: Android Id -string
  * S: Start time
  * L: Reference latitude / longitude
  * 
@@ -25,8 +27,8 @@ import java.util.Date;
  * D: SSID string
  * 
  * file header
- * SSSSSSSSLLLLLLLLLLLLLLLL
- * --long----long----long--
+ * VVVVZz*SSSSSSSSLLLLLLLLLLLLLLLL
+ * -int-s-long----long----long--
  * 
  * line header
  * NTT PAAAAGGGGWX
@@ -152,9 +154,20 @@ public class AndroidDecoder {
 		if(version >= 4) {
 			DATA_HEADER_LENGTH += 1;
 		}
+		// v4: +2 bytes in data entry (frequency)
+		if(version >= 6) {
+			DATA_ENTRY_LENGTH += 2;
+		}
 		
-		/* fetch unique id */
-		long user = fr.read_long();
+		String uid = "";
+		if(version < 6) {
+			/* fetch unique id */
+			long user = fr.read_long();
+			uid = user+"";
+		}
+		else {
+			uid = fr.read_string();
+		}
 
 		/* read start time - SSSSSSSS [8 bytes] */
 		long start_time = fr.read_long();
@@ -238,6 +251,12 @@ public class AndroidDecoder {
 				String mac_addr = decode_hw_addr(byte_hw_addr);
 				
 				if(debug) System.out.println("@"+fr.bytes_read+"  "+mac_addr);
+				
+				/* v6: read freqeuncy */
+				int frequency = 0;
+				if(version >= 6) {
+					frequency = ((int) fr.read_char()) & 0xffff;
+				}
 
 				/* read rssi - R [1 byte] */
 				int rssi = ((int) fr.read_byte()) & 0xff;
@@ -250,7 +269,7 @@ public class AndroidDecoder {
 				/* read String ID - I [1 byte] */
 				int ssid = fr.read_byte();
 				
-				event.add_WAP(new WAP(mac_addr, rssi, ssid));
+				event.add_WAP(new WAP(mac_addr, rssi, ssid, frequency));
 			}
 
 			output.addEvent(event);

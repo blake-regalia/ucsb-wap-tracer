@@ -22,6 +22,7 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class ActivityControl extends Activity {
 
@@ -154,7 +155,12 @@ public class ActivityControl extends Activity {
 				List<ScanResult> list = MainService.getLastScan();
 				Location location = MainService.getLastLocation();
 				int len = list.size();
-				info.append(String.format("%.5f", location.getLatitude())+", "+String.format("%.3f", location.getLongitude())+" @"+location.getAccuracy()+"m");
+				info.append(
+						String.format("%.5f", location.getLatitude())+", "
+						+ String.format("%.3f", location.getLongitude())
+						+ " @"+location.getAccuracy()+"m "
+						+ " -"+String.format("%.1f", ((System.currentTimeMillis()-location.getTime())*0.001))+"s"
+						);
 				for(int i=0; i<len; i++) {
 					ScanResult scan = list.get(i);
 					int signal_level = (int) Math.round((WifiManager.calculateSignalLevel(scan.level, TraceManager.WIFI_SIGNAL_NUM_PRECISION_LEVELS) * 2.2222));
@@ -167,6 +173,20 @@ public class ActivityControl extends Activity {
 			else if(type.equals(MainService.UPDATES.SIMPLE)) {
 				String simple = intent.getStringExtra(MainService.UPDATES.SIMPLE);
 				infoTextView.setText(simple);
+			}
+			else if(type.equals(MainService.UPDATES.UPLOADED)) {
+				String text = intent.getStringExtra(MainService.UPDATES.UPLOADED);
+				appStatus.setText(text);
+			}
+			else if(type.equals(MainService.UPDATES.GPS_LOST)) {
+				Toast.makeText(self, "GPS position lost", Toast.LENGTH_SHORT).show();
+			}
+			else if(type.equals(MainService.UPDATES.LOCATION_UNKNOWN)) {
+				Log.d("Controls", "making toast for unknown location");
+				Toast.makeText(self, "Unable to get position fix", Toast.LENGTH_LONG).show();
+			}
+			else if(type.equals(MainService.UPDATES.OUT_OF_BOUNDS)) {
+				Toast.makeText(self, "You're not within bounds", Toast.LENGTH_SHORT).show();
 			}
 			else if(type.equals(MainService.UPDATES.SLEEPING)) {
 				String text = intent.getStringExtra(MainService.UPDATES.SLEEPING);

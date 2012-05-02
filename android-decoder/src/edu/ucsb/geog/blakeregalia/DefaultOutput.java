@@ -98,6 +98,7 @@ public class DefaultOutput {
 					"\t"+((int) (((float) wap.getRSSI())/2.55f))+"% "
 					+ wap.getMAC()+" "
 					+ wap.getSSID()
+					+ (wap.getFrequency()==0?"":"  "+wap.getFrequency()+"mHz")
 					+ "\n"
 				);
 			}
