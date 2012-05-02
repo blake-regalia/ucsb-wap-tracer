@@ -196,9 +196,9 @@ public class LocationAdvisor {
 		thread.start();
 	}
 	
-	private void startTimeout(Runnable task, long timeout) {
+	private void startTimeout(Runnable task, long duration) {
 		stopTimeout();
-		timeout = Timeout.setTimeout(task, timeout);
+		timeout = Timeout.setTimeout(task, duration);
 	}
 
 	private void stopTimeout() {
