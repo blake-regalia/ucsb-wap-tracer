@@ -27,13 +27,11 @@ public class Registration {
 	private TelephonyManager mTelephonyManager;
 	private SmsManager mSmsManager = null;
 	
-	private String androidId;
-	private String phoneNumber;
+	private static String androidId = "unknown";
+	private static String phoneNumber = "unknown";
 	
 	public Registration(Context _context) {
 		context = _context;
-		
-		System.out.println("File?");
 		
 		try {
 			FileInputStream fis = context.openFileInput(REGISTRATION_FILENAME);
@@ -106,11 +104,11 @@ public class Registration {
 	}
 	
 
-	public String getAndroidId() {
+	public static String getAndroidId() {
 		return androidId;
 	}
 	
-	public String getPhoneNumber() {
+	public static String getPhoneNumber() {
 		return phoneNumber;
 	}
 	

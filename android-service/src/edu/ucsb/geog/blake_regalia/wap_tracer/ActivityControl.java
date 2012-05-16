@@ -157,9 +157,9 @@ public class ActivityControl extends Activity {
 				int len = list.size();
 				info.append(
 						String.format("%.5f", location.getLatitude())+", "
-						+ String.format("%.3f", location.getLongitude())
+						+ String.format("%.5f", location.getLongitude())
 						+ " @"+location.getAccuracy()+"m "
-						+ " -"+String.format("%.1f", ((System.currentTimeMillis()-location.getTime())*0.001))+"s"
+						+ " "+String.format("%.1f", (location.getTime()-System.currentTimeMillis())*0.001)+"s"
 						);
 				for(int i=0; i<len; i++) {
 					ScanResult scan = list.get(i);
@@ -177,6 +177,7 @@ public class ActivityControl extends Activity {
 			else if(type.equals(MainService.UPDATES.UPLOADED)) {
 				String text = intent.getStringExtra(MainService.UPDATES.UPLOADED);
 				appStatus.setText(text);
+				enableTraceButton = true;
 			}
 			else if(type.equals(MainService.UPDATES.GPS_LOST)) {
 				Toast.makeText(self, "GPS position lost", Toast.LENGTH_SHORT).show();

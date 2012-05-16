@@ -32,7 +32,8 @@ public class TraceManager {
 
 	// 10^6
 	public final static int COORDINATE_PRECISION = 1000000;
-	
+
+	private static final char TIMESTAMP_NEAR_FULL = 0xff00;
 
 	private static final int INITIAL_HASHTABLE_SIZE 			= 64;
 	public static final int WIFI_SIGNAL_NUM_PRECISION_LEVELS 	= 45;
@@ -41,10 +42,10 @@ public class TraceManager {
 	public static final double WIFI_SIGNAL_MAX_DATA_LEVEL_INV 	= 1.0 / WIFI_SIGNAL_MAX_DATA_LEVEL;
 	public static final double WIFI_SIGNAL_NUM_LEVELS_FACTOR 	= ((double) WIFI_SIGNAL_MAX_DATA_LEVEL) / WIFI_SIGNAL_NUM_PRECISION_LEVELS;
 
+	public static final double MINIMUM_TRACE_DISTANCE_M = 10.0;
 
 	protected Hashtable<String, Integer> ssid_names;
 	private Context context;
-	private Registration registration;
 
 	private File files_dir = null;
 	private File trace_file = null;
@@ -52,16 +53,26 @@ public class TraceManager {
 	
 	private boolean isTraceInitialized = false;
 	private long startTime;
+	
+	private Location originLocation = null;
+	
+	private boolean moved_min_distance = false;
+	private boolean ssid_hashtable_full = false;
+	private boolean timestamp_values_full = false;
 
 	public TraceManager(Context _context) {
 		context = _context;
 	}
 	
-	public void startNewTrace(Registration _registration) {
-		registration = _registration;
+	public void startNewTrace() {
 		ssid_names = new Hashtable<String, Integer>(INITIAL_HASHTABLE_SIZE);
-		
 		startTime = System.currentTimeMillis();
+		
+		moved_min_distance = false;
+		ssid_hashtable_full = false;
+		timestamp_values_full = false;
+		
+		originLocation = null;
 
 		files_dir = context.getFilesDir();
 		try {
@@ -73,7 +84,7 @@ public class TraceManager {
 
 		/* write the file header */
 		try {
-			String androidId = registration.getAndroidId();
+			String androidId = Registration.getAndroidId();
 			
 			data.write(Encoder.encode_int(Registration.VERSION));
 			data.write(Encoder.encode_byte(androidId.length()));
@@ -84,7 +95,7 @@ public class TraceManager {
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
 		}
-
+		 
 		isTraceInitialized = true;
 	}
 	
@@ -117,7 +128,11 @@ public class TraceManager {
 	}
 
 	private byte[] encode_time_ds(long time) {
-		return Encoder.encode_char((char) ((time) * TIMESTAMP_REDUCTION_FACTOR));
+		char ts = (char) ((time) * TIMESTAMP_REDUCTION_FACTOR);
+		if(ts >= TIMESTAMP_NEAR_FULL) {
+			timestamp_values_full = true;
+		}
+		return Encoder.encode_char(ts);
 	}
 
 
@@ -126,6 +141,9 @@ public class TraceManager {
 		Integer map = ssid_names.get(SSID);
 		if(map == null) {
 			key = ssid_names.size();
+			if(key == 254) {
+				ssid_hashtable_full = true;
+			}
 			ssid_names.put(SSID, new Integer(key));
 		}
 		else {
@@ -134,17 +152,6 @@ public class TraceManager {
 		return (byte) (key & 0xff);
 	}
 	
-
-	private byte[] hex_to_byte(String s) {
-	    int len = s.length();
-	    byte[] data = new byte[len / 2];
-	    for (int i = 0; i < len; i += 2) {
-	        data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
-	                             + Character.digit(s.charAt(i+1), 16));
-	    }
-	    return data;
-	}
-
 	public byte[] encodeSSIDs() {
 		StringBuilder sb = new StringBuilder();
 		ByteBuilder zero = new ByteBuilder(1);
@@ -178,38 +185,7 @@ public class TraceManager {
 		return sb.toString().getBytes();
 	}
 
-	private byte[] getBytesFromFile(File file) {
-	    try {
-		    InputStream is = new FileInputStream(file);
-
-		    // Get the size of the file
-		    long length = file.length();
-
-		    // You cannot create an array using a long type.
-		    // It needs to be an int type.
-		    // Before converting to an int type, check
-		    // to ensure that file is not larger than Integer.MAX_VALUE.
-		    if (length > Integer.MAX_VALUE) {
-		    	System.err.println("Log file too large");
-		        // File is too large
-		    }
-
-		    // Create the byte array to hold the data
-		    byte[] bytes = new byte[(int)length];
-		    
-			(new DataInputStream(is)).readFully(bytes);
-		    // Close the input stream and return bytes
-		    is.close();
-
-		    return bytes;
-		} catch (IOException e) {
-			System.err.println("getBytesFromFile("+file.getName()+");");
-			e.printStackTrace();
-		}
-	    return new byte[0];
-	}
-	
-	public void recordEvent(List<ScanResult> list, Location location) {
+	public int recordEvent(List<ScanResult> list, Location location) {
 		long time = System.currentTimeMillis();
 		
 		int size = list.size();
@@ -226,15 +202,13 @@ public class TraceManager {
 		// gps header information: 11 bytes
 		bytes.append(encode_gps(location, time));
 		
-		int i = list.size();
+		int i = size;
 		while(i-- != 0) {
 			ScanResult wap = (ScanResult) list.get(i);
 
 			// encode BSSID
 			bytes.append_6(
-					hex_to_byte(
-							wap.BSSID.replaceAll(":", "")
-						)
+					WifiController.encodeBSSID(wap.BSSID)
 					);
 			
 			// encode frequency
@@ -254,6 +228,10 @@ public class TraceManager {
 			bytes.append(
 					encode_ssid_name(wap.SSID)
 				);
+			
+			if(ssid_hashtable_full) {
+				break;
+			}
 		}
 		
 		try {
@@ -264,6 +242,21 @@ public class TraceManager {
 		}
 		
 		System.out.println("## wrote "+size+" waps to log");
+		
+		if(!moved_min_distance) {
+			if(originLocation == null) {
+				originLocation = location;
+			}
+			else if(location.distanceTo(originLocation) > MINIMUM_TRACE_DISTANCE_M) {
+				moved_min_distance = true;
+			}
+		}
+		
+		if(ssid_hashtable_full || timestamp_values_full) {
+			return -1;
+		}
+		
+		return 0;
 	}
 	
 	
@@ -276,6 +269,8 @@ public class TraceManager {
 			e.printStackTrace();
 		}
 		System.out.println("## closed log file");
+		
+		isTraceInitialized = false;
 	}
 	
 
@@ -288,6 +283,10 @@ public class TraceManager {
 	
 	public long save() {
 		if(trace_file == null) return 0;
+		if(!moved_min_distance) {
+			trace_file.delete();
+			return -2;
+		}
 		long fileSize = trace_file.length();
 		String file_size_str = fileSize+"";
 
@@ -306,13 +305,13 @@ public class TraceManager {
 		request.addPair("data",
 				new String(
 						Base64.encode(
-								getBytesFromFile(trace_file)
+								Encoder.getBytesFromFile(trace_file)
 								)
 						)
 				);
 		request.addPair("name", fname);
-		request.addPair("android-id", registration.getAndroidId());
-		request.addPair("phone-number", registration.getPhoneNumber());
+		request.addPair("android-id", Registration.getAndroidId());
+		request.addPair("phone-number", Registration.getPhoneNumber());
 		request.addPair("version", Registration.VERSION+"");
 		
 		String response = request.submit(HttpRequest.POST);

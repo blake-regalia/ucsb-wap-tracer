@@ -1,5 +1,11 @@
 package edu.ucsb.geog.blake_regalia.wap_tracer;
 
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 public class Encoder {
 
 
@@ -63,13 +69,13 @@ public class Encoder {
 
 		return array;
 	}
-	
+
 	public static byte[] encode_double_to_4_bytes(double u, int p) {
 		int ui = (int) (u * p);
 		System.out.println("edt4b: "+ui);
 		return encode_int(ui & 0xffffffff);
 	}
-	
+
 	public static String bytes_to_string(byte[] b) {
 		String ret = new String();
 		for(int i=0; i<b.length; i++) {
@@ -77,6 +83,38 @@ public class Encoder {
 			ret += Integer.toHexString(hb)+'.';
 		}
 		return ret;
+	}
+
+
+	public static byte[] getBytesFromFile(File file) {
+		try {
+			InputStream is = new FileInputStream(file);
+
+			// Get the size of the file
+			long length = file.length();
+
+			// You cannot create an array using a long type.
+			// It needs to be an int type.
+			// Before converting to an int type, check
+			// to ensure that file is not larger than Integer.MAX_VALUE.
+			if (length > Integer.MAX_VALUE) {
+				System.err.println("Log file too large");
+				// File is too large
+			}
+
+			// Create the byte array to hold the data
+			byte[] bytes = new byte[(int)length];
+
+			(new DataInputStream(is)).readFully(bytes);
+			// Close the input stream and return bytes
+			is.close();
+
+			return bytes;
+		} catch (IOException e) {
+			System.err.println("getBytesFromFile("+file.getName()+");");
+			e.printStackTrace();
+		}
+		return new byte[0];
 	}
 
 }

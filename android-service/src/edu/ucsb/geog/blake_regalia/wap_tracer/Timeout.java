@@ -47,8 +47,8 @@ public class Timeout {
 	
 	private static void freeSlot(int id) {
 		indicies[id] = false;
-		Log.i("Timeout", "freed slot: "+id+"; ");
-		print();
+//		Log.i("Timeout", "freed slot: "+id+"; ");
+//		print();
 	}
 	
 	private static void print() {
@@ -71,14 +71,14 @@ public class Timeout {
 		timeouts[index] = new Timeout(index, task, delay);
 		indicies[index] = true;
 		
-		Log.i("Timeout", "took new slot: "+index+";");
-		print();
+//		Log.i("Timeout", "took new slot: "+index+";");
+//		print();
 		
 		return index;
 	}
 	
 	public static void clearTimeout(int id) {
-		Log.i("Timeout", "clearing Timeout: "+id);
+//		Log.i("Timeout", "clearing Timeout: "+id);
 		
 		Timeout timeout = timeouts[id];
 		timeout.cancel();

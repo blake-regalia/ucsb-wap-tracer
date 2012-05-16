@@ -19,6 +19,10 @@ public class ByteBuilder {
 		bytes = new byte[length];
 	}
 	
+	public int length() {
+		return length;
+	}
+	
 	public void append(byte b) {
 		bytes[index++] = b;
 	}

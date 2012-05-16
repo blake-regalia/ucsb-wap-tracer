@@ -124,6 +124,7 @@ public class MainService extends Service {
 		HandlerThread thread = new HandlerThread("ServiceStartArguments", Process.THREAD_PRIORITY_BACKGROUND);
 		thread.start();
 
+		Log.d("MainService::onCreate", "**create**");
 
 		/* initialize the class object fields */
 
@@ -173,7 +174,7 @@ public class MainService extends Service {
 		// something bad has happened. exit the app
 		if(intent == null) {
 			System.err.println("no intent");
-			stopSelf();
+			//stopSelf();
 			return START_NOT_STICKY;
 		}
 
@@ -247,11 +248,14 @@ public class MainService extends Service {
 			tracer.close();
 			broadcast(UPDATES.SIMPLE, "Attempting to upload trace file...");
 			long bytes = tracer.save();
-			if(bytes != -1) {
-				broadcast(UPDATES.UPLOADED, "Upload successful. Contributed "+bytes+"-bytes of data.");			
+			if(bytes == -1) {
+				broadcast(UPDATES.UPLOADED, "Upload failed. No active internet connection");
+			}
+			else if(bytes == -2) {
+				broadcast(UPDATES.UPLOADED, "No significant movement occurred. Trace was discarded");
 			}
 			else {
-				broadcast(UPDATES.UPLOADED, "Upload failed. No active internet connection");
+				broadcast(UPDATES.UPLOADED, "Upload successful. Contributed "+bytes+"-bytes of data.");			
 			}
 			isTracing = false;
 		}
@@ -299,7 +303,7 @@ public class MainService extends Service {
 		private Runnable registration_failure = new Runnable() {
 			public void run() {
 				debug("::failed:: internet registration");
-				debug("==> "+client.getAndroidId()+" : "+client.getPhoneNumber());
+				debug("==> "+Registration.getAndroidId()+" : "+Registration.getPhoneNumber());
 				start(OBJECTIVE.REGISTER + 1);
 			}
 		};
@@ -352,11 +356,11 @@ public class MainService extends Service {
 		private Runnable begin_tracing = new Runnable() {
 			public void run() {
 				notification.postNotification(ActivityAlertUser.class, ACTIVITY_INTENT.DO_NOTHING, false, "Your location is being recorded", "");
-				tracer.startNewTrace(client);
+				tracer.startNewTrace();
 				wireless.scan(wifi_scan_trace, wifi_disabled_during_trace);				
 			}
 		};
-
+		
 		// runs if gps was disabled during the trace
 		private Runnable gps_disabled_during_trace = new Runnable() {
 			public void run() {
@@ -385,10 +389,44 @@ public class MainService extends Service {
 		// wait for the minimum interval time to pass before scanning for waps again
 		private Runnable scan_for_waps = new Runnable() {
 			public void run() {
+				if(!isTracing) return;
 				wireless.scan(wifi_scan_trace, wifi_disabled_during_trace);
 			}
 		};
+		
+		
+		
+		// wifi was disabled while monitoring
+		private Runnable wifi_disabled_during_monitor = new Runnable() {
+			public void run() {
+				
+			}
+		};
+		
+		// wait for the minimum interval time to pass before scanning for waps again
+		private Runnable scan_for_rssi = new Runnable() {
+			public void run() {
+				if(!hardware_monitor.is_enabled(HardwareMonitor.WIFI)) {
+					
+				}
+				else if(!hardware_monitor.is_enabled(HardwareMonitor.GPS)) {
+					start(OBJECTIVE.START_GPS);
+				}
+				else if(System.currentTimeMillis() > wakeTime) {
+					start(OBJECTIVE.SCAN_WIFI);
+				}
+				wireless.scan(monitor_waps, wifi_disabled_during_monitor);
+			}
+		};
+		
+		// continuously monitor the wifi access point levels 
+		private Runnable monitor_waps = new Runnable() {
+			public void run() {
+				scan_for_rssi.run();
+			}
+		};
 
+		
 		// runs when a wifi scan completes, test for ssid trigger
 		private Runnable wifi_ssid_test = new Runnable() {
 			public void run() {
@@ -428,7 +466,14 @@ public class MainService extends Service {
 				}
 				lastScanResults = wireless.getResults();
 				lastLocation = locator.getLocation();
-				tracer.recordEvent(lastScanResults, lastLocation);
+				int status = tracer.recordEvent(lastScanResults, lastLocation);
+				
+				// the trace file is overflowing
+				if(status < 0) {
+					stopTrace();
+					start(OBJECTIVE.BEGIN_TRACE);
+					return;
+				}
 				
 				broadcast(UPDATES.TRACING);
 		        
