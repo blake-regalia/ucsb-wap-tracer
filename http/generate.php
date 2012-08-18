@@ -37,8 +37,30 @@ $EVENTS_TABLE_NAME = "events";
 
 $ABSOLUTE_PATH = substr($_SERVER['SCRIPT_FILENAME'], 0, strrpos($_SERVER['SCRIPT_FILENAME'],'/'));
 
-$STRICT = (isset($_GET['strict']))? TRUE: FALSE;
-$PRETTY = (isset($_GET['pretty']))? '-pretty': '';
+$arg_strict = (isset($_GET['strict']))? TRUE: FALSE;
+$arg_pretty = (isset($_GET['pretty']))? '-pretty': '';
+
+$arg_sql = $_GET['sql'];
+$arg_json = $_GET['json'];
+
+for($a=1; $a<$argc; $a++) {
+	if(preg_match('/^\\-(\w+)$/', $argv[$a], $match)) {
+		switch($match[1]) {
+			case 'strict':
+				$arg_strict = true;
+				break;
+			case 'pretty':
+				$arg_pretty = true;
+				break;
+			case 'sql':
+				$arg_sql = $argv[++$a];
+				break;
+			case 'json':
+				$arg_json = $argv[++$a];
+				break;
+		}
+	}
+}
 
 
 /** **/
@@ -79,7 +101,7 @@ function get_all_files($data_dir, $ext) {
 	$data_dir_files = scandir('.');
 	foreach($data_dir_files as $user_dir) {
 		if($user_dir != '.' && $user_dir != '..' && $user_dir[0] != '~') {
-			chdir($user_dir);
+			if(chdir($user_dir) === false) continue;
 			$user_dir_files = scandir('.');
 			foreach($user_dir_files as $trace_file) {
 				$full_path = $data_dir.'/'.$user_dir.'/'.$trace_file;
@@ -99,6 +121,25 @@ function get_all_files($data_dir, $ext) {
 	return $array;
 }
 
+function get_all_user_files($dir, $ext) {
+	chdir($dir);
+	$array = array();
+	$user_dir_files = scandir('.');
+	foreach($user_dir_files as $trace_file) {
+		$full_path = $dir.'/'.$trace_file;
+		$pi = pathinfo($full_path);
+		if($pi['extension'] == $ext) {
+			$array[] = array(
+				'user' => $user_dir,
+				'trace' => $trace_file,
+				'path' => $dir.'/'.$trace_file
+			);
+		}
+	}
+	chdir('..');
+	return $array;
+}
+
 function mysql_load_redirect($file) {
 	header('Location: generate.php?sql='.$file);
 	exit;
@@ -108,8 +149,8 @@ function mysql_load_redirect($file) {
 
 
 // json
-if(isset($_GET['json'])) {
-	if($_GET['json'] == 'all') {
+if($arg_json) {
+	if($arg_json == 'all') {
 		
 		// empty json directory
 		if(!is_dir('json')) mkdir('json');
@@ -126,8 +167,12 @@ if(isset($_GET['json'])) {
 		
 		$files = get_all_files('data','bin');
 	}
-	else if($_GET['json'] == 'new') {
+	else if($arg_json == 'new') {
 		$files = get_new_files('data');
+	}
+	else if(is_dir('data/'.$_GET['json'])) {
+		$data_dir = 'data/'.$_GET['json'];
+		$files = get_all_user_files($data_dir);
 	}
 	else {
 		die('wrong args');
@@ -138,7 +183,7 @@ if(isset($_GET['json'])) {
 	ob_start();
 	foreach($files as $file) {
 		$json_path = 'json/'.$file['user'].'_'.$file['trace'].'.json';
-		$batch[] = decode_bin_to_file_output_script('-json '.$PRETTY.'"'.$file['path'].'"', $json_path);
+		$batch[] = decode_bin_to_file_output_script('-json '.$arg_pretty.'"'.$file['path'].'"', $json_path);
 		echo $json_path." <br />\n";
 		ob_flush(); flush();
 	}
@@ -148,11 +193,9 @@ if(isset($_GET['json'])) {
 }
 
 // sql
-else if(isset($_GET['sql'])) {
+else if(isset($arg_sql)) {
 	
-	$arg = $_GET['sql'];
-	
-	if($arg == 'all') {
+	if($arg_sql == 'all') {
 
 		// empty sql directory
 		if(!is_dir('sql')) {
@@ -175,7 +218,7 @@ else if(isset($_GET['sql'])) {
 		
 		$files = get_all_files('data','bin');
 	}
-	else if($arg == 'new') {
+	else if($arg_sql == 'new') {
 		$files = get_new_files('data');
 	}
 	
@@ -197,7 +240,7 @@ else if(isset($_GET['sql'])) {
 	
 	foreach($files as $file) {
 		$sql_path = 'sql/'.$file['user'].'_'.$file['trace'].'.sql';
-		decode_bin_to_file('-sql table='.$EVENTS_TABLE_NAME.' '.$PRETTY.' "'.$file['path'].'"', $sql_path);
+		decode_bin_to_file('-sql table='.$EVENTS_TABLE_NAME.' '.$arg_pretty.' "'.$file['path'].'"', $sql_path);
 		
 		$script = $MYSQL_PATH.' --user='.$DATABASE['USER'].' --password='.$DATABASE['PASS'].' "'.$DATABASE_NAME.'" < "'.$ABSOLUTE_PATH.'/'.$sql_path.'"';
 		//shell_exec($script);
