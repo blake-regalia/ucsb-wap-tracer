@@ -42,7 +42,7 @@ public class Encoder {
 		return array;
 	}
 
-	/** convert from a 32-bit int to a 4-byte array */
+	/** convert from a 32-bit signed int to a 4-byte array */
 	public static byte[] encode_int (int u) {
 		byte[] array = new byte[4];
 
@@ -69,10 +69,40 @@ public class Encoder {
 
 		return array;
 	}
+	
+
+	/** convert from a signed 32-bit float to a 4-byte array */
+	public static byte[] encode_float(float f) {
+		int u = Float.floatToIntBits(f);
+		byte[] array = new byte[4];
+
+		array[0] = (byte) ((u >> 24) & 0xFF);
+		array[1] = (byte) ((u >> 16) & 0xFF);
+		array[2] = (byte) ((u >> 8) & 0xFF);
+		array[3] = (byte) (u & 0xFF);
+
+		return array;
+	}
+
+	/** convert from a signed 64-bit double to an 8-byte array */
+	public static byte[] encode_double(double d) {
+		long u = Double.doubleToLongBits(d);
+		byte[] array = new byte[8];
+		
+		array[0] = (byte) ((u >> 56) & 0xFF);
+		array[1] = (byte) ((u >> 48) & 0xFF);
+		array[2] = (byte) ((u >> 40) & 0xFF);
+		array[3] = (byte) ((u >> 32) & 0xFF);
+		array[4] = (byte) ((u >> 24) & 0xFF);
+		array[5] = (byte) ((u >> 16) & 0xFF);
+		array[6] = (byte) ((u >> 8) & 0xFF);
+		array[7] = (byte) (u & 0xFF);
+
+		return array;
+	}
 
 	public static byte[] encode_double_to_4_bytes(double u, int p) {
 		int ui = (int) (u * p);
-		System.out.println("edt4b: "+ui);
 		return encode_int(ui & 0xffffffff);
 	}
 

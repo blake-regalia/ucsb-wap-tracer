@@ -110,7 +110,7 @@ public class ActivityControl extends Activity {
 				}
 				else if(text.equals(CONTROL_STOP_SERVICE)) {
 					System.out.println("Stopping service. "+isServiceStarted());
-					startMainService(MainService.INTENT_OBJECTIVE.KILL_SERVICE);
+					startMainService(MainService.INTENT_OBJECTIVE.STOP_SERVICE);
 
 
 					mControlsAdapter.editItem(0, getControlSwitchTitle(CONTROL_SWITCH_OFF), getControlSwitchSubtitle(CONTROL_SWITCH_OFF));
@@ -130,7 +130,7 @@ public class ActivityControl extends Activity {
 	
 	@Override
 	public void onResume() {
-		this.registerReceiver(mReceiver, new IntentFilter(MainService.BROADCAST_UPDATES));
+		this.registerReceiver(mReceiver, new IntentFilter(ServiceMonitor.BROADCAST_UPDATES));
 		super.onResume();
 	}
 	
@@ -149,10 +149,11 @@ public class ActivityControl extends Activity {
 			String type = intent.getStringExtra("type");
 
 			Log.i("Broadcast", type+":"+intent.getStringExtra(type));
+			//intent.getClass()
 			
-			if(type.equals(MainService.UPDATES.TRACING)) {
+			if(type.equals(ServiceMonitor.UPDATES.TRACING)) {
 				StringBuilder info = new StringBuilder();
-				List<ScanResult> list = MainService.getLastScan();
+				List<ScanResult> list = MainService.getLastWapScan();
 				Location location = MainService.getLastLocation();
 				int len = list.size();
 				info.append(
@@ -170,29 +171,32 @@ public class ActivityControl extends Activity {
 				}
 				infoTextView.setText(info.toString());
 			}
-			else if(type.equals(MainService.UPDATES.SIMPLE)) {
-				String simple = intent.getStringExtra(MainService.UPDATES.SIMPLE);
-				infoTextView.setText(simple);
+			else if(type.equals(ServiceMonitor.UPDATES.SIMPLE)) {
+				String simple = intent.getStringExtra(ServiceMonitor.UPDATES.SIMPLE);
+				appStatus.setText(simple);
 			}
-			else if(type.equals(MainService.UPDATES.UPLOADED)) {
-				String text = intent.getStringExtra(MainService.UPDATES.UPLOADED);
-				appStatus.setText(text);
+			else if(type.equals(ServiceMonitor.UPDATES.UPLOADED)) {
+				String text = intent.getStringExtra(ServiceMonitor.UPDATES.UPLOADED);
+				infoTextView.setText(text);
 				enableTraceButton = true;
 			}
-			else if(type.equals(MainService.UPDATES.GPS_LOST)) {
+			else if(type.equals(ServiceMonitor.UPDATES.GPS_LOST)) {
 				Toast.makeText(self, "GPS position lost", Toast.LENGTH_SHORT).show();
 			}
-			else if(type.equals(MainService.UPDATES.LOCATION_UNKNOWN)) {
+			else if(type.equals(ServiceMonitor.UPDATES.LOCATION_UNKNOWN)) {
 				Log.d("Controls", "making toast for unknown location");
 				Toast.makeText(self, "Unable to get position fix", Toast.LENGTH_LONG).show();
 			}
-			else if(type.equals(MainService.UPDATES.OUT_OF_BOUNDS)) {
+			else if(type.equals(ServiceMonitor.UPDATES.OUT_OF_BOUNDS)) {
 				Toast.makeText(self, "You're not within bounds", Toast.LENGTH_SHORT).show();
 			}
-			else if(type.equals(MainService.UPDATES.SLEEPING)) {
-				String text = intent.getStringExtra(MainService.UPDATES.SLEEPING);
+			else if(type.equals(ServiceMonitor.UPDATES.SLEEPING)) {
+				String text = intent.getStringExtra(ServiceMonitor.UPDATES.SLEEPING);
 				infoTextView.setText(text);
 				enableTraceButton = true;
+			}
+			else if(type.equals(ServiceMonitor.UPDATES.GPS_EXPIRED)) {
+				Toast.makeText(self, "Location became too old to use anymore", Toast.LENGTH_LONG).show();
 			}
 			
 			mControlsAdapter.setItemEnabled(1, enableTraceButton);

@@ -16,6 +16,7 @@ import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Looper;
+import android.util.Log;
 
 /**
  * This class is responsible for monitoring and starting hardware interfaces
@@ -23,6 +24,8 @@ import android.os.Looper;
  *
  */
 public class HardwareMonitor {
+
+	private BroadcastReceiver wifiInterestReceiver;
 
 	public static final int GPS = (1 << 0);
 	public static final int WIFI = (1 << 1);
@@ -32,9 +35,11 @@ public class HardwareMonitor {
 	public static final String ENABLE_WIFI = "enable_wifi";
 
 	private static final boolean USE_GPS_TOGGLE_EXPLOIT_IF_AVAILABLE = true;
+	
+	private static final String TAG = "HardwareMonitor";
 
 	/** objects */
-	private Context context;
+	private Context mContext;
 
 	private LocationManager location_manager;
 	private WifiManager wifi_manager;
@@ -43,15 +48,15 @@ public class HardwareMonitor {
 	private boolean can_toggle_gps = false;
 
 	public HardwareMonitor(Context _context) {
-		context = _context;
+		mContext = _context;
 
 		can_toggle_gps = gps_toggle_exploit_available() && USE_GPS_TOGGLE_EXPLOIT_IF_AVAILABLE;
 
 		// Acquire a reference to the system Location Manager
-		location_manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+		location_manager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
 
 		// Acquire a reference to the system Wifi Manager
-		wifi_manager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+		wifi_manager = (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
 	}
 
 
@@ -64,7 +69,7 @@ public class HardwareMonitor {
 
 
 	private boolean gps_toggle_exploit_available() {
-		PackageManager pacman = context.getPackageManager();
+		PackageManager pacman = mContext.getPackageManager();
 		PackageInfo pacInfo = null;
 
 		try {
@@ -87,7 +92,7 @@ public class HardwareMonitor {
 	}
 
 
-	private void toggle_gps(final Runnable ready, final Runnable hw_fail, Looper looper) {
+	private void toggle_gps(final Runnable ready, final Runnable hw_fail) {
 
 		System.out.println(">/<: GPS");
 		
@@ -105,14 +110,15 @@ public class HardwareMonitor {
 		};
 
 		// listen for as soon as the gps is enabled
-		location_manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener, looper);		
+//		location_manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener, looper);
+		location_manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
 
 		// exploit a bug in the power manager widget
 		final Intent poke = new Intent();
 		poke.setClassName("com.android.settings", "com.android.settings.widget.SettingsAppWidgetProvider"); //$NON-NLS-1$//$NON-NLS-2$
 		poke.addCategory(Intent.CATEGORY_ALTERNATIVE);
 		poke.setData(Uri.parse("3")); //$NON-NLS-1$
-		context.sendBroadcast(poke);
+		mContext.sendBroadcast(poke);
 
 		System.out.println("...");
 		
@@ -126,137 +132,157 @@ public class HardwareMonitor {
 
 
 
+	private void investGpsInterest(final Runnable disabled) {
+		
+		final LocationListener gpsInterestListener = new LocationListener() {			
+			public void onLocationChanged(Location location) {}
+			
+			public void onProviderDisabled(String provider) {
+				location_manager.removeUpdates(this);
+				callback(disabled);
+			}
+			
+			public void onProviderEnabled(String provider) {}
+			public void onStatusChanged(String provider, int status, Bundle extras) {}
+		};
+
+		location_manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, gpsInterestListener);
+	}
 
 
 	private boolean gps_enabled() {
 		return location_manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 	}
-
-
-	private void enable_gps_alert_dialog(Runnable gps_not_enabled) {
-		Thread thread = new Thread(gps_not_enabled);
-		thread.run();
-		/*
-		context.startActivity(
-				new Intent(context, Alert_Enable_GPS.class)
-				.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-				.putExtra("objective", MainService.INTENT_OBJECTIVE.START_GPS)
-				);
-				*/
-	}
-
-	public boolean is_enabled(int hardware) {
-		boolean enabled = true;
-		if((GPS & hardware) != 0) {
-			enabled &= gps_enabled();
+	
+	public void enable_gps(final Runnable enabled, final Runnable disabled, final Runnable failed) {
+		if(gps_enabled()) {
+			investGpsInterest(disabled);
+			callback(enabled);
+			return;
 		}
-		if((WIFI & hardware) != 0) {
-			enabled &= wifi_enabled();
+		
+		if(can_toggle_gps) {
+			toggle_gps(enabled, failed);
 		}
-		return enabled;
+		else {
+			callback(failed);
+		}
 	}
-
-	public boolean enable(int hardware, Runnable ready, Runnable hardware_fail, Looper looper) {
-		boolean rx = true;
-		if((GPS & hardware) != 0) {
-			if(gps_enabled()) {
-				rx &= true;
-			}
-			else {
-				if(can_toggle_gps) {
-					toggle_gps(ready, hardware_fail, looper);
+	
+	private static int previousWifiState;
+	
+	
+	
+	/**
+	 * Sets up a broadcastReceiver to listen for wifi hardware getting disabled
+	 * 
+	 * @param disabled	Callback listener to be fired if the wifi hardware is disabled
+	 */
+	private synchronized void investWifiInterest(final Runnable disabled) {
+		IntentFilter wifiInterestIntent = new IntentFilter();
+		wifiInterestIntent.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
+		
+		if(wifiInterestReceiver != null) {
+			mContext.unregisterReceiver(wifiInterestReceiver);
+		}
+		
+		wifiInterestReceiver = new BroadcastReceiver() {
+			
+			public void onReceive(Context context, Intent intent) {
+				
+				switch(wifi_manager.getWifiState()) {
+				
+				case WifiManager.WIFI_STATE_DISABLED:
+				case WifiManager.WIFI_STATE_DISABLING:
+				case WifiManager.WIFI_STATE_UNKNOWN:
+					mContext.unregisterReceiver(wifiInterestReceiver);
+					callback(disabled);
+					break;
 				}
-				else {
-					enable_gps_alert_dialog(hardware_fail);
-				}
-				rx &= false;
 			}
-		}
-		if((WIFI & hardware) != 0) {
-			if(wifi_enabled()) {
-				rx &= true;
-			}
-			else {
-				enable_wifi(ready, hardware_fail);
-				rx &= false;
-			}
-		}
-		return rx;
+		};
+
+		mContext.registerReceiver(wifiInterestReceiver, wifiInterestIntent);
 	}
-
-	GpsStatus.Listener gps_listener = new GpsStatus.Listener() {
-		public void onGpsStatusChanged(int event) {
-			System.out.println("GpsStatus changed");
-			switch(event) {
-			case GpsStatus.GPS_EVENT_STOPPED:
-				//enable_gps_alert_dialog();
-				break;
-			}
-		}
-	};
-
+	
 
 	private boolean wifi_enabled() {
 		return wifi_manager.isWifiEnabled();
 	}
-
 	
-	private static int previousWifiState;
-	
-	public void enable_wifi(final Runnable ready, final Runnable hardware_fail) {
-
-		final int initialState = wifi_manager.getWifiState();
-		switch(initialState) {
-		case WifiManager.WIFI_STATE_ENABLING:
-		case WifiManager.WIFI_STATE_ENABLED:
-			System.out.println("WiFi interface is enabling...");
-			break;
-		case WifiManager.WIFI_STATE_DISABLED:
-		case WifiManager.WIFI_STATE_DISABLING:
-			System.out.println("WiFi interface is disabled\n");
-			break;
-		case WifiManager.WIFI_STATE_UNKNOWN:
-			callback(hardware_fail);
+	public void enable_wifi(final Runnable enabled, final Runnable disabled, final Runnable failed) {
+		if(wifi_enabled()) {
+			investWifiInterest(disabled);
+			callback(enabled);
 			return;
 		}
 		
+		// fetch the initial state of the wifi to determine what to do later
+		final int initialState = wifi_manager.getWifiState();
 		previousWifiState = initialState; 
+		
+		switch(initialState) {
+
+		case WifiManager.WIFI_STATE_ENABLED:
+		case WifiManager.WIFI_STATE_ENABLING:
+			Log.d(TAG, "WiFi interface is enabling...");
+			break;
+			
+		case WifiManager.WIFI_STATE_DISABLED:
+		case WifiManager.WIFI_STATE_DISABLING:
+			Log.d(TAG, "WiFi interface is disabled");
+			break;
+			
+		case WifiManager.WIFI_STATE_UNKNOWN:
+			callback(failed);
+			return;
+		}
 
 		// wait for wifi to enable
 		IntentFilter intent = new IntentFilter();
 		intent.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
-		context.registerReceiver(new BroadcastReceiver() {
+		
+		mContext.registerReceiver(new BroadcastReceiver() {
+			
 			public void onReceive(Context c, Intent i) {
-
 				int state = wifi_manager.getWifiState();
-
-				System.out.println("WiFi is now: "+WifiController.wifiStateToString(state)+", previously: "+WifiController.wifiStateToString(previousWifiState));
+				Log.d(TAG, "WiFi is now: "+WifiController.wifiStateToString(state)+", previously: "+WifiController.wifiStateToString(previousWifiState));
 				
 				switch(state) {
+				
 				case WifiManager.WIFI_STATE_ENABLED:
-					context.unregisterReceiver(this);
-					callback(ready);
+					investWifiInterest(disabled);
+					mContext.unregisterReceiver(this);
+					callback(enabled);
 					return;
+					
 				case WifiManager.WIFI_STATE_ENABLING:
-					System.out.println("Enabling WiFi interface...\n");
+					Log.d(TAG, "Enabling WiFi interface...");
 					break;
+					
 				case WifiManager.WIFI_STATE_DISABLED:
 					switch(previousWifiState) {
 					case WifiManager.WIFI_STATE_DISABLED:
 					case WifiManager.WIFI_STATE_DISABLING:
 						break;
 					default:
-						System.out.println("ERROR: WiFi disabled, couldn't start it!");
-						context.unregisterReceiver(this);
-						callback(hardware_fail);
+						Log.e(TAG, "WiFi failed to start");
+						mContext.unregisterReceiver(this);
+						callback(failed);
 						break;
 					}
 					break;
+					
 				case WifiManager.WIFI_STATE_DISABLING:
 					if(previousWifiState != WifiManager.WIFI_STATE_DISABLING) {
-						System.out.println("ERROR: WiFi disabling when not supposed to.");
-						callback(hardware_fail);
+						Log.e(TAG, "WiFi disabling when not supposed to");
+						mContext.unregisterReceiver(this);
+						callback(failed);
 					}
+					break;
+					
+				case WifiManager.WIFI_STATE_UNKNOWN:
+					Log.w(TAG, "WiFi state went to unknown!");
 					break;
 				}
 				

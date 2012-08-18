@@ -55,7 +55,7 @@
         </activity>
 
         <service
-            android:name="edu.ucsb.geog.blake_regalia.wap_tracer.MainService"
+            android:name=".MainService"
             android:enabled="true" >
             <intent-filter>
                 <action android:name="edu.ucsb.geog.blake_regalia.wap_tracer.MainService" />

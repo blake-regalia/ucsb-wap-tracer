@@ -13,7 +13,7 @@ public class WifiController {
 	
 	private Context context;
 	
-	private WifiManager wifi_manager;
+	private WifiManager mWifiManager;
 	
 	private BroadcastReceiver broadcast_receiver = null;
 	
@@ -22,10 +22,8 @@ public class WifiController {
 	private Runnable callback_scan_ready;
 	
 	public WifiController(Context _context) {
-		
 		context = _context;
-		
-		wifi_manager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+		mWifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
 	}
 	
 	private void callback(Runnable code) {
@@ -40,15 +38,15 @@ public class WifiController {
 		}
 	}
 	
-	public void scan(Runnable ready, Runnable fail) {
+	public void scan(Runnable ready) {
 		callback_scan_ready = ready;
 		
 		listen_for_broadcasts(new saveResults());
 		
-		wifi_manager.startScan();
+		mWifiManager.startScan();
 	}
 	
-	private void listen_for_broadcasts(BroadcastReceiver receiver) {
+	private synchronized void listen_for_broadcasts(BroadcastReceiver receiver) {
 		abort();
 		IntentFilter intent = new IntentFilter();
 		intent.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
@@ -59,7 +57,7 @@ public class WifiController {
 	public class saveResults extends BroadcastReceiver {
 		@Override
 		public void onReceive(Context c, Intent i) {
-			scan_results = wifi_manager.getScanResults();
+			scan_results = mWifiManager.getScanResults();
 			callback(callback_scan_ready);
 		}
 	}

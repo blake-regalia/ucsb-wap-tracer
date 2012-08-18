@@ -8,12 +8,15 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.Toast;
 
 public class ActivityAlertUser extends Activity {
+	
+	private static final String TAG = "ActivityAlertUser";
 	
 	private Activity self;
 	
@@ -25,22 +28,19 @@ public class ActivityAlertUser extends Activity {
 	@Override
 	public void onCreate(Bundle savedInst) {
 		super.onCreate(null);
-		
 		self = this;
 		
 		Intent intent = this.getIntent();
 		if(intent != null) {
-			int intentAction = intentActionToConst(intent.getAction());
+			String action = intent.getAction();			
+			Log.d(TAG, "Started with action: "+action);
 			
-			System.out.println("ActivityAlertUser started with intent: "+intent.getAction());
-			switch(intentAction) {
-			case ACTION_WIFI_FAIL:
-				actionWifiFail();
-				break;
-			case ACTION_GPS_ENABLE:
+			if(action.equals("gps-enable")) {
 				actionGpsEnable();
-				break;
 			}
+			else if(action.equals("wifi-fail")) {
+				actionWifiFail();
+			} 
 		}
 	}
 
@@ -56,26 +56,6 @@ public class ActivityAlertUser extends Activity {
 		self.finish();
 		startService(intent);
 	}
-	
-	private int intentActionToConst(String intentAction) {
-		String packageNamePrefix = this.getClass().getPackage().getName()+":";
-		if(intentAction.length() > packageNamePrefix.length()) {
-			if(intentAction.substring(0, packageNamePrefix.length()).equals(packageNamePrefix)) {
-				String action = intentAction.substring(packageNamePrefix.length());
-				if(action.equals(MainService.ACTIVITY_INTENT.WIFI_FAIL)) {
-					return ACTION_WIFI_FAIL;
-				}
-				else if(action.equals(MainService.ACTIVITY_INTENT.GPS_ENABLE)) {
-					return ACTION_GPS_ENABLE;
-				}
-				else {
-					System.out.println("Action not found: "+action);
-				}
-			}
-		}
-		return 0;
-	}
-	
 
 	private void actionWifiFail() {
 		this.setContentView(R.layout.wifi_fail);

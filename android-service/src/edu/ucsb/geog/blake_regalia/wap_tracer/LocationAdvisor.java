@@ -55,10 +55,12 @@ public class LocationAdvisor {
 	private boolean use_wifi = false;
 	
 	private Context context;
+	private Looper mMainThread;
 	
 	private LocationManager location_manager;
-	
+
 	private Location last_location = null;
+	private Location archived_location = null;
 	private boolean has_gps_fix = false;
 	
 	private LocationListener active_listener = null;
@@ -72,8 +74,9 @@ public class LocationAdvisor {
 	private boolean isOldFix = false;
 	private boolean waitingOnFirstFix = false;
 
-	public LocationAdvisor(Context _context) {
+	public LocationAdvisor(Context _context, Looper looper) {
 		context = _context;
+		mMainThread = looper;
 
 		// Acquire a reference to the system Location Manager
 		location_manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
@@ -89,19 +92,19 @@ public class LocationAdvisor {
 	
 	
 	public Location getLocation() {
+		if(last_location == null) return archived_location;
+		archived_location = last_location;
 		return last_location;
 	}
 
-	public void obtainLocation(int listener, final Runnable code, final Runnable disabled, Looper looper) {
-		obtainLocation(listener, code, null, disabled, looper);
+	public void obtainLocation(int listener, final Runnable code) {
+		obtainLocation(listener, code, null);
 	}
 
-	public void obtainLocation(int listener, final Runnable code, final Runnable lost, final Runnable disabled, Looper looper) {
+	public void obtainLocation(int listener, final Runnable code, final Runnable lost) {
 		// prepare the callback methods for when a location is fixed or if hardware fails
 		callback_pending_location_fix = code;
-		callback_incaseof_hardware_fail = disabled;
 		callback_incaseof_position_lost = lost;
-		service_thread_looper  = looper;
 		
 		// make sure there are no listeners requestion location updates
 		stopListener();
@@ -127,7 +130,7 @@ public class LocationAdvisor {
 			waitingOnFirstFix = true;
 			
 			// start a timeout thread to notify the service of position lost after period of inactivity
-			startTimeout(trace_location_timeout, TRACE_LOCATION_MAX_AGE_MS);
+//			startTimeout(trace_location_timeout, TRACE_LOCATION_MAX_AGE_MS);
 			break;
 		}
 		
@@ -163,10 +166,10 @@ public class LocationAdvisor {
 		// begin listening for updates
 		active_location_events = 0;
 		if(use_gps) {
-			location_manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, active_listener, looper);
+			location_manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, active_listener, mMainThread);
 		}
 		if(use_wifi) {
-			location_manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, active_listener, looper);
+			location_manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, active_listener, mMainThread);
 		}
 	}
 	
@@ -191,8 +194,9 @@ public class LocationAdvisor {
 	private int timeout = -1; 
 	
 	private void callback(Runnable callback) {
+		if(callback == null) return;
 		Thread thread = new Thread(callback);
-		//thread.setPriority(Thread.MIN_PRIORITY);
+		thread.setPriority(Thread.MIN_PRIORITY);
 		thread.start();
 	}
 	
@@ -222,12 +226,6 @@ public class LocationAdvisor {
 		}
 	}
 
-	private void hardwareFail() {
-		stop();
-		callback(callback_incaseof_hardware_fail);
-		callback_incaseof_hardware_fail = null;
-	}
-	
 	private void positionLost() {
 		Log.d(TAG, "## position lost");
 		stop();
@@ -245,41 +243,8 @@ public class LocationAdvisor {
 		public synchronized void onLocationChanged(Location location) {
 		}
 		
-		public synchronized void onProviderDisabled(String provider) {
-			Log.d(TAG, "provider failed: "+provider);
-			WifiManager wifi_manager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-			
-			boolean fail = true;
-			
-			if(provider.equals(LocationManager.NETWORK_PROVIDER)) {
-				switch(wifi_manager.getWifiState()) {
-				case WifiManager.WIFI_STATE_DISABLED:
-					System.out.println("WIFI: disabled");
-					break;
-				case WifiManager.WIFI_STATE_ENABLED:
-					System.out.println("WIFI: enabled");
-					fail = false;
-					break;
-				case WifiManager.WIFI_STATE_DISABLING:
-					System.out.println("WIFI: disabling");
-					break;
-				case WifiManager.WIFI_STATE_ENABLING:
-					System.out.println("WIFI: enabling");
-					break;
-				default:
-					System.out.println("WIFI: unknown");
-					break;
-				}
-			}
-			if(fail) {
-				hardwareFail();
-			}
-			else {
-//				restart_listener();
-			}
-		}
-		public void onProviderEnabled(String arg0) {
-		}
+		public synchronized void onProviderDisabled(String provider) {}
+		public void onProviderEnabled(String arg0) {}
 		public synchronized void onStatusChanged(String arg0, int arg1, Bundle arg2) {
 			String str = "unknown";
 			switch(arg1) {
@@ -443,7 +408,7 @@ public class LocationAdvisor {
 					waitingOnFirstFix = false;
 				}
 				// start a timeout thread to notify the service of position lost after period of inactivity
-				startTimeout(trace_location_timeout, TRACE_LOCATION_MAX_AGE_MS);
+//				startTimeout(trace_location_timeout, TRACE_LOCATION_MAX_AGE_MS);
 			}
 		}
 	}

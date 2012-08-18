@@ -38,7 +38,7 @@ public class TraceManager {
 	private static final int INITIAL_HASHTABLE_SIZE 			= 64;
 	public static final int WIFI_SIGNAL_NUM_PRECISION_LEVELS 	= 45;
 	
-	public static final int WIFI_SIGNAL_MAX_DATA_LEVEL 		= 255;
+	public static final int WIFI_SIGNAL_MAX_DATA_LEVEL 			= 255;
 	public static final double WIFI_SIGNAL_MAX_DATA_LEVEL_INV 	= 1.0 / WIFI_SIGNAL_MAX_DATA_LEVEL;
 	public static final double WIFI_SIGNAL_NUM_LEVELS_FACTOR 	= ((double) WIFI_SIGNAL_MAX_DATA_LEVEL) / WIFI_SIGNAL_NUM_PRECISION_LEVELS;
 

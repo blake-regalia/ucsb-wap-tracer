@@ -1,5 +1,6 @@
 package edu.ucsb.geog.blake_regalia.wap_tracer;
 
+import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -21,41 +22,36 @@ public class NotificationInterface {
 	public void clear() {
 		mNotificationManager.cancelAll();
 	}
+	
+	public void post(Class activity, String action, boolean launchNow, String tickerText, String statusText) {
+		post(mContext, activity, action, launchNow, tickerText, statusText);
+	}
+	
+	public static void clear(Context context) {
+		((NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE)).cancelAll();
+	}
 
-	public void postNotification(Class activity, String uiPurpose, boolean launchNow, String tickerText, String statusText) {
+	public static void post(Context context, Class activity, String action, boolean launchNow, String tickerText, String statusText) {
+		NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+		
 		long now = System.currentTimeMillis(); 
 		Notification notification = new Notification(R.drawable.earth, tickerText, now);
 
-		CharSequence contentTitle = tickerText;
-		CharSequence contentText = statusText;
-
 		notification.flags = Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
 
-		if(!uiPurpose.equals(MainService.ACTIVITY_INTENT.DO_NOTHING)) {
-			Intent notificationIntent = new Intent(mContext, activity)
+		Intent notificationIntent = new Intent(context, activity)
 			.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-			.setAction(this.getClass().getPackage().getName()+":"+uiPurpose)
-			.putExtra("ui-purpose", uiPurpose);
+			.setAction(action);
 
-			PendingIntent contentIntent = PendingIntent.getActivity(mContext, 0, notificationIntent, 0);
-
-			notification.setLatestEventInfo(mContext, contentTitle, contentText, contentIntent);
-
+		if(!action.equals("nothing")) {
 			if(launchNow) {
-				mContext.startActivity(notificationIntent);
+				context.startActivity(notificationIntent);
 			}
 		}
-		else {
-			Intent notificationIntent = new Intent(mContext, activity)
-			.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-			.setAction(this.getClass().getPackage().getName()+":"+uiPurpose)
-			.putExtra("ui-purpose", "do-nothing");
 
-			PendingIntent contentIntent = PendingIntent.getActivity(mContext, 0, notificationIntent, 0);
+		PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
+		notification.setLatestEventInfo(context, tickerText, statusText, contentIntent);
 
-			notification.setLatestEventInfo(mContext, contentTitle, contentText, contentIntent);
-		}
-
-		mNotificationManager.notify(0, notification);
+		notificationManager.notify(0, notification);
 	}
 }
