@@ -79,7 +79,7 @@ public class EnvironmentMonitor extends LocationMonitor {
 	};
 
 	protected void enable_gps() {
-		mHardwareMonitor.enable_gps(gps_hardware_enabled, gps_hardware_disabled, gps_hardware_fail);
+		mHardwareMonitor.enableGps(gps_hardware_enabled, gps_hardware_disabled, gps_hardware_fail);
 	}
 	
 	
@@ -112,7 +112,7 @@ public class EnvironmentMonitor extends LocationMonitor {
 //		mLogManager = new LogManager(logType);
 
 		// use GPS and WIFI to resolve a location 
-		//mLocationAdvisor.useProvider(LocationAdvisor.GPS | LocationAdvisor.WIFI);
+		//mLocationHelper.useProvider(LocationAdvisor.GPS | LocationAdvisor.WIFI);
 		
 		start();
 	}
@@ -138,9 +138,9 @@ public class EnvironmentMonitor extends LocationMonitor {
 	
 	private Runnable location_fix = new Runnable() {
 		public void run() {
-			Location location = mLocationAdvisor.getLocation();
+			Location location = mLocationHelper.getLocation();
 			if(location == null) {
-				postNotification(ActivityIntent.GPS_SIGNAL_WEAK);
+				notifyUser(ActivityIntent.GPS_SIGNAL_WEAK);
 			}
 			else {
 			}
@@ -149,13 +149,13 @@ public class EnvironmentMonitor extends LocationMonitor {
 	
 	private Runnable position_lost = new Runnable() {
 		public void run() {
-			postNotification(ActivityIntent.GPS_SIGNAL_LOST);
+			notifyUser(ActivityIntent.GPS_SIGNAL_LOST);
 		}
 	};
 	
 	private void attempt_scan() {
 		mStatus = Status.READY;
-		mLocationAdvisor.obtainLocation(LocationAdvisor.BOUNDARY_CHECK_LISTENER, location_fix, position_lost);
+		//mLocationHelper.obtainLocation(LocationAdvisor.BOUNDARY_CHECK_LISTENER, location_fix, position_lost);
 	}
 
 	@Override

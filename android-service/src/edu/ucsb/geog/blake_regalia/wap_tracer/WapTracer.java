@@ -25,6 +25,9 @@ public class WapTracer extends LocationMonitor {
 	// how often to use the GPS receiver to check if the device is within boundaries within the precision of the ssid check interval
 	protected long LOCATION_CHECK_INTERVAL_MS = 3 * 60 * 60 * 1000; // 3 hours
 	
+	// how often to check if the GPS hardware is still enabled while the app is idling
+	protected long MONITOR_IDLE_GPS_INTERVAL_MS = 3 * 1000; // 3 seconds
+	
 	// array of Strings containing possible SSID triggers
 	protected final String[] WIFI_SSID_TRIGGERS = {
 			"UCSB Wireless Web",
@@ -110,12 +113,14 @@ public class WapTracer extends LocationMonitor {
 				// gps was disabled during use
 			case SCANNING:
 			case TRACING:
-				close();
+				closeIO();
+				notifyUser(ActivityIntent.GPS_DISABLED);
 				break;
 
 				// wifi was disabled
 			case STOPPING:
 			case CLOSED:
+				Log.w(TAG, "GPS disabled happend while: "+mStatus);
 				break;
 
 			default:
@@ -127,7 +132,7 @@ public class WapTracer extends LocationMonitor {
 
 	protected void enable_gps() {
 		broadcast(UPDATES.SIMPLE, "Waiting for GPS to enable...");
-		mHardwareMonitor.enable_gps(gps_hardware_enabled, gps_hardware_disabled, gps_hardware_fail);
+		mHardwareMonitor.enableGps(gps_hardware_enabled, gps_hardware_disabled, gps_hardware_fail);
 	}
 
 
@@ -190,7 +195,9 @@ public class WapTracer extends LocationMonitor {
 				// wifi was disabled during use
 			case SCANNING:
 			case TRACING:
-				close();
+				closeIO();
+				notifyUser(ActivityIntent.WIFI_DISABLED);
+				idle();
 				break;
 
 				// wifi was disabled
@@ -211,7 +218,7 @@ public class WapTracer extends LocationMonitor {
 	private Runnable wifi_hardware_fail = new Runnable() {
 		public void run() {
 			Log.e(TAG, "Your device does not support WiFi");
-			postNotification(ActivityIntent.WIFI_FAIL);
+			notifyUser(ActivityIntent.WIFI_FAIL);
 		}
 	};
 
@@ -239,7 +246,7 @@ public class WapTracer extends LocationMonitor {
 		mWifiController = new WifiController(mContext);
 
 		// use GPS and WIFI to resolve a location 
-		mLocationAdvisor.useProvider(LocationAdvisor.GPS | LocationAdvisor.WIFI);
+		mLocationHelper.useProvider(LocationHelper.GPS | LocationHelper.WIFI);
 
 		start();
 	}
@@ -260,15 +267,21 @@ public class WapTracer extends LocationMonitor {
 		enable_gps();
 	}
 
-
-	private Runnable location_fix = new Runnable() {
+	private void attempt_scan() {
+		ssidTriggerTimeout = Timeout.clearTimeout(ssidTriggerTimeout);
+		locationTriggerTimeout = Timeout.clearTimeout(locationTriggerTimeout);
+		
+		broadcast(UPDATES.SIMPLE, "Getting a location fix...");
+		mStatus = Status.READY;
+		mLocationHelper.obtainLocation(LocationHelper.BOUNDARY_CHECK_LISTENER, boundary_location_fix, position_lost);
+	}
+	
+	private boolean is_tracing = false;
+	
+	private Runnable tracing_location_fix = new Runnable() {
 		public void run() {
-			Location location = mLocationAdvisor.getLocation();
-			if(location == null) {
-				postNotification(ActivityIntent.GPS_SIGNAL_WEAK);
-			}
-			else {
-				mLocationAdvisor.obtainLocation(LocationAdvisor.TRACE_LOCATION_LISTENER, null, position_lost);
+			if(is_tracing == false) {
+				is_tracing = true;
 				broadcast(UPDATES.SIMPLE, "Scanning nearby access points...");
 				scan_wifi.run();
 			}
@@ -277,33 +290,38 @@ public class WapTracer extends LocationMonitor {
 
 	private Runnable position_lost = new Runnable() {
 		public void run() {
-			postNotification(ActivityIntent.GPS_SIGNAL_LOST);
+			notifyUser(ActivityIntent.GPS_SIGNAL_LOST);
+			closeIO();
+			idle();
 		}
 	};
 
-	private void attempt_scan() {
-		if(ssidTriggerTimeout != -1) {
-			Timeout.clearTimeout(ssidTriggerTimeout);
+
+	private Runnable boundary_location_fix = new Runnable() {
+		public void run() {
+			Location location = mLocationHelper.getLocation();
+			// if location in bounds..
+			if(location != null) {
+				mLocationHelper.obtainLocation(LocationHelper.TRACE_LOCATION_LISTENER, tracing_location_fix, position_lost);
+				broadcast(UPDATES.SIMPLE, "Getting accurate location fix...");
+			}
+			// otherwise, go idle
+			else {
+				idle();
+			}
 		}
-		if(locationTriggerTimeout != -1) {
-			Timeout.clearTimeout(locationTriggerTimeout);
-		}
-		
-		broadcast(UPDATES.SIMPLE, "Getting a location fix...");
-		mStatus = Status.READY;
-		mLocationAdvisor.obtainLocation(LocationAdvisor.BOUNDARY_CHECK_LISTENER, location_fix, position_lost);
-	}
+	};
 
 	private Runnable scan_wifi = new Runnable() {
 		public void run() {
-
+			
 			switch(mStatus) {
 
 			case SCANNING:
 				break;
 
 			case STOPPING:
-				close();
+				closeIO();
 				return;
 
 			default:
@@ -322,6 +340,7 @@ public class WapTracer extends LocationMonitor {
 		switch(mStatus) {
 
 		case WAIT_WIFI:
+			enable_wifi();
 			break;
 
 		case WAIT_GPS:
@@ -337,7 +356,7 @@ public class WapTracer extends LocationMonitor {
 		switch(mStatus) {
 		case SCANNING:
 		case TRACING:
-			close();
+			closeIO();
 			break;
 		}
 		mStatus = Status.CLOSED;
@@ -347,12 +366,12 @@ public class WapTracer extends LocationMonitor {
 	/**
 	 * closes the trace file
 	 */
-	private void close() {
-		if(wifiScanTimeout != -1) {
-			Timeout.clearTimeout(wifiScanTimeout);
-		}
+	private void closeIO() {
+		is_tracing = false;
+		wifiScanTimeout = Timeout.clearTimeout(wifiScanTimeout);
+		
 		mWifiController.abort();
-		mLocationAdvisor.shutDown();
+		mLocationHelper.unbind();
 		if(mStatus == Status.SCANNING || mStatus == Status.TRACING) {
 			mStatus = Status.STOPPING;
 			mTraceManager.close();
@@ -373,6 +392,7 @@ public class WapTracer extends LocationMonitor {
 		}
 		NotificationInterface.clear(mContext);
 		Log.d(TAG, "Tracing complete");
+		mLocationHelper.unbind();
 		mStatus = Status.CLOSED;
 	}
 
@@ -382,7 +402,7 @@ public class WapTracer extends LocationMonitor {
 	private Runnable wifi_scan_success = new Runnable() {
 		public void run() {
 			List<ScanResult> wapList = mWifiController.getResults();
-			Location currentLocation = mLocationAdvisor.getLocation();
+			Location currentLocation = mLocationHelper.getLocation();
 
 			if((System.currentTimeMillis()-currentLocation.getTime()) < GPS_AGE_MAX_MS) {
 				mTraceManager.recordEvent(wapList, currentLocation);
@@ -394,8 +414,8 @@ public class WapTracer extends LocationMonitor {
 				wifiScanTimeout = Timeout.setTimeout(scan_wifi, WIFI_SCAN_INTERVAL_MS);
 			}
 			else {
-				close();
-				postNotification(ActivityIntent.GPS_AGE_TOO_OLD);
+				closeIO();
+				notifyUser(ActivityIntent.GPS_AGE_TOO_OLD);
 				idle();
 			}
 		}
@@ -403,7 +423,16 @@ public class WapTracer extends LocationMonitor {
 
 	private void idle() {
 		Timeout.setTimeout(remind_activity, 3600);
-		mLocationAdvisor.shutDown();
+		
+		// stop listening for location updates
+		mLocationHelper.unbind();
+		
+		// periodically check that the gps doesn't get disabled
+		mHardwareMonitor.monitorGpsState(gps_hardware_disabled, MONITOR_IDLE_GPS_INTERVAL_MS);
+
+		// release the GPS hardware
+		mHardwareMonitor.unbindGps();
+		
 		ssidTriggerTimeout = Timeout.setTimeout(ssid_trigger_check, SSID_CHECK_INTERVAL_MS);
 		locationTriggerTimeout = Timeout.setTimeout(location_trigger_check, LOCATION_CHECK_INTERVAL_MS);
 	}

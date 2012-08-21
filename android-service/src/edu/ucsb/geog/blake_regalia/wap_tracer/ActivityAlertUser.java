@@ -40,7 +40,7 @@ public class ActivityAlertUser extends Activity {
 			}
 			else if(action.equals("wifi-fail")) {
 				actionWifiFail();
-			} 
+			}
 		}
 	}
 

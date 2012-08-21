@@ -77,13 +77,15 @@ public class Timeout {
 		return index;
 	}
 	
-	public static void clearTimeout(int id) {
-//		Log.i("Timeout", "clearing Timeout: "+id);
+	public static int clearTimeout(int id) {
+		if(id == -1) return -1;
 		
 		Timeout timeout = timeouts[id];
 		timeout.cancel();
 		timeouts[id] = null;
 
 		freeSlot(id);
+		
+		return -1;
 	}
 }

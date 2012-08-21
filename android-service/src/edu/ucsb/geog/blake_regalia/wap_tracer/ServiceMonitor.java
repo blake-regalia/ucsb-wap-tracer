@@ -26,7 +26,9 @@ public abstract class ServiceMonitor {
 	
 	protected enum ActivityIntent {
 		WIFI_FAIL,
+		WIFI_DISABLED,
 		GPS_ENABLE,
+		GPS_DISABLED,
 		GPS_SIGNAL_WEAK,
 		GPS_SIGNAL_LOST,
 		GPS_AGE_TOO_OLD,
@@ -41,16 +43,24 @@ public abstract class ServiceMonitor {
 	public abstract void resume();
 	public abstract void stop();
 	
-	protected void postNotification(ActivityIntent reason) {
+	protected void notifyUser(ActivityIntent reason) {
 		
 		switch(reason) {
-		
+
 		case WIFI_FAIL:
 			NotificationInterface.post(mContext, ActivityAlertUser.class, "wifi-fail", false, "This app can't run on your device", "Touch here for more information");			
+			break;
+			
+		case WIFI_DISABLED:
+			NotificationInterface.post(mContext, ActivityControl.class, "wifi-disabled", false, "Wi-Fi was disabled", "Tracer has shut down", 0);			
 			break;
 
 		case GPS_ENABLE:
 			NotificationInterface.post(mContext, ActivityAlertUser.class, "gps-enable", false, "GPS needs to be enabled", "GPS must remain enabled for app to run");
+			break;
+
+		case GPS_DISABLED:
+			NotificationInterface.post(mContext, ActivityControl.class, "gps-disabled", false, "GPS was disabled", "Tracer has shut down", 0);
 			break;
 
 		case GPS_SIGNAL_WEAK:

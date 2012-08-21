@@ -32,12 +32,16 @@ public class NotificationInterface {
 	}
 
 	public static void post(Context context, Class activity, String action, boolean launchNow, String tickerText, String statusText) {
+		post(context, activity, action, launchNow, tickerText, statusText, Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT);
+	}
+
+	public static void post(Context context, Class activity, String action, boolean launchNow, String tickerText, String statusText, int notificationFlags) {
 		NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 		
 		long now = System.currentTimeMillis(); 
 		Notification notification = new Notification(R.drawable.earth, tickerText, now);
 
-		notification.flags = Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
+		notification.flags = notificationFlags;
 
 		Intent notificationIntent = new Intent(context, activity)
 			.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
