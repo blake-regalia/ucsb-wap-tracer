@@ -1,5 +1,5 @@
 
-Copy "ucsb_wap_tracer.apk" to your device, install it, then run "UCSB Geog Tracer" from your applications menu.
+Copy "ucsb_wap_tracer_service.apk" to your device, install it, then run "UCSB Geog Tracer" from your applications menu.
 
 Wait for the application to get a fix on your location, then press the "Start" button.
 The device will log your position along with the access point data.
