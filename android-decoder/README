@@ -1,0 +1,12 @@
+ECLIPSE:
+  All the work is done for you, just run the project and input the name of the file when prompted.
+
+
+COMMAND LINE INTERFACE:
+
+java -jar android-decoder [-json|-sql [table=TABLE_NAME]]  [-pretty|-debug] FILE
+
+To invoke the decoder, open a command prompt or terminal and change directory to be in $PATH_TO_PROJECT/android-decoder/
+Assuming you've place the log file, `trace.bin` in the directory $PATH_TO_PROJECT/android-decoder/data/
+
+java -jar android-decoder trace.bin

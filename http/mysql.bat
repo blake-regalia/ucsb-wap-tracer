@@ -1,0 +1,3 @@
+"D:\HTTP\xampp\mysql\bin\mysql.exe" --user=root --password= "ucsb_wap_tracer" < "/sql/a4d6d0758f2b519_2012.08.17-20.04.31_v6.bin.sql"
+"D:\HTTP\xampp\mysql\bin\mysql.exe" --user=root --password= "ucsb_wap_tracer" < "/sql/a4d6d0758f2b519_2012.08.17-20.14.39_v6.bin.sql"
+"D:\HTTP\xampp\mysql\bin\mysql.exe" --user=root --password= "ucsb_wap_tracer" < "/sql/a4d6d0758f2b519_2012.08.17-20.57.48_v6.bin.sql"
