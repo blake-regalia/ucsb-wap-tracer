@@ -16,8 +16,8 @@ public class LocationHelper {
 
 	private static final String TAG = "LocationHelper::";
 
-	public static final int GPS = (1 << 0);
-	public static final int WIFI = (1 << 1);
+	public static final int PROVIDER_GPS  = (1 << 0);
+	public static final int PROVIDER_WIFI = (1 << 1);
 
 	// minimum 100m accuracy
 	protected static final int BOUNDARY_CHECK_MIN_ACCURACY_M = 100;
@@ -45,8 +45,8 @@ public class LocationHelper {
 	// for boundary checks
 	protected static final int LOCATION_TOO_INACCURATE = 250; 
 
-	public static final int TRACE_LOCATION_LISTENER = 0;
-	public static final int BOUNDARY_CHECK_LISTENER = 1;
+	public static final int LISTENER_TRACE_LOCATION = 0;
+	public static final int LISTENER_CHECK_BOUNDARY = 1;
 
 	private boolean use_gps = false;
 	private boolean use_wifi = false;
@@ -68,8 +68,8 @@ public class LocationHelper {
 	}
 
 	public boolean useProvider(int provider) {
-		use_gps = ((GPS & provider) != 0);
-		use_wifi = ((WIFI & provider) != 0);
+		use_gps = ((PROVIDER_GPS & provider) != 0);
+		use_wifi = ((PROVIDER_WIFI & provider) != 0);
 
 		return false;
 	}
@@ -78,7 +78,7 @@ public class LocationHelper {
 		return mLocation;
 	}
 
-	public void obtainLocation(int listenerType, final Runnable ready, final Runnable fail)  {
+	public void obtainLocation(int listenerType, LocationResultsCallback callback)  {
 
 		// make sure there are no listeners requestion location updates
 		if(mActiveListener != null) {
@@ -96,13 +96,13 @@ public class LocationHelper {
 		// reset all listener variables, including mLocation
 		switch(listenerType) {
 
-		case BOUNDARY_CHECK_LISTENER:
+		case LISTENER_CHECK_BOUNDARY:
 			requires_only_one_location = true;
-			mActiveListener = new BoundaryCheckListener(ready, fail);
+			mActiveListener = new BoundaryCheckListener(callback);
 			break;
 
-		case TRACE_LOCATION_LISTENER:
-			mActiveListener = new TraceLocationListener(ready, fail);
+		case LISTENER_TRACE_LOCATION:
+			mActiveListener = new TraceLocationListener(callback);
 			break;
 		
 		default:
@@ -134,19 +134,11 @@ public class LocationHelper {
 			mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, mActiveListener, mMainThread);
 		}
 		if(use_gps) {
-			Log.d(TAG, "binding listener w/ GPS: "+listenerType);
+			Log.d(TAG, "binding listener w/ PROVIDER_GPS: "+listenerType);
 			mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mActiveListener, mMainThread);
 		}
 	}
-
-	private void callback(Runnable callback) {
-		if(callback == null) return;
-		Thread thread = new Thread(callback);
-		thread.setPriority(Thread.MIN_PRIORITY);
-		thread.start();
-	}
-
-
+	
 	/** 
 	 * Stops all active listeners and timeouts and releases any resources
 	 * that may be associated with them
@@ -171,8 +163,7 @@ public class LocationHelper {
 	 *  **/
 	public class BasicLocationListener implements LocationListener {
 
-		protected Runnable mReady;
-		protected Runnable mFail;
+		protected LocationResultsCallback mCallback; 
 		
 		protected boolean objective_complete = false;
 		protected int active_location_events = 0;
@@ -181,21 +172,21 @@ public class LocationHelper {
 		// for accepting a single location fix 
 		protected void locationFixed() {
 			if(mLocation == null) {
-				positionLost();
+				positionLost(LocationResultsCallback.REASON_LOCATION_NULL);
 				return;
 			}
 			objective_complete = true;
-			callback(mReady);
+			mCallback.locationReady(mLocation);
 		}
 
 		// for accepting 1 of many location fixes
 		protected void locationFixed(Location location) {
 			mLocation = location;
-			callback(mReady);
+			mCallback.locationReady(mLocation);
 		}
 		
-		protected void positionLost() {
-			callback(mFail);
+		protected void positionLost(int reason) {
+			mCallback.positionLost(reason);
 		}
 		
 		protected synchronized void startTimeout(Runnable action, long delay) {
@@ -211,9 +202,8 @@ public class LocationHelper {
 			return objective_complete;
 		}
 		
-		public BasicLocationListener(Runnable ready, Runnable fail) {
-			mReady = ready;
-			mFail = fail;
+		public BasicLocationListener(LocationResultsCallback callback) {
+			mCallback = callback;
 			mLocation = null;
 		}
 
@@ -270,8 +260,8 @@ public class LocationHelper {
 
 	public class BoundaryCheckListener extends BasicLocationListener {
 
-		public BoundaryCheckListener(Runnable ready, Runnable fail) {
-			super(ready, fail);
+		public BoundaryCheckListener(LocationResultsCallback callback) {
+			super(callback);
 		}
 		public synchronized void handleLocationUpdate(Location location, boolean isOldLocation) {
 
@@ -331,7 +321,7 @@ public class LocationHelper {
 				}
 				else {
 					Log.d(TAG, "No good locations...");
-					positionLost();
+					positionLost(LocationResultsCallback.REASON_POOR_RECEPTION);
 				}
 			}
 		};
@@ -341,8 +331,8 @@ public class LocationHelper {
 
 	public class TraceLocationListener extends BasicLocationListener {
 		
-		public TraceLocationListener(Runnable ready, Runnable fail) {
-			super(ready, fail);
+		public TraceLocationListener(LocationResultsCallback callback) {
+			super(callback);
 		}
 		
 		public synchronized void handleLocationUpdate(Location location, boolean isOldFix) {
@@ -350,18 +340,18 @@ public class LocationHelper {
 			double accuracy = location.getAccuracy();
 			String provider = location.getProvider();
 
-			// GPS location
+			// PROVIDER_GPS location
 			if(provider.equals(LocationManager.GPS_PROVIDER)) {
 
 				// report position lost when a poor accuracy breaks the desirable threshold
 				if(accuracy > TRACE_LOCATION_MIN_ACCURACY_M  &&  isOldFix == false) {
 					Log.d(TAG, "### location accuracy too poor: "+location.getAccuracy());
-					this.positionLost();
+					positionLost(LocationResultsCallback.REASON_POOR_ACCURACY);
 					return;
 				}
 				else {
 					// store this location
-					this.locationFixed(location);
+					locationFixed(location);
 				}
 
 			}
@@ -379,7 +369,7 @@ public class LocationHelper {
 					this.locationFixed(location);
 				}
 
-				// if this position is accurate enough, and the GPS location is too old, then reluctantly accept it
+				// if this position is accurate enough, and the PROVIDER_GPS location is too old, then reluctantly accept it
 				else if(mLocation.getProvider().equals(LocationManager.GPS_PROVIDER)) {
 					long gps_old = ((new Date()).getTime() - TRACE_LOCATION_GPS_OLD_MS);
 					if((accuracy <= TRACE_LOCATION_DECENT_ACCURACY_M) && (mLocation.getTime() > gps_old)) {
@@ -395,7 +385,7 @@ public class LocationHelper {
 
 		private Runnable trace_location_timeout = new Runnable() {
 			public void run() {
-				positionLost();
+				positionLost(LocationResultsCallback.REASON_TIMED_OUT);
 			}
 		};
 		

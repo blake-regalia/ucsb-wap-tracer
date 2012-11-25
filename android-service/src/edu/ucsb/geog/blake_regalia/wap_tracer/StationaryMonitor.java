@@ -16,6 +16,8 @@ import android.os.Environment;
 
 public class StationaryMonitor {
 	
+	/**
+
 	private static final String DATA_FILENAME = "monitor.bin";
 
 	private static final String DEFAULT_SD_DIRECTORY = "./ucsb-wap-traces/";
@@ -29,7 +31,7 @@ public class StationaryMonitor {
 	public static final double WIFI_SIGNAL_MAX_DATA_LEVEL_INV 	= 1.0 / WIFI_SIGNAL_MAX_DATA_LEVEL;
 	public static final double WIFI_SIGNAL_NUM_LEVELS_FACTOR 	= ((double) WIFI_SIGNAL_MAX_DATA_LEVEL) / WIFI_SIGNAL_NUM_PRECISION_LEVELS;
 
-	/** precision of the recorded time-stamp values in milliseconds, value of 10 yields 0.1 second resolution **/
+	// precision of the recorded time-stamp values in milliseconds, value of 10 yields 0.1 second resolution
 	private static final int TIMESTAMP_PRECISION_MS = 10;
 	private static final double TIMESTAMP_REDUCTION_FACTOR = 0.1 / TIMESTAMP_PRECISION_MS;
 
@@ -61,7 +63,7 @@ public class StationaryMonitor {
 			System.err.println(e.getMessage());
 		}
 
-		/* write the file header */
+		// write the file header
 		try {
 			data.write(Encoder.encode_int(Registration.VERSION));
 			data.write(Encoder.encode_long(startTime));
@@ -209,4 +211,6 @@ public class StationaryMonitor {
         
         return output;
 	}
+	
+	/**/
 }

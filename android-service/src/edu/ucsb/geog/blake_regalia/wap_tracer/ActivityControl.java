@@ -65,6 +65,8 @@ public class ActivityControl extends Activity {
 		infoTextView = (TextView) this.findViewById(R.id.infoTextView);
 		appStatus = (TextView) this.findViewById(R.id.appStatus);
 		registration = new Registration(this);
+		
+		/*
 		appStatus.setText("Registering device...");
 		if(registration.register(registrationSuccess, registrationFailure)) {
 			appStatus.setText("Registered: "+registration.getAndroidId()+"; "+registration.getPhoneNumber());
@@ -72,6 +74,7 @@ public class ActivityControl extends Activity {
 		else {
 			appStatus.setText("Registering device with server...");
 		}
+		*/
 		
 		ArrayList<Control> controlList = new ArrayList<Control>();
 
@@ -101,15 +104,16 @@ public class ActivityControl extends Activity {
 
 				String text = (String) titleText.getText();
 
+				// start service
 				if(text.equals(CONTROL_START_SERVICE)) {
-					System.out.println("Starting service");
 					startMainService(MainService.INTENT_OBJECTIVE.START);
 
 					mControlsAdapter.editItem(0, getControlSwitchTitle(CONTROL_SWITCH_ON), getControlSwitchSubtitle(CONTROL_SWITCH_ON));
 					mControlsAdapter.enableItem(1);
 				}
+				
+				// stop service
 				else if(text.equals(CONTROL_STOP_SERVICE)) {
-					System.out.println("Stopping service. "+isServiceStarted());
 					startMainService(MainService.INTENT_OBJECTIVE.STOP_SERVICE);
 
 
@@ -151,6 +155,8 @@ public class ActivityControl extends Activity {
 			Log.i("Broadcast", type+":"+intent.getStringExtra(type));
 			//intent.getClass()
 			
+
+			/*
 			if(type.equals(ServiceMonitor.UPDATES.TRACING)) {
 				StringBuilder info = new StringBuilder();
 				List<ScanResult> list = MainService.getLastWapScan();
@@ -164,8 +170,8 @@ public class ActivityControl extends Activity {
 						);
 				for(int i=0; i<len; i++) {
 					ScanResult scan = list.get(i);
-					int signal_level = (int) Math.round((WifiManager.calculateSignalLevel(scan.level, TraceManager.WIFI_SIGNAL_NUM_PRECISION_LEVELS) * 2.2222));
-					String t = (signal_level < 10)? " "+signal_level: ""+signal_level;
+					int signal_level = scan.level;
+					String t = (Math.abs(signal_level) < 10)? " "+signal_level: ""+signal_level;
 					String s = (scan.SSID.equals("UCSB Wireless Web"))? " *": "";
 					info.append("\n"+t+"%  "+scan.BSSID+s);
 				}
@@ -181,7 +187,7 @@ public class ActivityControl extends Activity {
 				enableTraceButton = true;
 			}
 			else if(type.equals(ServiceMonitor.UPDATES.GPS_LOST)) {
-				Toast.makeText(self, "GPS position lost", Toast.LENGTH_SHORT).show();
+				Toast.makeText(self, "PROVIDER_GPS position lost", Toast.LENGTH_SHORT).show();
 			}
 			else if(type.equals(ServiceMonitor.UPDATES.LOCATION_UNKNOWN)) {
 				Log.d("Controls", "making toast for unknown location");
@@ -200,6 +206,7 @@ public class ActivityControl extends Activity {
 			}
 			
 			mControlsAdapter.setItemEnabled(1, enableTraceButton);
+			*/
 		}		
 	};
 
@@ -228,7 +235,7 @@ public class ActivityControl extends Activity {
 	}
 
 	private boolean isServiceStarted() {
-		return MainService.serviceRunning;
+		return MainService.getServiceStatus();
 	}
 
 	private void startMainService(String objective) {

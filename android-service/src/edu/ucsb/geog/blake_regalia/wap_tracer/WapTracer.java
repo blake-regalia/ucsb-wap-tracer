@@ -9,7 +9,10 @@ import android.os.Looper;
 import android.util.Log;
 
 
-public class WapTracer extends LocationMonitor {
+public class WapTracer {
+
+	/*
+
 
 	private static final String TAG = "WapTracer";
 
@@ -22,10 +25,10 @@ public class WapTracer extends LocationMonitor {
 	/// how often to perform a wifi scan to check if the device is within boundaries
 	protected long SSID_CHECK_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
 
-	// how often to use the GPS receiver to check if the device is within boundaries within the precision of the ssid check interval
+	// how often to use the PROVIDER_GPS receiver to check if the device is within boundaries within the precision of the ssid check interval
 	protected long LOCATION_CHECK_INTERVAL_MS = 3 * 60 * 60 * 1000; // 3 hours
 	
-	// how often to check if the GPS hardware is still enabled while the app is idling
+	// how often to check if the PROVIDER_GPS hardware is still enabled while the app is idling
 	protected long MONITOR_IDLE_GPS_INTERVAL_MS = 3 * 1000; // 3 seconds
 	
 	// array of Strings containing possible SSID triggers
@@ -88,24 +91,24 @@ public class WapTracer extends LocationMonitor {
 
 			// gps was disabled before anything had a chance
 			case INIT:
-				Log.w(TAG, "GPS disabled before this initialized");
+				Log.w(TAG, "PROVIDER_GPS disabled before this initialized");
 				break;
 
 				// gps was disabled while it was starting up
 			case WAIT_GPS:
-				Log.e(TAG, "GPS was disabled while it was starting up");
+				Log.e(TAG, "PROVIDER_GPS was disabled while it was starting up");
 				break;
 
 				// gps was disabled while starting wifi
 			case WAIT_WIFI:
-				Log.i(TAG, "Why are you disabling GPS?");
+				Log.i(TAG, "Why are you disabling PROVIDER_GPS?");
 				mStatus = Status.INIT;
 				enable_gps();
 				break;
 
 				// gps was disabled while testing conditions
 			case READY:
-				Log.i(TAG, "Why are you disabling GPS? I am trying to test things");
+				Log.i(TAG, "Why are you disabling PROVIDER_GPS? I am trying to test things");
 				mStatus = Status.INIT;
 				enable_gps();
 				break;
@@ -120,26 +123,23 @@ public class WapTracer extends LocationMonitor {
 				// wifi was disabled
 			case STOPPING:
 			case CLOSED:
-				Log.w(TAG, "GPS disabled happend while: "+mStatus);
+				Log.w(TAG, "PROVIDER_GPS disabled happend while: "+mStatus);
 				break;
 
 			default:
-				Log.w(TAG, "GPS disabled happend while: "+mStatus);
+				Log.w(TAG, "PROVIDER_GPS disabled happend while: "+mStatus);
 				break;
 			}
 		}
 	};
 
 	protected void enable_gps() {
-		broadcast(UPDATES.SIMPLE, "Waiting for GPS to enable...");
+		broadcast(UPDATES.SIMPLE, "Waiting for PROVIDER_GPS to enable...");
 		mHardwareMonitor.enableGps(gps_hardware_enabled, gps_hardware_disabled, gps_hardware_fail);
 	}
 
 
 
-	/**
-	 * runs when wifi is enabled 
-	 */
 	private Runnable wifi_hardware_enabled = new Runnable() {
 		public synchronized void run() {
 
@@ -162,9 +162,6 @@ public class WapTracer extends LocationMonitor {
 		}
 	};
 
-	/**
-	 * runs if wifi is disabled 
-	 */
 	private Runnable wifi_hardware_disabled = new Runnable() {
 		public void run() {
 
@@ -212,9 +209,7 @@ public class WapTracer extends LocationMonitor {
 		}
 	};
 
-	/**
-	 * runs if wifi could not be enabled on this device
-	 */
+
 	private Runnable wifi_hardware_fail = new Runnable() {
 		public void run() {
 			Log.e(TAG, "Your device does not support WiFi");
@@ -228,25 +223,19 @@ public class WapTracer extends LocationMonitor {
 	}	
 
 
-	/**
-	 * No-args constructor
-	 * 
-	 * @param context
-	 */
+
 	public WapTracer(Context context, Looper looper) {
 		super(context, looper);
 		init();
 	}
 
-	/**
-	 * initialize fields 
-	 */
+
 	private void init() {
 		mTraceManager = new TraceManager(mContext);
 		mWifiController = new WifiController(mContext);
 
-		// use GPS and WIFI to resolve a location 
-		mLocationHelper.useProvider(LocationHelper.GPS | LocationHelper.WIFI);
+		// use PROVIDER_GPS and PROVIDER_WIFI to resolve a location 
+		mLocationHelper.useProvider(LocationHelper.PROVIDER_GPS | LocationHelper.PROVIDER_WIFI);
 
 		start();
 	}
@@ -273,7 +262,7 @@ public class WapTracer extends LocationMonitor {
 		
 		broadcast(UPDATES.SIMPLE, "Getting a location fix...");
 		mStatus = Status.READY;
-		mLocationHelper.obtainLocation(LocationHelper.BOUNDARY_CHECK_LISTENER, boundary_location_fix, position_lost);
+		mLocationHelper.obtainLocation(LocationHelper.LISTENER_CHECK_BOUNDARY, boundary_location_fix, position_lost);
 	}
 	
 	private boolean is_tracing = false;
@@ -302,7 +291,7 @@ public class WapTracer extends LocationMonitor {
 			Location location = mLocationHelper.getLocation();
 			// if location in bounds..
 			if(location != null) {
-				mLocationHelper.obtainLocation(LocationHelper.TRACE_LOCATION_LISTENER, tracing_location_fix, position_lost);
+				mLocationHelper.obtainLocation(LocationHelper.LISTENER_TRACE_LOCATION, tracing_location_fix, position_lost);
 				broadcast(UPDATES.SIMPLE, "Getting accurate location fix...");
 			}
 			// otherwise, go idle
@@ -363,9 +352,7 @@ public class WapTracer extends LocationMonitor {
 	}
 
 
-	/**
-	 * closes the trace file
-	 */
+
 	private void closeIO() {
 		is_tracing = false;
 		wifiScanTimeout = Timeout.clearTimeout(wifiScanTimeout);
@@ -396,9 +383,7 @@ public class WapTracer extends LocationMonitor {
 		mStatus = Status.CLOSED;
 	}
 
-	/**
-	 * runs when scan completes
-	 */
+
 	private Runnable wifi_scan_success = new Runnable() {
 		public void run() {
 			List<ScanResult> wapList = mWifiController.getResults();
@@ -430,7 +415,7 @@ public class WapTracer extends LocationMonitor {
 		// periodically check that the gps doesn't get disabled
 		mHardwareMonitor.monitorGpsState(gps_hardware_disabled, MONITOR_IDLE_GPS_INTERVAL_MS);
 
-		// release the GPS hardware
+		// release the PROVIDER_GPS hardware
 		mHardwareMonitor.unbindGps();
 		
 		ssidTriggerTimeout = Timeout.setTimeout(ssid_trigger_check, SSID_CHECK_INTERVAL_MS);
@@ -464,4 +449,5 @@ public class WapTracer extends LocationMonitor {
 			broadcast(UPDATES.SIMPLE, "Going idle until next scan...");
 		}
 	};
+	/**/
 }

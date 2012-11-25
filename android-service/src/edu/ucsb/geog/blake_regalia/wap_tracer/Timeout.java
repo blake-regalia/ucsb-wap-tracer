@@ -7,7 +7,7 @@ import android.util.Log;
 
 public class Timeout {
 	
-	private static final int DEFAULT_SIZE = 16;
+	private static final int DEFAULT_SIZE = 32;
 	private static int mSize = DEFAULT_SIZE;
 	
 	private static Timeout[] timeouts = new Timeout[mSize];

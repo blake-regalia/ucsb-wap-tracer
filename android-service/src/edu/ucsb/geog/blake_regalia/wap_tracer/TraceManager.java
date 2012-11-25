@@ -1,6 +1,5 @@
 package edu.ucsb.geog.blake_regalia.wap_tracer;
 
-import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -18,15 +17,166 @@ import android.location.Location;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Environment;
+import android.util.Log;
 
-public class TraceManager {
+public abstract class TraceManager {
+	
+	private static final String TAG = "TraceManager";
+
+	protected static final int REASON_NONE           = 0xA000;
+	protected static final int REASON_TIME_EXCEEDING = 0xA001;
+	protected static final int REASON_IO_ERROR     = 0xA002;
+
+	protected static final double CONVERT_MILLISECONDS_DECISECONDS = 0.01;
+	protected static final double CONVERT_MILLISECONDS_CENTISECONDS = 0.1;
+	protected static final int    CONVERT_COORDINATE_PRECISION_LONG = (int) 10e6;
+	
+	private static final char DECISECONDS_AS_CHAR_NEAR_FULL = 0xff00; // 25.5 seconds left until unable to encode
+	
+	
+	private static final String PATH_DEFAULT_SD_DIRECTORY = "./ucsb-wap-traces/";
+
+ 
+	protected long locationSensorProviderTimeStart;
+	protected int shutdownReason;
+
+	protected File traceFile;
+	protected FileOutputStream traceFileData;
+	protected File filesDir;
+	protected File traceDir;
+	protected Context mContext;
+	
+	/**
+	 * @param context
+	 * @param timeStart
+	 */
+	public TraceManager(Context context, long timeStart) {
+		mContext = context;
+		locationSensorProviderTimeStart = timeStart;
+		shutdownReason = REASON_NONE;
+
+        File sdCard = Environment.getExternalStorageDirectory();
+		traceDir = new File(sdCard, PATH_DEFAULT_SD_DIRECTORY);
+        traceDir.mkdir();
+	}
+	
+	
+	public abstract boolean openFile();
+	public abstract boolean closeFile();
+	
+	protected void notifyShutdown(int reason) {
+		shutdownReason = reason;
+	}
+	
+	
+	protected byte[] encodeDeciseconds(long millis) {
+		char deciseconds = (char) ((millis) * CONVERT_MILLISECONDS_DECISECONDS);
+		if(deciseconds >= DECISECONDS_AS_CHAR_NEAR_FULL) {
+			notifyShutdown(REASON_TIME_EXCEEDING);
+		}
+		return Encoder.encode_char(deciseconds);
+	}
+	
+	
+	
+	/**
+	 * @return		the filename structure for the start time provided when the extending subclass was instantiated
+	 */
+	protected String getDateString() {
+        Calendar start = Calendar.getInstance();
+        start.setTimeInMillis(locationSensorProviderTimeStart);
+        
+        return ""+(start.get(Calendar.YEAR)+"")+"_"
+        		+zeroPad(start.get(Calendar.MONTH)+1)+"_"
+        		+zeroPad(start.get(Calendar.DAY_OF_MONTH))+"-"
+        		+zeroPad(start.get(Calendar.HOUR_OF_DAY))+"_"
+        		+zeroPad(start.get(Calendar.MINUTE))+"_"
+        		+zeroPad(start.get(Calendar.SECOND))+"."
+        		+"v"+Registration.VERSION;
+	}
+	
+	/**
+	 * Creates a new trace file in the current application's file directory
+	 * @param fileName
+	 */
+	protected boolean openTraceFile(String fileName) {
+		filesDir = mContext.getFilesDir();
+		try {
+			traceFile = new File(filesDir, fileName);
+			traceFileData = mContext.openFileOutput(fileName, Context.MODE_PRIVATE);
+			return true;
+		} catch (FileNotFoundException e) {
+			Log.e(TAG, e.getMessage());
+			notifyShutdown(REASON_IO_ERROR);
+		}
+		return false;
+	}
+
+	/**
+	 * Writes data to the open trace file
+	 * @param bytes
+	 */
+	protected boolean writeToTraceFile(byte[] bytes) {
+		try {
+			traceFileData.write(bytes);
+			return true;
+		} catch (IOException e) {
+			Log.e(TAG, e.getMessage());
+			notifyShutdown(REASON_IO_ERROR);
+		}
+		return false;
+	}
+	
+
+	/**
+	 * Closes the trace file and moves it to the SD card
+	 * @param bytes
+	 */
+	protected boolean closeTraceFile() {
+		if(traceFileData != null) {
+			try {
+				traceFileData.close();
+				traceFileData = null;
+				moveTraceFileToSdCard();
+				return true;
+			} catch (IOException e) {
+				Log.e(TAG, e.getMessage());
+				notifyShutdown(REASON_IO_ERROR);
+			}
+			return false;
+		}
+		else {
+			Log.w(TAG, "no trace file");
+			return true;
+		}
+	}
+	
+	private void moveTraceFileToSdCard() {
+        File sdCardPath = new File(traceDir, traceFile.getName());
+		Log.d(TAG, "renaming trace file to: "+sdCardPath.getAbsolutePath());
+        traceFile.renameTo(sdCardPath);
+	}
+	
+	
+	private String zeroPad(int d) {
+		if(d < 10) {
+			return "0"+d;
+		}
+		return ""+d;
+	}
+	
+	
+	
+	
+	
+	/*
+	
 	
 	private static final String DATA_FILENAME = "trace.bin";
-	private static final String DEFAULT_SD_DIRECTORY = "./ucsb-wap-traces/";
 	
 	private static final int MAX_NUM_WAPS = 255;
 
-	/** precision of the recorded time-stamp values in milliseconds, value of 10 yields 0.1 second resolution **/
+	// precision of the recorded time-stamp values in milliseconds, value of 10 yields 0.1 second resolution
 	private static final int TIMESTAMP_PRECISION_MS = 10;
 	private static final double TIMESTAMP_REDUCTION_FACTOR = 0.1 / TIMESTAMP_PRECISION_MS;
 
@@ -82,7 +232,7 @@ public class TraceManager {
 			System.err.println(e.getMessage());
 		}
 
-		/* write the file header */
+		// write the file header
 		try {
 			String androidId = Registration.getAndroidId();
 			
@@ -127,13 +277,6 @@ public class TraceManager {
 		return bytes.getBytes();		
 	}
 
-	private byte[] encode_time_ds(long time) {
-		char ts = (char) ((time) * TIMESTAMP_REDUCTION_FACTOR);
-		if(ts >= TIMESTAMP_NEAR_FULL) {
-			timestamp_values_full = true;
-		}
-		return Encoder.encode_char(ts);
-	}
 
 
 	private byte encode_ssid_name(String SSID) {
@@ -274,13 +417,10 @@ public class TraceManager {
 	}
 	
 
-	private String zero_pad(int d) {
-		if(d < 10) {
-			return "0"+d;
-		}
-		return ""+d;
-	}
+	*/
 	
+	
+	/**
 	public long save() {
 		if(trace_file == null) return 0;
 		if(!moved_min_distance) {
@@ -370,4 +510,5 @@ public class TraceManager {
         
         return output;
 	}
+	**/
 }

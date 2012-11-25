@@ -14,7 +14,9 @@ import android.os.Looper;
 import android.util.Log;
 
 
-public class EnvironmentMonitor extends LocationMonitor {
+public class EnvironmentMonitor {
+	
+	/*
 
 	private static final String TAG = "EnvironmentMonitor";
 	
@@ -61,42 +63,35 @@ public class EnvironmentMonitor extends LocationMonitor {
 
 			// gps was disabled before anything had a chance
 			case INIT:
-				Log.w(TAG, "GPS disabled before this initialized");
+				Log.w(TAG, "PROVIDER_GPS disabled before this initialized");
 				break;
 			
 			// gps was disabled while testing conditions
 			case READY:
-				Log.i(TAG, "Why are you disabling GPS? I am trying to test things");
+				Log.i(TAG, "Why are you disabling PROVIDER_GPS? I am trying to test things");
 				mStatus = Status.INIT;
 				enable_gps();
 				break;
 
 			default:
-				Log.w(TAG, "GPS disabled happend while: "+mStatus);
+				Log.w(TAG, "PROVIDER_GPS disabled happend while: "+mStatus);
 				break;
 			}
 		}
 	};
 
 	protected void enable_gps() {
-		mHardwareMonitor.enableGps(gps_hardware_enabled, gps_hardware_disabled, gps_hardware_fail);
+		// enable gps via hardwareManager
 	}
 	
 	
 
-	/**
-	 * No-args constructor
-	 * 
-	 * @param context
-	 */
 	public EnvironmentMonitor(Context context, Looper looper) {
 		super(context, looper);
 		init();
 	}
 	
-	/**
-	 * initialize fields 
-	 */
+	
 	private void init() {
 		mSensorManager = (SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE);
 		
@@ -111,7 +106,7 @@ public class EnvironmentMonitor extends LocationMonitor {
 		
 //		mLogManager = new LogManager(logType);
 
-		// use GPS and WIFI to resolve a location 
+		// use PROVIDER_GPS and PROVIDER_WIFI to resolve a location 
 		//mLocationHelper.useProvider(LocationAdvisor.GPS | LocationAdvisor.WIFI);
 		
 		start();
@@ -293,6 +288,6 @@ public class EnvironmentMonitor extends LocationMonitor {
 		
 		
 	}
-
+*/
 
 }

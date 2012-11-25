@@ -56,11 +56,11 @@ public abstract class ServiceMonitor {
 			break;
 
 		case GPS_ENABLE:
-			NotificationInterface.post(mContext, ActivityAlertUser.class, "gps-enable", false, "GPS needs to be enabled", "GPS must remain enabled for app to run");
+			NotificationInterface.post(mContext, ActivityAlertUser.class, "gps-enable", false, "PROVIDER_GPS needs to be enabled", "PROVIDER_GPS must remain enabled for app to run");
 			break;
 
 		case GPS_DISABLED:
-			NotificationInterface.post(mContext, ActivityControl.class, "gps-disabled", false, "GPS was disabled", "Tracer has shut down", 0);
+			NotificationInterface.post(mContext, ActivityControl.class, "gps-disabled", false, "PROVIDER_GPS was disabled", "Tracer has shut down", 0);
 			break;
 
 		case GPS_SIGNAL_WEAK:
