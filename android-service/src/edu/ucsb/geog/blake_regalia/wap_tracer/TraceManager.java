@@ -6,16 +6,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Calendar;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map.Entry;
 
 import android.content.Context;
-import android.location.Location;
-import android.net.wifi.ScanResult;
-import android.net.wifi.WifiManager;
 import android.os.Environment;
 import android.util.Log;
 
@@ -23,13 +17,22 @@ public abstract class TraceManager {
 	
 	private static final String TAG = "TraceManager";
 
+	private static final String JOIN_STR  = "-";
+	private static final String SPLIT_STR = "_";
+	private static final String END_STR = ".";
+
+	protected static final int ID_TYPE_TRACE_GPS  = 0xFF01;
+	protected static final int ID_TYPE_TRACE_WIFI = 0xFF02;
+	protected static final int ID_TYPE_TRACE_WAP  = 0xFF03;
+
 	protected static final int REASON_NONE           = 0xA000;
 	protected static final int REASON_TIME_EXCEEDING = 0xA001;
 	protected static final int REASON_IO_ERROR     = 0xA002;
 
-	protected static final double CONVERT_MILLISECONDS_DECISECONDS = 0.01;
-	protected static final double CONVERT_MILLISECONDS_CENTISECONDS = 0.1;
-	protected static final int    CONVERT_COORDINATE_PRECISION_LONG = (int) 10e6;
+	protected static final double CONVERT_MILLISECONDS_DECISECONDS  = 1e-2;
+	protected static final double CONVERT_MILLISECONDS_CENTISECONDS = 1e-1;
+	protected static final double CONVERT_COORDINATE_PRECISION_LONG = 1e+6;
+	
 	
 	private static final char DECISECONDS_AS_CHAR_NEAR_FULL = 0xff00; // 25.5 seconds left until unable to encode
 	
@@ -37,7 +40,7 @@ public abstract class TraceManager {
 	private static final String PATH_DEFAULT_SD_DIRECTORY = "./ucsb-wap-traces/";
 
  
-	protected long locationSensorProviderTimeStart;
+	protected long sensorLocationProviderTimeStart;
 	protected int shutdownReason;
 
 	protected File traceFile;
@@ -52,7 +55,7 @@ public abstract class TraceManager {
 	 */
 	public TraceManager(Context context, long timeStart) {
 		mContext = context;
-		locationSensorProviderTimeStart = timeStart;
+		sensorLocationProviderTimeStart = timeStart;
 		shutdownReason = REASON_NONE;
 
         File sdCard = Environment.getExternalStorageDirectory();
@@ -84,14 +87,14 @@ public abstract class TraceManager {
 	 */
 	protected String getDateString() {
         Calendar start = Calendar.getInstance();
-        start.setTimeInMillis(locationSensorProviderTimeStart);
+        start.setTimeInMillis(sensorLocationProviderTimeStart);
         
-        return ""+(start.get(Calendar.YEAR)+"")+"_"
-        		+zeroPad(start.get(Calendar.MONTH)+1)+"_"
-        		+zeroPad(start.get(Calendar.DAY_OF_MONTH))+"-"
-        		+zeroPad(start.get(Calendar.HOUR_OF_DAY))+"_"
-        		+zeroPad(start.get(Calendar.MINUTE))+"_"
-        		+zeroPad(start.get(Calendar.SECOND))+"."
+        return ""+(start.get(Calendar.YEAR)+"")+JOIN_STR
+        		+zeroPad(start.get(Calendar.MONTH)+1)+JOIN_STR
+        		+zeroPad(start.get(Calendar.DAY_OF_MONTH))+SPLIT_STR
+        		+zeroPad(start.get(Calendar.HOUR_OF_DAY))+JOIN_STR
+        		+zeroPad(start.get(Calendar.MINUTE))+JOIN_STR
+        		+zeroPad(start.get(Calendar.SECOND))+END_STR
         		+"v"+Registration.VERSION;
 	}
 	
@@ -99,17 +102,39 @@ public abstract class TraceManager {
 	 * Creates a new trace file in the current application's file directory
 	 * @param fileName
 	 */
-	protected boolean openTraceFile(String fileName) {
+	protected boolean openTraceFile(String fileName, int traceType, long startTime) {
 		filesDir = mContext.getFilesDir();
 		try {
 			traceFile = new File(filesDir, fileName);
 			traceFileData = mContext.openFileOutput(fileName, Context.MODE_PRIVATE);
-			return true;
+			return writeTraceFileHeader(traceType, startTime);
 		} catch (FileNotFoundException e) {
 			Log.e(TAG, e.getMessage());
 			notifyShutdown(REASON_IO_ERROR);
 		}
 		return false;
+	}
+	
+	private boolean writeTraceFileHeader(int traceType, long startTime) {
+		/* generate the file header */
+		ByteBuilder byteBuilder = new ByteBuilder(4 + 4 + 8);
+
+		// version: 4 bytes
+		byteBuilder.append_4(
+				Encoder.encode_int(Registration.VERSION)
+				);
+
+		// sensor ID: 4 bytes
+		byteBuilder.append_4(
+				Encoder.encode_int(traceType)
+				);
+
+		// start time [offset basis]: 8 bytes
+		byteBuilder.append_8(
+				Encoder.encode_long(startTime)
+				);
+		
+		return writeToTraceFile(byteBuilder.getBytes());
 	}
 
 	/**
@@ -118,6 +143,7 @@ public abstract class TraceManager {
 	 */
 	protected boolean writeToTraceFile(byte[] bytes) {
 		try {
+			if(traceFileData == null) throw new NullPointerException("trace file was never opened");
 			traceFileData.write(bytes);
 			return true;
 		} catch (IOException e) {
@@ -137,8 +163,7 @@ public abstract class TraceManager {
 			try {
 				traceFileData.close();
 				traceFileData = null;
-				moveTraceFileToSdCard();
-				return true;
+				return moveTraceFileToSdCard();
 			} catch (IOException e) {
 				Log.e(TAG, e.getMessage());
 				notifyShutdown(REASON_IO_ERROR);
@@ -151,10 +176,31 @@ public abstract class TraceManager {
 		}
 	}
 	
-	private void moveTraceFileToSdCard() {
+	private boolean moveTraceFileToSdCard() {
         File sdCardPath = new File(traceDir, traceFile.getName());
-		Log.d(TAG, "renaming trace file to: "+sdCardPath.getAbsolutePath());
-        traceFile.renameTo(sdCardPath);
+		Log.d(TAG, "copying trace file to: "+sdCardPath.getAbsolutePath());
+		try {
+			copy(traceFile, sdCardPath);
+			traceFile.delete();
+			return true;
+		} catch (IOException e) {
+			Log.e(TAG, e.getMessage());
+			notifyShutdown(REASON_IO_ERROR);
+		}
+		return false;
+	}
+	
+	public void copy(File src, File dst) throws IOException {
+	    InputStream in = new FileInputStream(src);
+	    OutputStream out = new FileOutputStream(dst);
+
+	    byte[] buf = new byte[1024];
+	    int len;
+	    while((len = in.read(buf)) > 0) {
+	        out.write(buf, 0, len);
+	    }
+	    in.close();
+	    out.close();
 	}
 	
 	

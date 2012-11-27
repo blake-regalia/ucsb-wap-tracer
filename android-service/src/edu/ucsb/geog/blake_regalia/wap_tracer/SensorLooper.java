@@ -65,7 +65,7 @@ public abstract class SensorLooper {
 	 * the method to execute each loop iteration
 	 * @return		either <i>BLOCKING_ON</i> or <i>BLOCKING_OFF</i>
 	 */
-	protected abstract int sensorLoopMethod();
+	protected abstract void sensorLoopMethod();
 
 	/**
 	 * method to call when owner of this object forces a shutdown
@@ -90,9 +90,11 @@ public abstract class SensorLooper {
 			openLooper();
 			while(looperStatus == STATUS_RUNNING) {
 				if(looperBlocking == BLOCKING_OFF) {
-					looperBlocking = sensorLoopMethod();
+					sensorLoopMethod();
 				}
 			}
+			Log.i(TAG, "*looper breaks* ("+sensorLooperIndex+")");
+			
 			if(looperStatus == STATUS_BLOCKED) {
 				looperStatus = STATUS_STOPPED;
 			}
@@ -129,8 +131,6 @@ public abstract class SensorLooper {
 	}
 
 	public void startRecording(RecorderCallback callback, int index, long timeStarted) {
-		Log.w(TAG, "startRecording("+index+")");
-		
 		if(looperStatus != STATUS_STOPPED) {
 			callback.recordingFailedToStart(index, RecorderCallback.REASON_RUNNING);
 		}
@@ -139,7 +139,7 @@ public abstract class SensorLooper {
 			sensorLocationProviderTimeStarted = timeStarted;
 			if(preLooperMethod()) {
 				// notify owner recording started
-				callback.recordingStarted(index);
+				callback.recordingStarted(index, sensorLocationProviderTimeStarted);
 			}
 			else {
 				// setup callback to notify owner later
@@ -152,7 +152,7 @@ public abstract class SensorLooper {
 	
 	protected void notifyOwnerRecordingStarted() {
 		if(mRecorderCallback != null) {
-			mRecorderCallback.recordingStarted(recorderCallbackIndex);
+			mRecorderCallback.recordingStarted(recorderCallbackIndex, sensorLocationProviderTimeStarted);
 		}
 		mRecorderCallback = null;
 	}
@@ -174,7 +174,9 @@ public abstract class SensorLooper {
 			
 			// prevent any more calls to loop method by breaking out of loop
 			looperStatus = STATUS_BLOCKED;
-		} 
+		}
+		
+		mThread = new Thread(looper);
 	}	
 
 }

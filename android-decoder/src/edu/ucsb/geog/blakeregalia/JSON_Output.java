@@ -4,7 +4,8 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-public class JSON_Output extends DefaultOutput {
+public class JSON_Output {
+	/*
 	
 	private StringBuilder out;
 	
@@ -20,7 +21,7 @@ public class JSON_Output extends DefaultOutput {
 	public void addEvent(WAP_Event event) {
 		int i = event.getNumWAPs();
 		while(i-- != 0) {
-			WAP wap = event.getWAP(i);
+			Wap wap = event.getWAP(i);
 			String mac = wap.getMAC();
 			if(!mac_addrs.containsKey(mac)) {
 				mac_addrs.put(wap.getMAC(), new Integer(mac_addrs.size()));
@@ -120,7 +121,7 @@ public class JSON_Output extends DefaultOutput {
 			json("length", i);
 			
 			while(i-- != 0) {
-				WAP wap = event.getWAP(i);
+				Wap wap = event.getWAP(i);
 
 				begin(i);
 				
@@ -140,5 +141,5 @@ public class JSON_Output extends DefaultOutput {
 		
 		return out.toString();
 	}
-	
+	*/
 }

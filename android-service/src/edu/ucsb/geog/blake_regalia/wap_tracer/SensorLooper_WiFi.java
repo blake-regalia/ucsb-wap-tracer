@@ -57,10 +57,10 @@ public class SensorLooper_WiFi extends SensorLooper {
 	 * bind a receiver for scan results, save start time & begin scan
 	 */
 	@Override
-	protected int sensorLoopMethod() {
+	protected void sensorLoopMethod() {
+		looperBlocking = BLOCKING_ON;
 		scanTimeStarted = System.currentTimeMillis();
 		mWifiManager.startScan();
-		return BLOCKING_ON;
 	}
 	
 	/**

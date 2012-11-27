@@ -24,29 +24,34 @@ public class TraceManager_WAP extends TraceManager {
 
 	private Context mContext;
 	private Hashtable<String, Integer> ssidNames;
+	private String traceType;
 
 	public TraceManager_WAP(Context context, long timeStart) {
 		super(context, timeStart);
 		mContext = context;
 		ssidNames = new Hashtable<String, Integer>(SIZE_INITIAL_HASHTABLE);
+		traceType = "trace";
 	}
 
+	public TraceManager_WAP(Context context, long timeStart, String _traceType) {
+		super(context, timeStart);
+		mContext = context;
+		ssidNames = new Hashtable<String, Integer>(SIZE_INITIAL_HASHTABLE);
+		traceType = _traceType;
+	}
+
+	@Override
 	public boolean openFile() {
 
 		/* generate the file header */
-		ByteBuilder byteBuilder = new ByteBuilder(4 + 8);
-
-		// version: 4 bytes
-		byteBuilder.append_4(Encoder.encode_int(Registration.VERSION));
-
-		// start time [offset basis]: 8 bytes
-		byteBuilder.append_8(Encoder.encode_long(locationSensorProviderTimeStart));
+		ByteBuilder byteBuilder = new ByteBuilder(0);
 
 
 		/* create file & write file header */
-		String traceFileName = getDateString()+".wifi-trace.bin";
-		if(openTraceFile(traceFileName)) {
-			return writeToTraceFile(byteBuilder.getBytes());
+		String traceFileName = getDateString()+"."+traceType+"-wap.bin";
+		if(openTraceFile(traceFileName, ID_TYPE_TRACE_WAP, sensorLocationProviderTimeStart)) {
+			return true;
+			//return writeToTraceFile(byteBuilder.getBytes());
 		}
 
 		return false;
@@ -55,15 +60,16 @@ public class TraceManager_WAP extends TraceManager {
 	public boolean closeFile() {
 		Log.d(TAG, "closing trace file");
 		
-		writeToTraceFile(
-				encodeSsidMap()
-				);
-		
-		if(closeTraceFile()) {
-			return true;
-		}
-		
-		return false;
+		byte[] zero = {0};
+		return
+				// signify no more wap entries
+				writeToTraceFile(zero)
+				
+				// lookup table for ssid names
+				&& writeToTraceFile(encodeSsidMap())
+
+				// and close the file
+				&& closeTraceFile();
 	}
 
 
@@ -91,6 +97,11 @@ public class TraceManager_WAP extends TraceManager {
 					encodeBssid(wap.BSSID)
 					);
 
+			// encode SSID name: 1 byte identifier
+			bytes.append(
+					encodeSsidName(wap.SSID)
+					);
+			
 			// encode frequency: 2 bytes
 			bytes.append_2(
 					Encoder.encode_char((char) wap.frequency)
@@ -101,10 +112,6 @@ public class TraceManager_WAP extends TraceManager {
 					Encoder.encode_byte(wap.level)
 					);
 
-			// encode SSID name: 1 byte identifier
-			bytes.append(
-					encodeSsidName(wap.SSID)
-					);
 
 			// stop encoding if no more space in SSID hash table
 			if(shutdownReason == REASON_SSID_TABLE_FULL) {
@@ -168,14 +175,6 @@ public class TraceManager_WAP extends TraceManager {
 
 	public byte[] encodeSsidMap() {
 		StringBuilder stringBuilder = new StringBuilder();
-		
-		/*
-		ByteBuilder zero = new ByteBuilder(1);
-		zero.append((byte) (0 & 0xff));
-		stringBuilder.append(new String(zero.getBytes()));
-		*/
-		
-		stringBuilder.append("\0");
 
 		Iterator<Entry<String, Integer>> set = ssidNames.entrySet().iterator();
 		while(set.hasNext()) {

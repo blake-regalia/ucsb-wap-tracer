@@ -6,46 +6,43 @@ import android.util.Log;
 import android.util.Pair;
 
 public class TraceManager_GPS extends TraceManager {
-	
+
 	private static final String TAG = "TraceManager(GPS)";
 
 	private long[] coordinatePair; 
+	private String traceType;
 
-	public TraceManager_GPS(Context context, long timeStart, long[] coordinates) {
+	public TraceManager_GPS(Context context, long timeStart, double[] coordinates, String _traceType) {
 		super(context, timeStart);
-		coordinatePair = coordinates;
+		coordinatePair = new long[2];
+		coordinatePair[0] = (long) (coordinates[0] * CONVERT_COORDINATE_PRECISION_LONG);
+		coordinatePair[1] = (long) (coordinates[1] * CONVERT_COORDINATE_PRECISION_LONG);
+		traceType = _traceType;
 	}
 
 	@Override
 	public boolean openFile() {
 
-		/* generate the file header */
-		ByteBuilder byteBuilder = new ByteBuilder(4 + 8 + 8 + 8);
-
-		// version: 4 bytes
-		byteBuilder.append_4(
-				Encoder.encode_int(Registration.VERSION)
-				);
-
-		// start time [offset basis]: 8 bytes
-		byteBuilder.append_8(
-				Encoder.encode_long(locationSensorProviderTimeStart)
-				);
+		/* generate the file secondary header */
+		ByteBuilder byteBuilder = new ByteBuilder(8 + 8);
 
 		// latitude basis as long: 8 bytes
 		byteBuilder.append_8(
-				Encoder.encode_long((long) (coordinatePair[0] * CONVERT_COORDINATE_PRECISION_LONG))
+				Encoder.encode_long(coordinatePair[0])
 				);
 
 		// longitude basis as long: 8 bytes
 		byteBuilder.append_8(
-				Encoder.encode_long((long) (coordinatePair[1] * CONVERT_COORDINATE_PRECISION_LONG))
+				Encoder.encode_long(coordinatePair[1])
 				);
 
 
 		/* create file & write file header */
-		String traceFileName = getDateString()+".location-gps.bin";
-		if(openTraceFile(traceFileName)) {
+		String traceFileName = getDateString()+"."
+				+traceType
+				+(traceType.equals("location")? "": "-gps")
+				+".bin";
+		if(openTraceFile(traceFileName, ID_TYPE_TRACE_GPS, sensorLocationProviderTimeStart)) {
 			return writeToTraceFile(byteBuilder.getBytes());
 		}
 
@@ -55,45 +52,18 @@ public class TraceManager_GPS extends TraceManager {
 	@Override
 	public boolean closeFile() {
 		Log.d(TAG, "closing trace file");
-		
-		if(closeTraceFile()) {
-			return true;
-		}
 
-		return false;
+		byte[] negativeOne = {-1};
+		return 
+				// signify end of entry block
+				writeToTraceFile(negativeOne)
+
+				// close file
+				&& closeTraceFile();
 	}
 
 	public int recordEvent(Location location) {
-		ByteBuilder byteBuilder = new ByteBuilder(4 + 4);
-
-		// positive time offset (centi-seconds): 4 bytes
-		byteBuilder.append_4(
-				Encoder.encode_int(
-						(int) ((location.getTime()-locationSensorProviderTimeStart) * CONVERT_MILLISECONDS_CENTISECONDS)
-						)
-				);
-
-		// latitude: 4 bytes
-		byteBuilder.append_4(
-				Encoder.encode_double_to_4_bytes(
-						location.getLatitude()-coordinatePair[0], CONVERT_COORDINATE_PRECISION_LONG
-						)
-				);
-
-		// longitude: 4 bytes
-		byteBuilder.append_4(
-				Encoder.encode_double_to_4_bytes(
-						location.getLongitude()-coordinatePair[1], CONVERT_COORDINATE_PRECISION_LONG
-						)
-				);
-
-
-		// altitude [-32,768, -32,767]: 2 bytes
-		byteBuilder.append_4(
-				Encoder.encode_short(
-						(short) Math.round(location.getAltitude())
-						)
-				);
+		ByteBuilder byteBuilder = new ByteBuilder(1 + 2 + 4 + 4 + 4);
 
 		// accuracy [0, 255]: 1 byte
 		int accuracy = Math.round(location.getAccuracy());
@@ -104,16 +74,44 @@ public class TraceManager_GPS extends TraceManager {
 						accuracy
 						)
 				);
-		
+
+		// altitude [-32,768, -32,767]: 2 bytes
+		byteBuilder.append_2(
+				Encoder.encode_short(
+						(short) Math.round(location.getAltitude())
+						)
+				);
+
+		// positive time offset (centi-seconds): 4 bytes
+		byteBuilder.append_4(
+				Encoder.encode_int(
+						(int) ((location.getTime()-sensorLocationProviderTimeStart) * CONVERT_MILLISECONDS_CENTISECONDS)
+						)
+				);
+
+		// latitude: 4 bytes
+		byteBuilder.append_4(
+				Encoder.encode_int(
+						(int) ((location.getLatitude()*CONVERT_COORDINATE_PRECISION_LONG) - coordinatePair[0])
+						)
+				);
+
+		// longitude: 4 bytes
+		byteBuilder.append_4(
+				Encoder.encode_int(
+						(int) ((location.getLongitude()*CONVERT_COORDINATE_PRECISION_LONG) - coordinatePair[1])
+						)
+				);
+
 		// for some reason, this looper is shutting down
 		if(shutdownReason != REASON_NONE) {
 			switch(shutdownReason) {
 			case REASON_IO_ERROR:
 				return SensorLooper.REASON_IO_ERROR;
-				
+
 			case REASON_TIME_EXCEEDING:
 				return SensorLooper.REASON_DATA_FULL;
-			
+
 			default:
 				return SensorLooper.REASON_UNKNOWN;
 			}

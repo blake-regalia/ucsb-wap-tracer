@@ -5,8 +5,9 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-public class SQL_Output extends DefaultOutput {
+public class SQL_Output {
 	
+	/*
 	private static final int INITIAL_HASH_TABLE_SIZE = 192;
 
 	private Hashtable<String, UWAP> waps;
@@ -17,18 +18,18 @@ public class SQL_Output extends DefaultOutput {
 	StringBuilder out;
 	
 	private class UWAP {
-		ArrayList<Pair<WAP_Event, WAP>> events;
-		Pair<WAP_Event, WAP> pair;
+		ArrayList<Pair<WAP_Event, Wap>> events;
+		Pair<WAP_Event, Wap> pair;
 		private int ssid;
 		
-		public UWAP(WAP_Event evt, WAP wap) {
-			events = new ArrayList<Pair<WAP_Event, WAP>>();
-			events.add(new Pair<WAP_Event, WAP>(evt, wap));
+		public UWAP(WAP_Event evt, Wap wap) {
+			events = new ArrayList<Pair<WAP_Event, Wap>>();
+			events.add(new Pair<WAP_Event, Wap>(evt, wap));
 			ssid = wap.getSSID();
 		}
 		
-		public void add(WAP_Event evt, WAP wap) {
-			events.add(new Pair<WAP_Event, WAP>(evt, wap));
+		public void add(WAP_Event evt, Wap wap) {
+			events.add(new Pair<WAP_Event, Wap>(evt, wap));
 		}
 		
 		public int getSSID() {
@@ -61,7 +62,7 @@ public class SQL_Output extends DefaultOutput {
 	public void addEvent(WAP_Event event) {
 		int i = event.getNumWAPs();
 		while(i-- != 0) {
-			WAP wap = event.getWAP(i);
+			Wap wap = event.getWAP(i);
 			String mac = wap.getMAC();
 			UWAP uwap = waps.get(mac);
 			if(uwap == null) {
@@ -158,18 +159,6 @@ public class SQL_Output extends DefaultOutput {
 				
 				out.append(tab+"INSERT INTO `"+table+"` (");
 				
-				/**/
-				tab_push();
-				out.append(tab+"`bssid`,");
-				out.append(tab+"`time`,");
-				out.append(tab+"`accuracy`,");
-				out.append(tab+"`latitude`,");
-				out.append(tab+"`longitude`,");
-				out.append(tab+"`rssi`");
-				tab_pop();
-				out.append(tab+") VALUES (");
-				/**/
-				
 				//out.append("`ssid`, `time`, `accuracy`, `latitude`, `longitude`) VALUES (");
 
 				tab_push();
@@ -190,4 +179,5 @@ public class SQL_Output extends DefaultOutput {
 		
 		return out.toString();
 	}
+	*/
 }

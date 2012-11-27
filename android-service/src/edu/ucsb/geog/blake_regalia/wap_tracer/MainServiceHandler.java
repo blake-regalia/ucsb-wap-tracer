@@ -14,8 +14,9 @@ public class MainServiceHandler extends Handler implements HardwareCallback, Rec
 	
 	private static final String TAG = "MainServiceHandler";
 
-	private static final int STATUS_LOCATION_SENSOR_PROVIDER_OFF   = 0x00;
-	private static final int STATUS_LOCATION_SENSOR_PROVIDER_ON    = 0x01;
+	private static final int STATUS_SENSOR_LOCATION_PROVIDER_OFF      = 0x00;
+	private static final int STATUS_SENSOR_LOCATION_PROVIDER_STARTING = 0x01;
+	private static final int STATUS_SENSOR_LOCATION_PROVIDER_ON       = 0x02;
 
 	private static final int OBJECTIVE_NONE      = 0x00;
 	private static final int OBJECTIVE_RECOVER   = 0x03;
@@ -42,6 +43,7 @@ public class MainServiceHandler extends Handler implements HardwareCallback, Rec
 
 		case MainService.OBJECTIVE.INITIALIZE:
 			Log.d(TAG, "=> initialize");
+		case MainService.OBJECTIVE.START_GPS:
 			// give sensorLocationProvider order to enable necessary hardware
 			mSensorLocationProvider.attemptEnableHardware(this);
 			break;
@@ -60,7 +62,7 @@ public class MainServiceHandler extends Handler implements HardwareCallback, Rec
 	public MainServiceHandler(Looper looper, Context context) {
 
 		// initialize primitive data type fields
-		sensorLocationProviderStatus = STATUS_LOCATION_SENSOR_PROVIDER_OFF;
+		sensorLocationProviderStatus = STATUS_SENSOR_LOCATION_PROVIDER_OFF;
 		sensorLoopersBitmask = 0;
 		objectiveClose = OBJECTIVE_NONE;
 
@@ -185,6 +187,7 @@ public class MainServiceHandler extends Handler implements HardwareCallback, Rec
 	 */
 	public void sensorLooperFailed(int index, int reason) {
 		shutdown(OBJECTIVE_RECOVER);
+		Log.d(TAG, "Loopers were shut down");
 		/*
 	this.sensorLoopersBitmask &= ~(1 << index);
 
@@ -202,15 +205,30 @@ public class MainServiceHandler extends Handler implements HardwareCallback, Rec
 	/**
 	 * triggered when the locationSensorProvider starts recording
 	 */
-	public synchronized void recordingStarted(int ignore) {
+	public synchronized void recordingStarted(int ignore, long timestamp) {
 		Log.i(TAG, "sensorLocationProvider started recording");
 		
-		sensorLocationProviderStatus = STATUS_LOCATION_SENSOR_PROVIDER_ON;
-		sensorLocationProviderTimeStarted = System.currentTimeMillis();
+		sensorLocationProviderStatus = STATUS_SENSOR_LOCATION_PROVIDER_ON;
+		sensorLocationProviderTimeStarted = timestamp;
+
+		// attempt to start recording any sensor loopers if they are not already recording
+		int loopIndex = 0;
+		for(SensorLooper tSensorLooper : mSensorLoopers) {
+			tSensorLooper.startRecording(mCallbackHandler, loopIndex, sensorLocationProviderTimeStarted);
+			loopIndex += 1;
+		}
 	}
 
 	public void recordingFailedToStart(int ignore, int reason) {
 
+		String reasonStr = null;
+		switch(reason) {
+		case RecorderCallback.REASON_UNIMPLEMENTED: reasonStr = "Unimplemented"; break;
+		case RecorderCallback.REASON_RUNNING: reasonStr = "Running"; break;
+		case RecorderCallback.REASON_STOPPED: reasonStr = "Stopped"; break;
+		}
+		
+		Log.e(TAG, "SensorLocationProvider failed to start recording: "+reasonStr);
 	}
 
 	/**
@@ -218,6 +236,7 @@ public class MainServiceHandler extends Handler implements HardwareCallback, Rec
 	 */
 	public void recordingStopped(int ignore, int reason) {
 
+		Log.e(TAG, "SensorLocationProvider stopped recording.");
 	}
 
 	/**
@@ -235,7 +254,12 @@ public class MainServiceHandler extends Handler implements HardwareCallback, Rec
 
 		public void hardwareEnabled(int index) {
 			Log.d(TAG, "sensorLooper("+index+") hardware enabled");
-			mSensorLoopers.get(index).startRecording(this, index, sensorLocationProviderTimeStarted);
+
+			// attempt to start recording if the sensor location provider is recording
+			if(sensorLocationProviderStatus == STATUS_SENSOR_LOCATION_PROVIDER_ON) {
+				Log.e(TAG, "sensorLocationProvider gave clearance to start recording");
+				mSensorLoopers.get(index).startRecording(this, index, sensorLocationProviderTimeStarted);
+			}
 		}
 
 		public void hardwareFailedToEnable(int index, int reason) {
@@ -265,7 +289,7 @@ public class MainServiceHandler extends Handler implements HardwareCallback, Rec
 			}
 		}
 
-		public void recordingStarted(int index) {
+		public void recordingStarted(int index, long timestamp) {
 			Log.d(TAG, "sensorLooper("+index+") started recording");
 		}
 

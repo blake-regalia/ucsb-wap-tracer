@@ -79,6 +79,8 @@ public class LocationHelper {
 	}
 
 	public void obtainLocation(int listenerType, LocationResultsCallback callback)  {
+		
+		Log.d(TAG, "obtainLocation()");
 
 		// make sure there are no listeners requestion location updates
 		if(mActiveListener != null) {
@@ -120,8 +122,7 @@ public class LocationHelper {
 					// trigger a location changed event with an older saved location
 					mActiveListener.onLocationChanged(location, true);
 					// if the method accepted one of the last known locations and that's all we need
-					if(mActiveListener.completedObjective()) {
-						unbind();
+					if(mActiveListener == null) {
 						return;
 					}
 				}
@@ -263,6 +264,14 @@ public class LocationHelper {
 		public BoundaryCheckListener(LocationResultsCallback callback) {
 			super(callback);
 		}
+		protected void fixed() {
+			unbind();
+			locationFixed();
+		}
+		protected void lost(int reason) {
+			unbind();
+			positionLost(reason);
+		}
 		public synchronized void handleLocationUpdate(Location location, boolean isOldLocation) {
 
 			Log.d(TAG, "boundary check: location change event: "+active_location_events+" => "+location.getProvider());
@@ -297,7 +306,7 @@ public class LocationHelper {
 
 				Log.d(TAG, "boundary check:: location is good enough. using it for boundary check");
 
-				this.locationFixed();
+				fixed();
 				return;
 			}
 			// if location listener has been called several times..
@@ -305,7 +314,7 @@ public class LocationHelper {
 
 				Log.d(TAG, "boundary cehck:: location changed enough times, using best location");
 
-				this.locationFixed();
+				fixed();
 				return;
 			}
 
@@ -317,11 +326,11 @@ public class LocationHelper {
 			public void run() {
 				if(mLocation != null) {
 					Log.d(TAG, "boundary check:: update timed out; using best estimate");
-					locationFixed();
+					fixed();
 				}
 				else {
 					Log.d(TAG, "No good locations...");
-					positionLost(LocationResultsCallback.REASON_POOR_RECEPTION);
+					lost(LocationResultsCallback.REASON_POOR_RECEPTION);
 				}
 			}
 		};
@@ -385,6 +394,7 @@ public class LocationHelper {
 
 		private Runnable trace_location_timeout = new Runnable() {
 			public void run() {
+				timeout_failure = -1;
 				positionLost(LocationResultsCallback.REASON_TIMED_OUT);
 			}
 		};
